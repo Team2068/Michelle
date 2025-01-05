@@ -1,10 +1,10 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
@@ -38,6 +38,10 @@ public class Elevator extends SubsystemBase {
 
   public void stopElevator(){
     elevatorMotor.stopMotor();
+  }
+
+    public void setElevatorPos(double pos) {
+    elevatorMotor.getClosedLoopController().setReference(pos, ControlType.kPosition);
   }
 
   public double elevatorPos() {
