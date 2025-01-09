@@ -254,7 +254,7 @@ public class Swerve extends SubsystemBase {
 
     public static final class DriveConstants {
         public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(30);
-        public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(21.5);
+        public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(30);
 
         public static final int[] CHASSIS_ID = { 3, 2, 4, 5 }; // FL, FR, BL, BR
 
