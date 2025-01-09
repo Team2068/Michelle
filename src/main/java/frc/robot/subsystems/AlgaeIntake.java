@@ -21,15 +21,15 @@ public class AlgaeIntake extends SubsystemBase {
     roller.configure(rollerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-  public void rollerVoltage(double volts){
+  public void volts(double volts){
     roller.setVoltage(volts);
   }
 
-  public void rollerSpeed(double speed){
+  public void speed(double speed){
     roller.setVoltage(speed);
   }
 
-  public void stopRoller(){
+  public void stop(){
     roller.stopMotor();
   }
 
@@ -39,6 +39,6 @@ public class AlgaeIntake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("Beam Break", grabbed());
+    SmartDashboard.putBoolean("Intake Full", grabbed());
   }
 }

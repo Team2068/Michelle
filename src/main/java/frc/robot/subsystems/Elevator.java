@@ -8,54 +8,107 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.*;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Elevator extends SubsystemBase {
-  public SparkMax elevatorMotor = new SparkMax(7, MotorType.kBrushless);;
-  public SparkMax elevatorFollower = new SparkMax(8, MotorType.kBrushless);
+  public SparkMax motor = new SparkMax(7, MotorType.kBrushless);;
+  public SparkMax follower = new SparkMax(8, MotorType.kBrushless);
   SparkMaxConfig config = new SparkMaxConfig();
 
+  TrapezoidProfile profile = new TrapezoidProfile(new Constraints(100, 500));
+  Timer time = new Timer();
+  double target = 0;
+  boolean stopped = true;
+
+  // Target Heights
+  public final double Rest = 0;
+  public final double L2 = 0;
+  public final double L3 = 0;
+  public final double L4 = 0;
+  public final double Barge = 0;
+  public final double MAX_HEIGHT = 0;
+
+
   public Elevator() {
-
-
     config
-      .follow(elevatorMotor, true)
-      .idleMode(SparkMaxConfig.IdleMode.kBrake);
-
-    config.closedLoop
-        .feedbackSensor(FeedbackSensor.kPrimaryEncoder).pid(0, 0, 0);
+      .idleMode(SparkMaxConfig.IdleMode.kBrake)
+      .closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+      .pid(0, 0, 0);
     
+    motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-      elevatorMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-      elevatorFollower.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    config.follow(motor, true);
+
+    follower.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    zero();
   }
 
-  public void moveElevator(double speed) {
-    elevatorMotor.set(speed);
+  public void speed(double speed) {
+    motor.set(speed);
   }
   
-  public void moveElevatorVolts(double speed) {
-    elevatorMotor.setVoltage(speed);
+  public void volts(double volts) {
+    motor.setVoltage(volts);
   }
 
-  public void stopElevator(){
-    elevatorMotor.stopMotor();
+  public void stop(){
+    stopped = true;
+    motor.stopMotor();
   }
 
-    public void setElevatorPos(double pos) {
-    elevatorMotor.getClosedLoopController().setReference(pos, ControlType.kPosition);
+  public void movePID(double height) {
+    motor.getClosedLoopController().setReference(height, ControlType.kPosition);
+  }
+
+  public void move(double height){ // TODO: Checkout how adding a feedforward affects the results
+    stopped = false;
+    target = Math.max( Math.min( height, 0 ), MAX_HEIGHT );
+    time.restart();
   }
 
   public double elevatorPos() {
-    return elevatorMotor.getEncoder().getPosition();
+    return motor.getEncoder().getPosition();
   }
 
-  public void resetEncoders(){
-    elevatorMotor.getEncoder().setPosition(0);
+  public void zero(){
+    motor.getEncoder().setPosition(0);
+  }
+
+  public void Rest(){
+    move(Rest);
+  }
+
+  public void L2(){
+    move(L2);
+  }
+
+  public void L3(){
+    move(L3);
+  }
+
+  public void L4(){
+    move(L4);
   }
 
   @Override
   public void periodic() {
+    if (stopped) return;
 
+    State out = profile.calculate(time.get(), new State(L2, Barge), new State(target, 0));
+    motor.getClosedLoopController().setReference(out.position, ControlType.kPosition);
+    
+    // TODO: Maybe log Supplied Volts
+    SmartDashboard.putNumber("Elevator Height", motor.getEncoder().getPosition());
+    
+    SmartDashboard.putNumber("Elevator Target Height", target);
+    SmartDashboard.putNumber("Elevator cTarget Height", out.position);
+
+    SmartDashboard.putNumber("Elevator Speed", motor.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Elevator cTarget Velocity", out.velocity);
   }
 }

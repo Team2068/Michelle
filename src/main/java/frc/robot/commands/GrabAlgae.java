@@ -16,12 +16,12 @@ public class GrabAlgae extends Command {
 
   @Override
   public void execute() {
-    io.algaeIntake.rollerVoltage(12);
+    io.algaeIntake.volts(12);
   }
 
   @Override
   public void end(boolean interrupted) {
-    io.algaeIntake.stopRoller();
+    io.algaeIntake.stop();
   }
 
   @Override
