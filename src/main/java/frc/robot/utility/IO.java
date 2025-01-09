@@ -15,6 +15,7 @@ public class IO extends SubsystemBase {
         public final CommandXboxController mech = new CommandXboxController(1);
 
         public final Swerve chassis = new Swerve();
+        public final Claw claw = new Claw();
 
         public CommandScheduler scheduler = CommandScheduler.getInstance();
 
@@ -26,6 +27,7 @@ public class IO extends SubsystemBase {
 
         public void configGlobal(){
                 DriverStation.silenceJoystickConnectionWarning(true);
+                chassis.setDefaultCommand(new DefaultDrive(this, drive));
         }
 
         public void config1Player() {
@@ -34,6 +36,8 @@ public class IO extends SubsystemBase {
                 drive.rightStick().onTrue(new InstantCommand(() -> chassis.field_oritented = !chassis.field_oritented));
 
                 drive.start().onTrue(new InstantCommand(chassis::resetOdometry));
+
+                drive.y().onTrue(new ToggleClaw(this));
         }
 
         public void config2Player() {
@@ -41,6 +45,8 @@ public class IO extends SubsystemBase {
                 // drive.rightBumper().onTrue(new InstantCommand(() -> chassis.slow_mode = !chassis.slow_mode));
 
                 drive.back().onTrue(new InstantCommand(chassis::resetOdometry));
+
+                mech.y().onTrue(new ToggleClaw(this));
         }
 
         public void configTesting() {

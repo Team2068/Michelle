@@ -22,7 +22,9 @@ public class Elevator extends SubsystemBase {
       .follow(elevatorMotor, true)
       .idleMode(SparkMaxConfig.IdleMode.kBrake);
 
-    config.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pid(0, 0, 0);
+    config.closedLoop
+        .feedbackSensor(FeedbackSensor.kPrimaryEncoder).pid(0, 0, 0);
+    
 
       elevatorMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
       elevatorFollower.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
