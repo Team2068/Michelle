@@ -58,7 +58,7 @@ public class Swerve extends SubsystemBase {
     private final KrakenSwerveModule[] modules = new KrakenSwerveModule[4];
     private ChassisSpeeds chassisSpeeds = new ChassisSpeeds();
 
-    private boolean active = true;
+    public boolean active = true;
 
     public Swerve() {
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");

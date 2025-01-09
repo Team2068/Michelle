@@ -79,7 +79,7 @@ public class Elevator extends SubsystemBase {
     motor.getEncoder().setPosition(0);
   }
 
-  public void Rest(){
+  public void rest(){
     move(Rest);
   }
 

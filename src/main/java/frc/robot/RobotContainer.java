@@ -13,17 +13,12 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.utility.IO;
 
 public class RobotContainer {
-  SendableChooser<Runnable> bindings = new SendableChooser<Runnable>();
 
-  public IO io = new IO(bindings);
+  public IO io = new IO();
 
   public RobotContainer() {
-    SmartDashboard.putData("Bindings", bindings);
-    SmartDashboard.putData("Autonomous", new SequentialCommandGroup(
-        new InstantCommand(() -> io.chassis.field_oritented = true)));
+    // SmartDashboard.putData("Autonomous", ); // TBD
 
-    io.configGlobal();
-    io.config1Player();
   }
 
   public Command getAutonomousCommand() {
