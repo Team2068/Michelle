@@ -67,9 +67,9 @@ public class Swerve extends SubsystemBase {
                     tab.getLayout(DriveConstants.LAYOUT_TITLE[i], BuiltInLayouts.kList)
                             .withSize(2, 4)
                             .withPosition(i * 2, 0),
-                    DriveConstants.DRIVE_ID[i],
-                    DriveConstants.STEER_ID[i],
-                    DriveConstants.ENCODER_ID[i]);
+                    DriveConstants.CHASSIS_ID[i],
+                    DriveConstants.CHASSIS_ID[i],
+                    DriveConstants.CHASSIS_ID[i]);
         }
 
         // Load the RobotConfig from the GUI settings. You should probably
@@ -256,9 +256,8 @@ public class Swerve extends SubsystemBase {
         public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(30);
         public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(21.5);
 
-        public static final int[] DRIVE_ID = { 3, 2, 4, 5 }; // FL, FR, BL, BR
-        public static final int[] STEER_ID = { 7, 6, 5, 8 }; // FL, FR, BL, BR
-        public static final int[] ENCODER_ID = { 11, 10, 12, 13 }; // FL, FR, BL, BR
+        public static final int[] CHASSIS_ID = { 3, 2, 4, 5 }; // FL, FR, BL, BR
+
         public static final String[] LAYOUT_TITLE = { "Front Left", "Front Right", "Back Left", "Back Right" };
 
         public static final int PIGEON_ID = 6;
