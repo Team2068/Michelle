@@ -11,8 +11,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Elevator extends SubsystemBase {
-  public SparkMax elevatorMotor = new SparkMax(0, MotorType.kBrushless);;
-  public SparkMax elevatorFollower = new SparkMax(1, MotorType.kBrushless);
+  public SparkMax elevatorMotor = new SparkMax(7, MotorType.kBrushless);;
+  public SparkMax elevatorFollower = new SparkMax(8, MotorType.kBrushless);
   SparkMaxConfig config = new SparkMaxConfig();
 
   public Elevator() {

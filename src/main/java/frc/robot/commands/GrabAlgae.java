@@ -1,16 +1,14 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Claw;
 import frc.robot.utility.IO;
 
-public class ToggleClaw extends Command {
+public class GrabAlgae extends Command {
   IO io;
-  boolean open = false;
 
-  public ToggleClaw(IO io) {
+  public GrabAlgae(IO io) {
     this.io = io;
-    addRequirements(io.claw);
+    addRequirements(io.algaeIntake);
   }
 
   @Override
@@ -18,18 +16,16 @@ public class ToggleClaw extends Command {
 
   @Override
   public void execute() {
-    open = !open;
-    double clawPosition = open ? Claw.CLAW_CLOSED_POS : Claw.CLAW_OPEN_POS;
-    io.claw.setClawPos(clawPosition);
+    io.algaeIntake.rollerVoltage(12);
   }
 
   @Override
   public void end(boolean interrupted) {
-    io.claw.stopClaw();
+    io.algaeIntake.stopRoller();
   }
 
   @Override
   public boolean isFinished() {
-    return false;
+    return io.algaeIntake.grabbed();
   }
 }

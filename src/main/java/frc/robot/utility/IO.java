@@ -15,7 +15,7 @@ public class IO extends SubsystemBase {
         public final CommandXboxController mech = new CommandXboxController(1);
 
         public final Swerve chassis = new Swerve();
-        public final Claw claw = new Claw();
+        public final AlgaeIntake algaeIntake = new AlgaeIntake();
 
         public CommandScheduler scheduler = CommandScheduler.getInstance();
 
@@ -37,7 +37,7 @@ public class IO extends SubsystemBase {
 
                 drive.start().onTrue(new InstantCommand(chassis::resetOdometry));
 
-                drive.y().onTrue(new ToggleClaw(this));
+                drive.y().onTrue(new GrabAlgae(this));
         }
 
         public void config2Player() {
@@ -46,7 +46,7 @@ public class IO extends SubsystemBase {
 
                 drive.back().onTrue(new InstantCommand(chassis::resetOdometry));
 
-                mech.y().onTrue(new ToggleClaw(this));
+                mech.y().onTrue(new GrabAlgae(this));
         }
 
         public void configTesting() {

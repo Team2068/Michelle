@@ -256,12 +256,12 @@ public class Swerve extends SubsystemBase {
         public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(19.5);
         public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(21.5);
 
-        public static final int[] DRIVE_ID = { 4, 2, 6, 8 }; // FL, FR, BL, BR
-        public static final int[] STEER_ID = { 5, 3, 7, 9 }; // FL, FR, BL, BR
+        public static final int[] DRIVE_ID = { 3, 2, 4, 5 }; // FL, FR, BL, BR
+        public static final int[] STEER_ID = { 7, 6, 5, 8 }; // FL, FR, BL, BR
         public static final int[] ENCODER_ID = { 11, 10, 12, 13 }; // FL, FR, BL, BR
         public static final String[] LAYOUT_TITLE = { "Front Left", "Front Right", "Back Left", "Back Right" };
 
-        public static final int PIGEON_ID = 14;
+        public static final int PIGEON_ID = 6;
 
         public static final int TURBO = 1;
         public static final int SLOW = 2;
