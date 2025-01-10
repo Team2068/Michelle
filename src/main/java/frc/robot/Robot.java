@@ -44,7 +44,9 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {}
 
   @Override
-  public void autonomousExit() {}
+  public void autonomousExit() {
+    m_robotContainer.io.chassis.adjustRotation();
+  }
 
   @Override
   public void teleopInit() {
