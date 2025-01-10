@@ -7,7 +7,6 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -93,10 +92,7 @@ public class Swerve extends SubsystemBase {
                 config,
                 () -> {
                     var alliance = DriverStation.getAlliance();
-                    if (alliance.isPresent()) {
-                        return alliance.get() == DriverStation.Alliance.Red;
-                    }
-                    return false;
+                    return alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red;
                 },
                 this);
 
@@ -128,14 +124,12 @@ public class Swerve extends SubsystemBase {
     }
 
     public double distance(Pose2d reference_point) {
-        Transform2d dist = odometry.getPoseMeters().minus(reference_point);
-        return Math.sqrt((dist.getX() * dist.getX()) + (dist.getY() * dist.getY()));
+        return odometry.getPoseMeters().getTranslation().getDistance(reference_point.getTranslation());
     }
 
     public double distance(double[] reference_point) {
         var reference_pose = new Pose2d(reference_point[0], reference_point[2], new Rotation2d(reference_point[3]));
-        Transform2d dist = odometry.getPoseMeters().minus(reference_pose);
-        return Math.sqrt((dist.getX() * dist.getX()) + (dist.getY() * dist.getY()));
+        return distance(reference_pose);
     }
 
     private SwerveModulePosition modulePosition(KrakenSwerveModule module) {
