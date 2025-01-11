@@ -215,6 +215,14 @@ public class Swerve extends SubsystemBase {
         return chassisSpeeds;
     }
 
+    public double getYaw() {
+        return pigeon2.getYaw().getValueAsDouble();
+    }
+
+    public double getPitch() {
+        return pigeon2.getPitch().getValueAsDouble();
+    }
+
     public void enable() {
         active = true;
     }
