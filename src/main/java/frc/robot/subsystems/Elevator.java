@@ -7,6 +7,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.*;
@@ -110,5 +111,11 @@ public class Elevator extends SubsystemBase {
 
     SmartDashboard.putNumber("Elevator Speed", motor.getEncoder().getVelocity());
     SmartDashboard.putNumber("Elevator cTarget Velocity", out.velocity);
+
+    Logger.recordOutput("Elevator Height", motor.getEncoder().getPosition());
+    Logger.recordOutput("Elevator Target Height", target);
+    Logger.recordOutput("Elevator cTarget Height", out.position);
+    Logger.recordOutput("Elevator Speed", motor.getEncoder().getVelocity());
+    Logger.recordOutput("Elevator cTarget Velocity", out.velocity);
   }
 }

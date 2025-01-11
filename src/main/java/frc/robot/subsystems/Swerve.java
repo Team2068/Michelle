@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -248,6 +250,11 @@ public class Swerve extends SubsystemBase {
         SmartDashboard.putNumber("Pigeon Roll", pigeon2.getRoll().getValueAsDouble());
 
         SmartDashboard.putString("Drive Mode", (field_oritented) ? "Field-Oriented" : "Robot-Oriented");
+
+        Logger.recordOutput("Odometry Rotation", rotation().getDegrees());
+        Logger.recordOutput("Pigeon Yaw", pigeon2.getYaw().getValueAsDouble());
+        Logger.recordOutput("Pigeon Pitch", pigeon2.getPitch().getValueAsDouble());
+        Logger.recordOutput("Pigeon Roll", pigeon2.getRoll().getValueAsDouble());
     }
 
     public static final class DriveConstants {

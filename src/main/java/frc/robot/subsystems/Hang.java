@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -29,6 +31,7 @@ public class Hang extends SubsystemBase {
 
   @Override
   public void periodic() {
+    Logger.recordOutput("Hang Pos", hang.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Hang Pos", hang.getPosition().getValueAsDouble());
   }
 }
