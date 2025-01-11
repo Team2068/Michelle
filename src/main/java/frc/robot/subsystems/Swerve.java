@@ -215,6 +215,10 @@ public class Swerve extends SubsystemBase {
         return chassisSpeeds;
     }
 
+    public double getRoll() {
+        return pigeon2.getRoll().getValueAsDouble();
+    }
+
     public void enable() {
         active = true;
     }
