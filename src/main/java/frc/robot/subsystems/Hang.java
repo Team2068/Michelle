@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -15,10 +13,6 @@ public class Hang extends SubsystemBase {
 
   public Hang() {
     hang.setNeutralMode(NeutralModeValue.Brake);
-
-    TalonFXConfiguration config = new TalonFXConfiguration();
-    config.CurrentLimits = new CurrentLimitsConfigs().withStatorCurrentLimitEnable(true).withStatorCurrentLimit(20);
-    hang.getConfigurator().apply(config);
   }
 
   public void hangSpeed(double speed) {

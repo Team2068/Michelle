@@ -28,6 +28,6 @@ public class HangSequence extends Command {
 
   @Override
   public boolean isFinished() {
-    return io.chassis.getPitch() > Hang.HANG_MAX_ANGLE;
+    return io.chassis.getRoll() > Hang.HANG_MAX_ANGLE;
   }
 }
