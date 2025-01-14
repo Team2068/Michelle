@@ -3,7 +3,8 @@ package frc.robot.commands;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.utility.DebugTable;
+import frc.robot.utility.Util;
+import frc.robot.subsystems.Swerve;
 import frc.robot.utility.IO;
 
 import java.util.function.DoubleSupplier;
@@ -20,9 +21,9 @@ public class DefaultDrive extends Command {
     }
 
     public DefaultDrive(IO io, CommandXboxController controller) {
-        this(io, () -> modifyAxis(controller.getLeftY()) * io.chassis.MAX_VELOCITY,
-        () -> modifyAxis(controller.getLeftX()) * io.chassis.MAX_VELOCITY,
-        () -> modifyAxis(controller.getRightX()) * io.chassis.MAX_VELOCITY);
+        this(io, () -> modifyAxis(controller.getLeftY()) * Swerve.Drive.MAX_VELOCITY,
+        () -> modifyAxis(controller.getLeftX()) * Swerve.Drive.MAX_VELOCITY,
+        () -> modifyAxis(controller.getRightX()) * Swerve.Drive.MAX_VELOCITY);
     }
   
     public DefaultDrive(IO io,
@@ -40,14 +41,14 @@ public class DefaultDrive extends Command {
     
     @Override
     public void execute() {
-        double down_scale = 1 - modifyAxis(io.drive.getLeftTriggerAxis());
-        double up_scale = modifyAxis(io.drive.getRightTriggerAxis());
+        double down_scale = 1 - modifyAxis(io.main.controller.getLeftTriggerAxis());
+        double up_scale = modifyAxis(io.main.controller.getRightTriggerAxis());
 
         // double scale = (double) DebugTable.get("Translation Scale", 1.0) * down_scale + up_scale;
         // double rot_scale = (double) DebugTable.get("Rotation Scale", 0.65) * down_scale + up_scale; //0.65 for Shaan. 0.75 for Tristan.
 
         double scale = 1.0 * down_scale + up_scale;
-        double rot_scale = (double) DebugTable.get("Rotation Scale", 0.65) * down_scale + up_scale; //0.65 for Shaan. 0.75 for Tristan.
+        double rot_scale = (double) Util.get("Rotation Scale", 0.65) * down_scale + up_scale; //0.65 for Shaan. 0.75 for Tristan.
 
         // double xSpeed = x_supplier.getAsDouble() * scale;
         // double ySpeed = y_supplier.getAsDouble() * scale;
