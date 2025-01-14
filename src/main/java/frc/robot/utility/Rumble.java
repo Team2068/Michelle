@@ -4,6 +4,7 @@
 
 package frc.robot.utility;
 
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -15,33 +16,30 @@ Timer time = new Timer();
 double duration = 0;
 boolean condition = false;
 Runnable action;
-RumbleType rs;
 GenericHID controller;
+int pattern;
  
-  public Rumble(RumbleType rumbleSide, double intensity, double duration, GenericHID controller, Runnable action) {
+  public Rumble(int pattern, double duration, GenericHID controller, Runnable action) {
     time.start();
-    rs = rumbleSide;
-    this.action = action; 
-    this.duration = duration;
+    this.pattern = pattern;
     this.controller = controller;
-    controller.setRumble(rumbleSide, intensity);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    action.run();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    RumblePatterns.Run(pattern, controller);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    controller.setRumble(rs, 0);
+    controller.setRumble(RumbleType.kBothRumble, 0);
     action.run();
   }
 

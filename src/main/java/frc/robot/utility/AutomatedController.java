@@ -2,7 +2,6 @@ package frc.robot.utility;
 
 import java.util.function.BooleanSupplier;
 
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -93,6 +92,6 @@ public class AutomatedController {
         controller.povUp().and( manual() ).onTrue(Util.Do(io.chassis::enable));
         controller.povDown().and( manual() ).onTrue(Util.Do(io.chassis::disable)).debounce(1.5);
         controller.povLeft().and( manual() ).onTrue(Util.Do(io.chassis::syncEncoders));
-        controller.povRight().and( manual() ).and(() -> {return !io.chassis.active;}).onTrue(new Rumble(RumbleType.kBothRumble, .25, .5, controller.getHID(), io.chassis::resetAbsolute)); // Add the Rumble effect
+        controller.povRight().and( manual() ).and(() -> {return !io.chassis.active;}).onTrue(new Rumble(0, .5, controller.getHID(), io.chassis::resetAbsolute)); // Add the Rumble effect
         }
 }

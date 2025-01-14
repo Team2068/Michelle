@@ -4,6 +4,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.utility.Util;
+import frc.robot.subsystems.Swerve;
 import frc.robot.utility.IO;
 
 import java.util.function.DoubleSupplier;
@@ -20,9 +21,9 @@ public class DefaultDrive extends Command {
     }
 
     public DefaultDrive(IO io, CommandXboxController controller) {
-        this(io, () -> modifyAxis(controller.getLeftY()) * io.chassis.MAX_VELOCITY,
-        () -> modifyAxis(controller.getLeftX()) * io.chassis.MAX_VELOCITY,
-        () -> modifyAxis(controller.getRightX()) * io.chassis.MAX_VELOCITY);
+        this(io, () -> modifyAxis(controller.getLeftY()) * Swerve.Drive.MAX_VELOCITY,
+        () -> modifyAxis(controller.getLeftX()) * Swerve.Drive.MAX_VELOCITY,
+        () -> modifyAxis(controller.getRightX()) * Swerve.Drive.MAX_VELOCITY);
     }
   
     public DefaultDrive(IO io,

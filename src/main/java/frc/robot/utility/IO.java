@@ -1,7 +1,5 @@
 package frc.robot.utility;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
@@ -26,7 +24,7 @@ public class IO extends SubsystemBase {
                 chassis.setDefaultCommand(new DefaultDrive(this, main.controller));
         }
 
-        StructPublisher<Pose2d> estimated_pose = Util.table.getStructTopic("Estimated Pose", Pose2d.struct).publish();
+        // StructPublisher<Pose2d> estimated_pose = Util.table.getStructTopic("Estimated Pose", Pose2d.struct).publish();
 
         @Override
         public void periodic() {}
