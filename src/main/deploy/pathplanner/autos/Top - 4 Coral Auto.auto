@@ -1,0 +1,61 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Top to J,I"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score L-L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "J,I to Station and back"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score R-L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "J,I to Station to L, K"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score L-L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L, K to Station and back"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score R-L4"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
