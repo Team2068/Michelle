@@ -5,6 +5,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -45,6 +47,8 @@ public class Swerve extends SubsystemBase {
                     -DriveConstants.DRIVETRAIN_WHEELBASE_METERS / 2.0));
 
     public final Pigeon2 pigeon2 = new Pigeon2(DriveConstants.PIGEON_ID);
+
+    public SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(kinematics, rotation(), modulePositions(), pose());
 
     StructArrayPublisher<SwerveModuleState> current_states = NetworkTableInstance.getDefault().getTable("Debug")
             .getStructArrayTopic("Current Module States", SwerveModuleState.struct).publish();
@@ -248,6 +252,8 @@ public class Swerve extends SubsystemBase {
         SmartDashboard.putNumber("Pigeon Roll", pigeon2.getRoll().getValueAsDouble());
 
         SmartDashboard.putString("Drive Mode", (field_oritented) ? "Field-Oriented" : "Robot-Oriented");
+
+        poseEstimator.update(rotation(), modulePositions());
     }
 
     public static final class DriveConstants {
