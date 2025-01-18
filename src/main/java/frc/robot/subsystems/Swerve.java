@@ -147,6 +147,10 @@ public class Swerve extends SubsystemBase {
         return pos;
     }
 
+    public double getYaw(){
+        return pigeon2.getYaw().getValueAsDouble();
+    }
+
     public SwerveModuleState[] moduleStates(KrakenSwerveModule[] modules) {
         SwerveModuleState[] state = new SwerveModuleState[4];
         for (int i = 0; i < modules.length; i++)
