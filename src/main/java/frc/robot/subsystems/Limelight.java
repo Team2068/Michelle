@@ -4,11 +4,15 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.PoseEstimator;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.utility.LimelightHelpers;
 import frc.robot.utility.IO;
 
 public class Limelight extends SubsystemBase {
@@ -16,6 +20,7 @@ public class Limelight extends SubsystemBase {
   double x;
   double y;
   double robotyaw;
+  double latency;
 
   public IO io;
   
@@ -27,10 +32,12 @@ public class Limelight extends SubsystemBase {
     NetworkTableEntry tx = table.getEntry("tx");
     NetworkTableEntry ty = table.getEntry("ty");
     NetworkTableEntry ta = table.getEntry("ta");
+    NetworkTableEntry tl = table.getEntry("tl");
 
     x = tx.getDouble(0.0);
     y= ty.getDouble(0.0);
     area= ta.getDouble(0.0);
+    latency = tl.getDouble(0.0);
   }
 
   @Override
@@ -38,10 +45,17 @@ public class Limelight extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("LimelightX", x);
     SmartDashboard.putNumber("LimelightY", y);              //MIGHT NEED TO CHANGE THIS
-    SmartDashboard.putNumber("LimelightArea", area);  
+    SmartDashboard.putNumber("LimelightArea", area); 
+    SmartDashboard.putNumber("Limelight Latency", latency); 
 
     // field localization 
     robotyaw = io.chassis.getYaw();
-    frc.robot.utility.LimelightHelpers.SetRobotOrientation("", robotyaw, 0.0, 0.0, 0.0, 0.0, 0.0);
+    LimelightHelpers.SetRobotOrientation("", robotyaw, 0.0, 0.0, 0.0, 0.0, 0.0);
+
+    //pose estimation
+    LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("");
+
+    io.chassis.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+    io.chassis.poseEstimator.addVisionMeasurement(limelightMeasurement.pose, limelightMeasurement.timestampSeconds);
   }
 }
