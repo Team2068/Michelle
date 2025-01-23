@@ -18,9 +18,9 @@ import frc.robot.modules.KrakenSwerveModule;
 import frc.robot.utility.Util;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Swerve extends SubsystemBase {
 
@@ -38,6 +38,7 @@ public class Swerve extends SubsystemBase {
                     -Drive.WHEELBASE / 2.0));
 
     public final Pigeon2 pigeon2 = new Pigeon2(Drive.PIGEON_ID);
+    public final Timer syncTimer = new Timer();
 
     StructArrayPublisher<SwerveModuleState> current_states = Util.table
             .getStructArrayTopic("Current Module States", SwerveModuleState.struct).publish();
@@ -66,7 +67,7 @@ public class Swerve extends SubsystemBase {
 
         odometry = new SwerveDriveOdometry(kinematics, rotation(), modulePositions(),
                 new Pose2d(0, 0, new Rotation2d()));
-
+        syncTimer.start();
     }
 
     public void zeroGyro() {
@@ -201,6 +202,9 @@ public class Swerve extends SubsystemBase {
         target_states.set(states);
         Pose2d pose = odometry.update(rotation(), modulePositions());
         posePublisher.set(pose);
+
+        if (syncTimer.get() % 5 == 0)
+            syncEncoders();
 
         SmartDashboard.putNumber("X position", pose.getX());
         SmartDashboard.putNumber("Y position", pose.getY());
