@@ -12,6 +12,7 @@ import java.util.function.DoubleSupplier;
 public class DefaultDrive extends Command {
 
     private final IO io;
+    private CommandXboxController controller;
     private final DoubleSupplier x_supplier;
     private final DoubleSupplier y_supplier;
     private final DoubleSupplier rotation_supplier;
@@ -24,6 +25,7 @@ public class DefaultDrive extends Command {
         this(io, () -> modifyAxis(controller.getLeftY()) * Swerve.Drive.MAX_VELOCITY,
         () -> modifyAxis(controller.getLeftX()) * Swerve.Drive.MAX_VELOCITY,
         () -> modifyAxis(controller.getRightX()) * Swerve.Drive.MAX_VELOCITY);
+        this.controller = controller;
     }
   
     public DefaultDrive(IO io,
@@ -41,8 +43,8 @@ public class DefaultDrive extends Command {
     
     @Override
     public void execute() {
-        double down_scale = 1 - modifyAxis(io.main.controller.getLeftTriggerAxis());
-        double up_scale = modifyAxis(io.main.controller.getRightTriggerAxis());
+        double down_scale = 1 - modifyAxis(controller.getLeftTriggerAxis());
+        double up_scale = modifyAxis(controller.getRightTriggerAxis());
 
         // double scale = (double) DebugTable.get("Translation Scale", 1.0) * down_scale + up_scale;
         // double rot_scale = (double) DebugTable.get("Rotation Scale", 0.65) * down_scale + up_scale; //0.65 for Shaan. 0.75 for Tristan.
@@ -80,7 +82,7 @@ public class DefaultDrive extends Command {
     }
 
     private static double modifyAxis(double value) {
-        value = deadband(value, 0.1); // Deadband
+        value = deadband(value, 0.15); // Deadband
         value = Math.copySign(value * value, value); // Square the axis
         return value;
     }

@@ -12,6 +12,7 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -32,8 +33,6 @@ public class KrakenSwerveModule {
     public static final double DRIVE_REDUCTION = (15.0 / 32.0) * (10.0 / 60.0);
     public static final double STEER_REDUCTION = (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0);
     public static final double DRIVE_CONVERSION_FACTOR = Math.PI * WHEEL_DIAMETER * DRIVE_REDUCTION;
-    public double positional_error = 0;
-    public double in_volts = 0;
 
     public KrakenSwerveModule(ShuffleboardLayout tab, int driveID, int steerID, int steerCANID) {
         driveMotor = new TalonFX(driveID, "rio");
@@ -54,8 +53,9 @@ public class KrakenSwerveModule {
         steerConfig.closedLoop
                 .positionWrappingEnabled(true)
                 .positionWrappingMaxInput(PI2)
-                .feedbackSensor(FeedbackSensor.kPrimaryEncoder).pid(0.2, 0.0, 0.0);
-
+                .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                .pid(0.1, 0.0, 0.0);
+                
         steerConfig.signals.primaryEncoderPositionPeriodMs(20);
 
         CanandmagSettings settings = new CanandmagSettings();
@@ -83,8 +83,6 @@ public class KrakenSwerveModule {
         tab.addDouble("Absolute Angle", () -> Math.toDegrees(angle()));
         tab.addDouble("Current Angle", () -> Math.toDegrees(steerMotor.getEncoder().getPosition()));
         tab.addDouble("Target Angle", () -> Math.toDegrees(desiredAngle));
-        tab.addDouble("Drive Volts", () -> in_volts);
-        tab.addDouble("Positional Error", () -> positional_error);
         tab.addBoolean("Active", steerEncoder::isConnected);
     }
 
@@ -132,7 +130,6 @@ public class KrakenSwerveModule {
             driveVolts *= -1.0;
         }
 
-        in_volts = driveVolts;
         driveMotor.set(driveVolts);
         steerMotor.getClosedLoopController().setReference(targetAngle, ControlType.kPosition);
     }

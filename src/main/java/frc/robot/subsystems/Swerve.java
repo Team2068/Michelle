@@ -1,10 +1,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -30,8 +26,6 @@ public class Swerve extends SubsystemBase {
 
     public boolean field_oritented = true;
     public boolean slow_mode = false;
-
-    public RobotConfig config;
 
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
             new Translation2d(Drive.TRACKWIDTH / 2.0,
@@ -67,33 +61,8 @@ public class Swerve extends SubsystemBase {
                             .withPosition(i * 2, 0),
                     Drive.CHASSIS_ID[i],
                     Drive.CHASSIS_ID[i],
-                    Drive.CHASSIS_ID[i]);
+                    Drive.ENCODER_ID[i]);
         }
-
-        // Load the RobotConfig from the GUI settings. You should probably
-        // store this in your Constants file
-        try{
-            config = RobotConfig.fromGUISettings();
-          } catch (Exception e) {
-            // Handle exception as needed
-            e.printStackTrace();
-          }
-
-        AutoBuilder.configure(
-                this::pose,
-                this::resetOdometry,
-                this::getSpeeds,
-                (speeds, feedforwards) -> drive(speeds),
-                new PPHolonomicDriveController(
-                        new PIDConstants(AutoConstants.kPXController, 0.0, 0.0), // Translation PID constants
-                        new PIDConstants(AutoConstants.kPThetaController, 0, 0, 0.01) // Rotation PID constants
-                ),
-                config,
-                () -> {
-                    var alliance = DriverStation.getAlliance();
-                    return alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red;
-                },
-                this);
 
         odometry = new SwerveDriveOdometry(kinematics, rotation(), modulePositions(),
                 new Pose2d(0, 0, new Rotation2d()));
@@ -254,6 +223,7 @@ public class Swerve extends SubsystemBase {
         public static final String[] LAYOUT_TITLE = { "Front Left", "Front Right", "Back Left", "Back Right" };
 
         public static final int[] CHASSIS_ID = { 3, 2, 4, 5 }; // FL, FR, BL, BR
+        public static final int[] ENCODER_ID = { 8, 7, 9, 10 }; // FL, FR, BL, BR
 
         public static final int PIGEON_ID = 6;
 

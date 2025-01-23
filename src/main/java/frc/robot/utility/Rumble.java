@@ -28,12 +28,13 @@ int pattern;
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    RumblePatterns.Run(pattern, controller);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RumblePatterns.Run(pattern, controller);
+    action.run();
   }
 
   // Called once the command ends or is interrupted.
