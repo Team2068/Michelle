@@ -54,7 +54,7 @@ public class KrakenSwerveModule {
                 .positionWrappingEnabled(true)
                 .positionWrappingMaxInput(PI2)
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                .pid(0.1, 0.0, 0.0);
+                .pid(0.2, 0.0, 0.0);
                 
         steerConfig.signals.primaryEncoderPositionPeriodMs(20);
 
@@ -62,7 +62,6 @@ public class KrakenSwerveModule {
         settings.setInvertDirection(true);
 
         steerEncoder.clearStickyFaults();
-        steerEncoder.resetFactoryDefaults(false);
         steerEncoder.setSettings(settings);
 
         TalonFXConfiguration config = new TalonFXConfiguration();
@@ -90,7 +89,7 @@ public class KrakenSwerveModule {
         driveMotor.setPosition(0.0);
     }
 
-    public void resetSteerPosition() {
+    public void syncSteerEncoders() {
         steerMotor.getEncoder().setPosition(angle());
     }
 
@@ -116,14 +115,14 @@ public class KrakenSwerveModule {
     }
 
     public void set(double driveVolts, double targetAngle) {
-        resetSteerPosition();
+        // syncSteerEncoders();
 
         targetAngle %= PI2;
         targetAngle += (targetAngle < 0.0) ? PI2 : 0.0;
 
         desiredAngle = targetAngle;
 
-        double diff = targetAngle - angle();
+        double diff = targetAngle -    steerMotor.getEncoder().getPosition();
 
         if (diff > (Math.PI / 2.0) || diff < -(Math.PI / 2.0)) {
             targetAngle = (targetAngle + Math.PI) % PI2;

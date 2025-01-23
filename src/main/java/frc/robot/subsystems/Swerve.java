@@ -158,7 +158,7 @@ public class Swerve extends SubsystemBase {
 
     public void syncEncoders() {
         for (KrakenSwerveModule mod : modules)
-            mod.resetSteerPosition();
+            mod.syncSteerEncoders();
     }
 
     public void resetAbsolute() {
