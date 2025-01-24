@@ -17,24 +17,26 @@ double duration = 0;
 boolean condition = false;
 Runnable action;
 GenericHID controller;
-int pattern;
+RumblePatterns pattern = new RumblePatterns();
+int type;
  
-  public Rumble(int pattern, double duration, GenericHID controller, Runnable action) {
+  public Rumble(int type, double duration, GenericHID controller, Runnable action) {
     time.start();
-    this.pattern = pattern;
+    this.type = type;
     this.controller = controller;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RumblePatterns.Run(pattern, controller);
+    // pattern.timer.start();
+    action.run();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    action.run();
+    pattern.Run(type, controller);
   }
 
   // Called once the command ends or is interrupted.

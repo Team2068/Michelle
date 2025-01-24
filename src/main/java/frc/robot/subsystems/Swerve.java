@@ -220,8 +220,8 @@ public class Swerve extends SubsystemBase {
     }
 
     public static final class Drive {
-        public static final double TRACKWIDTH = Units.inchesToMeters(19.5);
-        public static final double WHEELBASE = Units.inchesToMeters(21.5);
+        public static final double TRACKWIDTH = Units.inchesToMeters(30.0); // 19.5
+        public static final double WHEELBASE = Units.inchesToMeters(30.0); // 21.5
 
         public static final double MAX_VOLTAGE = 16;
         public static final double MAX_VELOCITY = 20;    
