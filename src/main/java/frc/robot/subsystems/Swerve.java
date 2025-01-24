@@ -198,8 +198,10 @@ public class Swerve extends SubsystemBase {
         SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
         if (active && speeds != new ChassisSpeeds())
             setModuleStates(states);
+
         current_states.set(moduleStates(modules));
         target_states.set(states);
+
         Pose2d pose = odometry.update(rotation(), modulePositions());
         posePublisher.set(pose);
 
@@ -218,8 +220,8 @@ public class Swerve extends SubsystemBase {
     }
 
     public static final class Drive {
-        public static final double TRACKWIDTH = Units.inchesToMeters(30);
-        public static final double WHEELBASE = Units.inchesToMeters(30);
+        public static final double TRACKWIDTH = Units.inchesToMeters(19.5);
+        public static final double WHEELBASE = Units.inchesToMeters(21.5);
 
         public static final double MAX_VOLTAGE = 16;
         public static final double MAX_VELOCITY = 20;    
