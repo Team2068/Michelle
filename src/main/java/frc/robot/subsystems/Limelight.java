@@ -47,26 +47,5 @@ public class Limelight extends SubsystemBase {
     SmartDashboard.putNumber("LimelightY", y);              //MIGHT NEED TO CHANGE THIS
     SmartDashboard.putNumber("LimelightArea", area); 
     SmartDashboard.putNumber("Limelight Latency", latency); 
-
-    // field localization 
-    robotyaw = io.chassis.getYaw();
-    LimelightHelpers.SetRobotOrientation("", robotyaw, 0.0, 0.0, 0.0, 0.0, 0.0);
-
-    //pose estimation
-    LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("");
-
-    io.chassis.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
-    io.chassis.poseEstimator.addVisionMeasurement(limelightMeasurement.pose, limelightMeasurement.timestampSeconds);
-
-    /* LIMELIGHT OFFSET NEED TODO 
-    LimelightHelpers.setCameraPose_RobotSpace("", 
-    0.5,    // Forward offset (meters)
-    0.0,    // Side offset (meters)
-    0.5,    // Height offset (meters)
-    0.0,    // Roll (degrees)
-    30.0,   // Pitch (degrees)
-    0.0     // Yaw (degrees)
-    );
-     */
   }
 }

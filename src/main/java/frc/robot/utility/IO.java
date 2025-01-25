@@ -1,5 +1,6 @@
 package frc.robot.utility;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
@@ -19,6 +20,8 @@ public class IO extends SubsystemBase {
         public final Elevator elevator = new Elevator();
 
         public CommandScheduler scheduler = CommandScheduler.getInstance();
+
+        double robotyaw;
 
         public IO(SendableChooser<Runnable> bindings) {
                 bindings.setDefaultOption("Single Player", this::config1Player);
@@ -63,5 +66,25 @@ public class IO extends SubsystemBase {
         @Override
         public void periodic() {
 
+                // field localization
+                robotyaw = chassis.getYaw();
+                LimelightHelpers.SetRobotOrientation("", robotyaw, 0.0, 0.0, 0.0, 0.0, 0.0);
+
+                //pose estimation
+                LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("");
+
+                chassis.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+                chassis.poseEstimator.addVisionMeasurement(limelightMeasurement.pose, limelightMeasurement.timestampSeconds);
+
+                  /* LIMELIGHT OFFSET NEED TODO 
+                LimelightHelpers.setCameraPose_RobotSpace("", 
+                0.5,    // Forward offset (meters)
+                0.0,    // Side offset (meters)
+                0.5,    // Height offset (meters)
+                0.0,    // Roll (degrees)
+                30.0,   // Pitch (degrees)
+                0.0     // Yaw (degrees)
+                );
+                */
         }
 }
