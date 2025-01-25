@@ -4,16 +4,11 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.estimator.PoseEstimator;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.utility.LimelightHelpers;
-import frc.robot.utility.IO;
 
 public class Limelight extends SubsystemBase {
   double area;
@@ -21,13 +16,9 @@ public class Limelight extends SubsystemBase {
   double y;
   double robotyaw;
   double latency;
-
-  public IO io;
   
   /** Creates a new Limelight. */
-  public Limelight(IO io) {
-    this.io = io;
-
+  public Limelight() {
     final NetworkTable table = NetworkTableInstance.getDefault().getTable("Limelight");
     NetworkTableEntry tx = table.getEntry("tx");
     NetworkTableEntry ty = table.getEntry("ty");
