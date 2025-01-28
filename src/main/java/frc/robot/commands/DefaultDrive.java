@@ -63,9 +63,9 @@ public class DefaultDrive extends Command {
         
         ChassisSpeeds output = new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed);
 
-        if (io.chassis.field_oritented){
-            output = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rotationSpeed, io.chassis.rotation());
-        }
+        // if (io.chassis.field_oritented){
+        //     output = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rotationSpeed, io.chassis.rotation());
+        // }
 
         io.chassis.drive(output);
     }

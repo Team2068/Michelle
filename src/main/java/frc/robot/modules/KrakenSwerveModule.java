@@ -12,7 +12,6 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
-import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -47,16 +46,19 @@ public class KrakenSwerveModule {
                 .inverted(true);
 
         steerConfig.encoder
-                .positionConversionFactor(Math.PI * STEER_REDUCTION)
+                .positionConversionFactor(2 * Math.PI * STEER_REDUCTION)
                 .velocityConversionFactor(Math.PI * STEER_REDUCTION / 60);
 
         steerConfig.closedLoop
                 .positionWrappingEnabled(true)
                 .positionWrappingMaxInput(PI2)
-                .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                // .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 .pid(0.2, 0.0, 0.0);
-                
+
+        steerConfig.signals.primaryEncoderPositionAlwaysOn(true);
         steerConfig.signals.primaryEncoderPositionPeriodMs(20);
+        steerConfig.signals.primaryEncoderVelocityPeriodMs(20);
+        steerConfig.signals.primaryEncoderVelocityAlwaysOn(true);
 
         CanandmagSettings settings = new CanandmagSettings();
         settings.setInvertDirection(true);
@@ -70,6 +72,10 @@ public class KrakenSwerveModule {
         config.CurrentLimits.StatorCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = 20;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
+        // TODO Test PID on Drive Motors
+        // config.Slot0.kP = 1;
+        // config.Slot0.kI = 0;
+        // config.Slot0.kD = 0;
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;

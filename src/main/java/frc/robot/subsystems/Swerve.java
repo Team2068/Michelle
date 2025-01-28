@@ -172,9 +172,12 @@ public class Swerve extends SubsystemBase {
             mod.set(0, 0);
     }
 
-    public void setModuleStates(SwerveModuleState[] states) {
+    public void setModuleStates(SwerveModuleState[] states) { 
         SwerveDriveKinematics.desaturateWheelSpeeds(states, Drive.MAX_VELOCITY);
         for (int i = 0; i < modules.length; i++) {
+            // // cosine compensation
+            // states[i].speedMetersPerSecond = states[i].speedMetersPerSecond * Math.cos(states[i].angle.getRadians()-moduleStates(modules)[i].angle.getRadians());
+
             modules[i].set((states[i].speedMetersPerSecond / Drive.MAX_VELOCITY), states[i].angle.getRadians());
         }
     }
@@ -203,8 +206,8 @@ public class Swerve extends SubsystemBase {
         Pose2d pose = odometry.update(rotation(), modulePositions());
         posePublisher.set(pose);
 
-        if (syncTimer.get() % 5 == 0)
-            syncEncoders();
+        // if (syncTimer.get() % 2 == 0)
+        //     syncEncoders();
 
         SmartDashboard.putNumber("X position", pose.getX());
         SmartDashboard.putNumber("Y position", pose.getY());
@@ -218,10 +221,10 @@ public class Swerve extends SubsystemBase {
     }
 
     public static final class Drive {
-        public static final double TRACKWIDTH = Units.inchesToMeters(30);
-        public static final double WHEELBASE = Units.inchesToMeters(30);
+        public static final double TRACKWIDTH = Units.inchesToMeters(19.5);
+        public static final double WHEELBASE = Units.inchesToMeters(21.5);
 
-        public static final double MAX_VOLTAGE = 16;
+        public static final double MAX_VOLTAGE = 12;
         public static final double MAX_VELOCITY = 20;    
 
         public static final String[] LAYOUT_TITLE = { "Front Left", "Front Right", "Back Left", "Back Right" };
