@@ -24,21 +24,14 @@ public class SwerveConstants {
     public static final int SLOW = 2;
 
     public SwerveConstants() {
-            switch (compChassis ? 0 : 1) {
-                case 0:
-                    TRACKWIDTH = Units.inchesToMeters(30);
-                    WHEELBASE = Units.inchesToMeters(30);
-                    GEAR_RATIO = 6.12;
-                    break;
-
-                case 1:
-                    TRACKWIDTH = Units.inchesToMeters(19.5);
-                    WHEELBASE = Units.inchesToMeters(21.5);
-                    GEAR_RATIO = 8.14;
-                    break;
-            
-                default:
-                    break;
-            }
+        if (compChassis){
+            TRACKWIDTH = Units.inchesToMeters(30);
+            WHEELBASE = Units.inchesToMeters(30);
+            GEAR_RATIO = 6.12;
+        } else {
+            TRACKWIDTH = Units.inchesToMeters(19.5);
+            WHEELBASE = Units.inchesToMeters(21.5);
+            GEAR_RATIO = 8.14;
         }
+    }
 }

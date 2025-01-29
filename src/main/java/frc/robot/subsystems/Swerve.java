@@ -45,7 +45,7 @@ public class Swerve extends SubsystemBase {
             .getStructArrayTopic("Target Module States", SwerveModuleState.struct).publish();
     StructPublisher<Pose2d> posePublisher = NetworkTableInstance.getDefault().getTable("Debug")
             .getStructTopic("Current pose", Pose2d.struct).publish();
-
+    
     final SwerveDriveOdometry odometry;
     final KrakenSwerveModule[] modules = new KrakenSwerveModule[4];
     ChassisSpeeds speeds = new ChassisSpeeds();
@@ -203,6 +203,7 @@ public class Swerve extends SubsystemBase {
             setModuleStates(states);
         current_states.set(moduleStates(modules));
         target_states.set(states);
+
         Pose2d pose = odometry.update(rotation(), modulePositions());
         posePublisher.set(pose);
 

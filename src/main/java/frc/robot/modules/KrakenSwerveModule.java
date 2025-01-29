@@ -86,6 +86,7 @@ public class KrakenSwerveModule {
 
         tab.addDouble("Absolute Angle", () -> Math.toDegrees(angle()));
         tab.addDouble("Current Angle", () -> Math.toDegrees(steerMotor.getEncoder().getPosition()));
+        tab.addDouble("Angle Difference", () -> Math.toDegrees(angle() - steerMotor.getEncoder().getPosition()));
         tab.addDouble("Target Angle", () -> Math.toDegrees(desiredAngle));
         tab.addBoolean("Active", steerEncoder::isConnected);
     }
@@ -120,14 +121,14 @@ public class KrakenSwerveModule {
     }
 
     public void set(double driveVolts, double targetAngle) {
-        // syncSteerEncoders();
+        syncSteerEncoders();
 
         targetAngle %= PI2;
         targetAngle += (targetAngle < 0.0) ? PI2 : 0.0;
 
         desiredAngle = targetAngle;
 
-        double diff = targetAngle -    steerMotor.getEncoder().getPosition();
+        double diff = targetAngle - angle();
 
         if (diff > (Math.PI / 2.0) || diff < -(Math.PI / 2.0)) {
             targetAngle = (targetAngle + Math.PI) % PI2;
