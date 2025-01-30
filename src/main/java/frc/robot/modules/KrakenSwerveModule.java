@@ -42,7 +42,7 @@ public class KrakenSwerveModule {
         steerConfig
                 .smartCurrentLimit(20)
                 .idleMode(IdleMode.kBrake)
-                .inverted(true);
+                .inverted(false);
 
         steerConfig.encoder
                 .positionConversionFactor(2 * Math.PI * STEER_REDUCTION)
@@ -54,10 +54,8 @@ public class KrakenSwerveModule {
                 // .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 .pid(0.2, 0.0, 0.0);
 
-        steerConfig.signals.primaryEncoderPositionAlwaysOn(true);
+        steerConfig.signals.primaryEncoderPositionAlwaysOn(false);
         steerConfig.signals.primaryEncoderPositionPeriodMs(20);
-        steerConfig.signals.primaryEncoderVelocityPeriodMs(20);
-        steerConfig.signals.primaryEncoderVelocityAlwaysOn(true);
 
         CanandmagSettings settings = new CanandmagSettings();
         settings.setInvertDirection(true);
@@ -71,10 +69,7 @@ public class KrakenSwerveModule {
         config.CurrentLimits.StatorCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = 20;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
-        // TODO Test PID on Drive Motors
-        // config.Slot0.kP = 1;
-        // config.Slot0.kI = 0;
-        // config.Slot0.kD = 0;
+        
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -85,7 +80,7 @@ public class KrakenSwerveModule {
         driveMotor.getConfigurator().apply(config);
 
         tab.addDouble("Absolute Angle", () -> Math.toDegrees(angle()));
-        tab.addDouble("Current Angle", () -> Math.toDegrees(steerMotor.getEncoder().getPosition()));
+        // tab.addDouble("Current Angle", () -> Math.toDegrees(steerMotor.getEncoder().getPosition()));
         tab.addDouble("Angle Difference", () -> Math.toDegrees(angle() - steerMotor.getEncoder().getPosition()));
         tab.addDouble("Target Angle", () -> Math.toDegrees(desiredAngle));
         tab.addBoolean("Active", steerEncoder::isConnected);
@@ -121,7 +116,7 @@ public class KrakenSwerveModule {
     }
 
     public void set(double driveVolts, double targetAngle) {
-        syncSteerEncoders();
+        syncSteerEncoders(); 
 
         targetAngle %= PI2;
         targetAngle += (targetAngle < 0.0) ? PI2 : 0.0;

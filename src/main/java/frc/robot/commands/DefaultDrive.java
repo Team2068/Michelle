@@ -43,13 +43,13 @@ public class DefaultDrive extends Command {
     
     @Override
     public void execute() {
-        double down_scale = 1 - modifyAxis(controller.getLeftTriggerAxis());
+        double down_scale = 1.2 - modifyAxis(controller.getLeftTriggerAxis());
         double up_scale = modifyAxis(controller.getRightTriggerAxis());
 
         // double scale = (double) DebugTable.get("Translation Scale", 1.0) * down_scale + up_scale;
         // double rot_scale = (double) DebugTable.get("Rotation Scale", 0.65) * down_scale + up_scale; //0.65 for Shaan. 0.75 for Tristan.
 
-        double scale = 1.0 * down_scale + up_scale;
+        double scale = 0.75 * down_scale + up_scale;
         double rot_scale = (double) Util.get("Rotation Scale", 0.65) * down_scale + up_scale; //0.65 for Shaan. 0.75 for Tristan.
 
         // double xSpeed = x_supplier.getAsDouble() * scale;
