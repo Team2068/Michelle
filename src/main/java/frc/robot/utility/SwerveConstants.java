@@ -3,13 +3,12 @@ package frc.robot.utility;
 public class SwerveConstants {
     boolean compChassis = false;
 
-    public static double TRACKWIDTH = 19.5;
-    public static double WHEELBASE = 21.5;
+    public static double TRACKWIDTH = 19.5; // 30.0 for MKi
+    public static double WHEELBASE = 21.5;  // 30.0 for MKi
 
     public static double GEAR_RATIO;
 
-    public static final double MAX_VOLTAGE = 10;
-    public static final double MAX_VELOCITY = 5;
+    public static final double MAX_VELOCITY = 5.4;
 
     public static final String[] LAYOUT_TITLE = { "Front Left", "Front Right", "Back Left", "Back Right" };
 
@@ -18,6 +17,4 @@ public class SwerveConstants {
 
     public static final int PIGEON_ID = 6;
 
-    public static final int TURBO = 1;
-    public static final int SLOW = 2;
 }

@@ -177,7 +177,7 @@ public class Swerve extends SubsystemBase {
         for (int i = 0; i < modules.length; i++) {
             states[i].optimize(new Rotation2d(modules[i].angle()));
             // states[i].cosineScale(new Rotation2d(modules[i].angle())); // Cosine Compensation
-            modules[i].set((states[i].speedMetersPerSecond / SwerveConstants.MAX_VELOCITY), states[i].angle.getRadians());
+            modules[i].set((states[i].speedMetersPerSecond / SwerveConstants.MAX_VELOCITY) * .8 , states[i].angle.getRadians());
         }
     }
 

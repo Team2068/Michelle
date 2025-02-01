@@ -43,29 +43,18 @@ public class DefaultDrive extends Command {
     
     @Override
     public void execute() {
-        double down_scale = 1.2 - modifyAxis(controller.getLeftTriggerAxis());
-        double up_scale = modifyAxis(controller.getRightTriggerAxis());
+        double down_scale = 1.25 - modifyAxis(controller.getLeftTriggerAxis());
+        double up_scale = (SwerveConstants.MAX_VELOCITY * .2) * modifyAxis(controller.getRightTriggerAxis());
 
-        // double scale = (double) DebugTable.get("Translation Scale", 1.0) * down_scale + up_scale;
-        // double rot_scale = (double) DebugTable.get("Rotation Scale", 0.65) * down_scale + up_scale; //0.65 for Shaan. 0.75 for Tristan.
-
-        double scale = 0.75 * down_scale + up_scale;
-        double rot_scale = (double) Util.get("Rotation Scale", 0.65) * down_scale + up_scale; //0.65 for Shaan. 0.75 for Tristan.
-
-        // double xSpeed = x_supplier.getAsDouble() * scale;
-        // double ySpeed = y_supplier.getAsDouble() * scale;
-        // double rotationSpeed = rotation_supplier.getAsDouble() * rot_scale;
+        double scale = 0.8 * down_scale + up_scale;
+        double rot_scale = .48 * down_scale + up_scale; //0.48 for Shaan. 0.6 for Tristan.
 
         double xSpeed = x_supplier.getAsDouble() * scale;
         double ySpeed = y_supplier.getAsDouble() * scale;
-        double rotationSpeed = Math.pow(rotation_supplier.getAsDouble() * rot_scale, 3);
+        double rotationSpeed = rotation_supplier.getAsDouble() * down_scale * rot_scale;
 
         
         ChassisSpeeds output = new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed);
-        Util.set("Drive Speed X", output.vxMetersPerSecond);
-        Util.set("Drive Speed Y", output.vyMetersPerSecond);
-        Util.set("Drive Speed Omega", output.omegaRadiansPerSecond);
- 
 
         if (io.chassis.field_oritented)
             output = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rotationSpeed, io.chassis.rotation());

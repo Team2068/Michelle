@@ -41,7 +41,7 @@ public class KrakenSwerveModule {
 
         steerConfig
                 .smartCurrentLimit(20)
-                .idleMode(IdleMode.kBrake)
+                .idleMode(IdleMode.kCoast)
                 .inverted(false);
 
         steerConfig.encoder

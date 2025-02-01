@@ -5,6 +5,8 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.GrabAlgae;
+import frc.robot.commands.ReleaseAlgae;
 
 public class AutomatedController {
     public final CommandXboxController controller;
@@ -47,6 +49,7 @@ public class AutomatedController {
     public void configure(){
         
         controller.start().and(controller.getHID()::getBackButtonPressed).onTrue(Util.Do(this::toggleMode));
+        controller.back().onTrue(Util.Do(io.chassis::resetOdometry, io.chassis));
 
         // AUTOMATED
 
@@ -54,53 +57,54 @@ public class AutomatedController {
         // LB align Left and Score Coral & Score Barge
         // RB align Right and Score Coral & Score Processor 
 
-        // controller.y().and( automated() ).onTrue(Util.Do(io.elevator::L4));
-        // controller.b().and( automated() ).onTrue(Util.Do(io.elevator::L3));
-        // controller.a().and( automated() ).onTrue(Util.Do(io.elevator::L2));
-        // controller.x().and( automated() )
-        //     .onTrue(Util.Do(
-        //         new ReleaseAlgae(io, false),
-        //         new GrabAlgae(io),
-        //         io.intake::grabbed));
+        controller.y().and( automated() ).onTrue(Util.Do(io.elevator::L4));
+        controller.b().and( automated() ).onTrue(Util.Do(io.elevator::L3));
+        controller.a().and( automated() ).onTrue(Util.Do(io.elevator::L2));
+        controller.x().and( automated() )
+            .onTrue(Util.Do(
+                new ReleaseAlgae(io, false),
+                new GrabAlgae(io),
+                io.intake::grabbed));
 
-        // controller.povUp().and( automated() )
-        //     .onTrue(Util.Do(() -> io.elevator.speed(0.25)))
-        //     .onFalse(Util.Do(() -> io.elevator.speed(0.0)));
+        controller.povUp().and( automated() )
+            .onTrue(Util.Do(() -> io.elevator.speed(0.25)))
+            .onFalse(Util.Do(() -> io.elevator.speed(0.0)));
 
-        // controller.povDown().and( automated() )
-        //     .onTrue(Util.Do(() -> io.elevator.speed(-0.25)))
-        //     .onFalse(Util.Do(() -> io.elevator.speed(0.0)));
+        controller.povDown().and( automated() )
+            .onTrue(Util.Do(() -> io.elevator.speed(-0.25)))
+            .onFalse(Util.Do(() -> io.elevator.speed(0.0)));
 
-        // controller.povLeft().and( automated() )
-        //     .onTrue(Util.Do(() -> io.intake.speed(-0.5)))
-        //     .onFalse(Util.Do(() -> io.intake.speed(0.0)));
+        controller.povLeft().and( automated() )
+            .onTrue(Util.Do(() -> io.intake.speed(-0.5)))
+            .onFalse(Util.Do(() -> io.intake.speed(0.0)));
 
-        // controller.povRight().and( automated() )
-        //     .onTrue(Util.Do(() -> io.intake.speed(0.5)))
-        //     .onFalse(Util.Do(() -> io.intake.speed(0.0)));
+        controller.povRight().and( automated() )
+            .onTrue(Util.Do(() -> io.intake.speed(0.5)))
+            .onFalse(Util.Do(() -> io.intake.speed(0.0)));
 
-        //     // MANUAL
+            // MANUAL
 
-        //     controller.rightTrigger().and( manual() )
-        //     .onTrue(Util.Do(() -> io.elevator.speed(0.25)))
-        //     .onFalse(Util.Do(() -> io.elevator.speed(0.0)));
+            controller.rightTrigger().and( manual() )
+            .onTrue(Util.Do(() -> io.elevator.speed(0.25)))
+            .onFalse(Util.Do(() -> io.elevator.speed(0.0)));
 
-        // controller.leftTrigger().and( manual() )
-        //     .onTrue(Util.Do(() -> io.elevator.speed(-0.25)))
-        //     .onFalse(Util.Do(() -> io.elevator.speed(0.0)));
+        controller.leftTrigger().and( manual() )
+            .onTrue(Util.Do(() -> io.elevator.speed(-0.25)))
+            .onFalse(Util.Do(() -> io.elevator.speed(0.0)));
 
-        // controller.leftBumper().and( manual() )
-        //     .onTrue(Util.Do(() -> io.intake.speed(-0.5)))
-        //     .onFalse(Util.Do(() -> io.intake.speed(0.0)));
+        controller.leftBumper().and( manual() )
+            .onTrue(Util.Do(() -> io.intake.speed(-0.5)))
+            .onFalse(Util.Do(() -> io.intake.speed(0.0)));
 
-        // controller.rightBumper().and( manual() )
-        //     .onTrue(Util.Do(() -> io.intake.speed(0.5)))
-        //     .onFalse(Util.Do(() -> io.intake.speed(0.0)));
+        controller.rightBumper().and( manual() )
+            .onTrue(Util.Do(() -> io.intake.speed(0.5)))
+            .onFalse(Util.Do(() -> io.intake.speed(0.0)));
 
-        controller.povUp().and( manual() ).onTrue(Util.Do(io.chassis::enable));
-        controller.povDown().and( manual() ).onTrue(Util.Do(io.chassis::disable)).debounce(1.5);
-        controller.povLeft().and( manual() ).onTrue(Util.Do(io.chassis::syncEncoders));
+        // controller.povUp().and( manual() ).onTrue(Util.Do(io.chassis::enable));
+        // controller.povDown().and( manual() ).onTrue(Util.Do(io.chassis::disable)).debounce(1.5);
+        // controller.povLeft().and( manual() ).onTrue(Util.Do(io.chassis::syncEncoders));
+        // controller.povRight().and( manual() ).and(() -> {return !io.chassis.active;}).onTrue(new InstantCommand(io.chassis::resetAbsolute)); // Add the Rumble effect
+
         // controller.povRight().and( manual() ).and(() -> {return !io.chassis.active;}).onTrue(new Rumble(0, .5, controller.getHID(), io.chassis::resetAbsolute)); // Add the Rumble effect
-        controller.povRight().and( manual() ).and(() -> {return !io.chassis.active;}).onTrue(new InstantCommand(io.chassis::resetAbsolute)); // Add the Rumble effect
-        }
+    }
 }
