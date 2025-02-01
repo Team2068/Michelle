@@ -4,8 +4,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.utility.Util;
-import frc.robot.subsystems.Swerve;
 import frc.robot.utility.IO;
+import frc.robot.utility.SwerveConstants;
 
 import java.util.function.DoubleSupplier;
 
@@ -22,9 +22,9 @@ public class DefaultDrive extends Command {
     }
 
     public DefaultDrive(IO io, CommandXboxController controller) {
-        this(io, () -> modifyAxis(controller.getLeftY()) * Swerve.Drive.MAX_VELOCITY,
-        () -> modifyAxis(controller.getLeftX()) * Swerve.Drive.MAX_VELOCITY,
-        () -> modifyAxis(controller.getRightX()) * Swerve.Drive.MAX_VELOCITY);
+        this(io, () -> modifyAxis(controller.getLeftY()) * SwerveConstants.MAX_VELOCITY,
+        () -> modifyAxis(controller.getLeftX()) * SwerveConstants.MAX_VELOCITY,
+        () -> modifyAxis(controller.getRightX()) * SwerveConstants.MAX_VELOCITY);
         this.controller = controller;
     }
   
@@ -43,13 +43,13 @@ public class DefaultDrive extends Command {
     
     @Override
     public void execute() {
-        double down_scale = 1 - modifyAxis(controller.getLeftTriggerAxis());
+        double down_scale = 1.2 - modifyAxis(controller.getLeftTriggerAxis());
         double up_scale = modifyAxis(controller.getRightTriggerAxis());
 
         // double scale = (double) DebugTable.get("Translation Scale", 1.0) * down_scale + up_scale;
         // double rot_scale = (double) DebugTable.get("Rotation Scale", 0.65) * down_scale + up_scale; //0.65 for Shaan. 0.75 for Tristan.
 
-        double scale = 1.0 * down_scale + up_scale;
+        double scale = 0.75 * down_scale + up_scale;
         double rot_scale = (double) Util.get("Rotation Scale", 0.65) * down_scale + up_scale; //0.65 for Shaan. 0.75 for Tristan.
 
         // double xSpeed = x_supplier.getAsDouble() * scale;

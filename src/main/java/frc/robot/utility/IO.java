@@ -1,9 +1,7 @@
 package frc.robot.utility;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
-import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
 public class IO extends SubsystemBase {

@@ -5,7 +5,6 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkMax;
 
@@ -46,15 +45,16 @@ public class KrakenSwerveModule {
                 .inverted(false);
 
         steerConfig.encoder
-                .positionConversionFactor(Math.PI * STEER_REDUCTION)
+                .positionConversionFactor(2 * Math.PI * STEER_REDUCTION)
                 .velocityConversionFactor(Math.PI * STEER_REDUCTION / 60);
 
         steerConfig.closedLoop
                 .positionWrappingEnabled(true)
                 .positionWrappingMaxInput(PI2)
-                .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                // .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 .pid(0.2, 0.0, 0.0);
-                
+
+        steerConfig.signals.primaryEncoderPositionAlwaysOn(false);
         steerConfig.signals.primaryEncoderPositionPeriodMs(20);
 
         CanandmagSettings settings = new CanandmagSettings();
@@ -81,7 +81,8 @@ public class KrakenSwerveModule {
         driveMotor.getConfigurator().apply(config);
 
         tab.addDouble("Absolute Angle", () -> Math.toDegrees(angle()));
-        tab.addDouble("Current Angle", () -> Math.toDegrees(steerMotor.getEncoder().getPosition()));
+        // tab.addDouble("Current Angle", () -> Math.toDegrees(steerMotor.getEncoder().getPosition()));
+        tab.addDouble("Angle Difference", () -> Math.toDegrees(angle() - steerMotor.getEncoder().getPosition()));
         tab.addDouble("Target Angle", () -> Math.toDegrees(desiredAngle));
         tab.addBoolean("Active", steerEncoder::isConnected);
     }
@@ -117,18 +118,6 @@ public class KrakenSwerveModule {
 
     public void set(double driveVolts, double targetAngle) {
         syncSteerEncoders();
-
-        // targetAngle %= PI2;
-        // targetAngle += (targetAngle < 0.0) ? PI2 : 0.0;
-
-        // desiredAngle = targetAngle;
-
-        // double diff = targetAngle - angle();
-
-        // if (diff > (Math.PI / 2.0) || diff < -(Math.PI / 2.0)) {
-        //     targetAngle = (targetAngle + Math.PI) % PI2;
-        //     driveVolts *= -1.0;
-        // }
 
         driveMotor.set(driveVolts);
         steerMotor.getClosedLoopController().setReference(targetAngle, ControlType.kPosition);

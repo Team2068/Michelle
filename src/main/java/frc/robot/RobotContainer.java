@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.DefaultDrive;
 import frc.robot.utility.AutomatedController;
 import frc.robot.utility.IO;
+import frc.robot.utility.SwerveConstants;
 
 public class RobotContainer {
 
@@ -19,6 +20,7 @@ public class RobotContainer {
 
 
   public RobotContainer() {
+    new SwerveConstants();
     main = new AutomatedController(0, io);
     backup = new AutomatedController(1, io);
     SmartDashboard.putData("Main-Controller Mode", main.selector);
