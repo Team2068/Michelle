@@ -13,14 +13,12 @@ import frc.robot.utility.IO;
 import frc.robot.utility.SwerveConstants;
 
 public class RobotContainer {
-
   public IO io = new IO();
   public final AutomatedController main;
   public final AutomatedController backup;
 
 
   public RobotContainer() {
-    new SwerveConstants();
     main = new AutomatedController(0, io);
     backup = new AutomatedController(1, io);
     SmartDashboard.putData("Main-Controller Mode", main.selector);

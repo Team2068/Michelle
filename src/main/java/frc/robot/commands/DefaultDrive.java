@@ -58,10 +58,14 @@ public class DefaultDrive extends Command {
 
         double xSpeed = x_supplier.getAsDouble() * scale;
         double ySpeed = y_supplier.getAsDouble() * scale;
-        double rotationSpeed = rotation_supplier.getAsDouble() * rot_scale;
+        double rotationSpeed = Math.pow(rotation_supplier.getAsDouble() * rot_scale, 3);
 
         
         ChassisSpeeds output = new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed);
+        Util.set("Drive Speed X", output.vxMetersPerSecond);
+        Util.set("Drive Speed Y", output.vyMetersPerSecond);
+        Util.set("Drive Speed Omega", output.omegaRadiansPerSecond);
+ 
 
         if (io.chassis.field_oritented)
             output = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rotationSpeed, io.chassis.rotation());
