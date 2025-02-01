@@ -56,16 +56,15 @@ public class DefaultDrive extends Command {
         // double ySpeed = y_supplier.getAsDouble() * scale;
         // double rotationSpeed = rotation_supplier.getAsDouble() * rot_scale;
 
-        double xSpeed = Math.pow(x_supplier.getAsDouble() * scale, 3.0);
-        double ySpeed = Math.pow(y_supplier.getAsDouble() * scale, 3.0);
-        double rotationSpeed = Math.pow(rotation_supplier.getAsDouble() * rot_scale, 3.0);
+        double xSpeed = x_supplier.getAsDouble() * scale;
+        double ySpeed = y_supplier.getAsDouble() * scale;
+        double rotationSpeed = rotation_supplier.getAsDouble() * rot_scale;
 
         
         ChassisSpeeds output = new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed);
 
-        if (io.chassis.field_oritented){
+        if (io.chassis.field_oritented)
             output = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rotationSpeed, io.chassis.rotation());
-        }
 
         io.chassis.drive(output);
     }
@@ -82,7 +81,7 @@ public class DefaultDrive extends Command {
     }
 
     private static double modifyAxis(double value) {
-        value = deadband(value, 0.15); // Deadband
+        value = deadband(value, 0.1); // Deadband
         value = Math.copySign(value * value, value); // Square the axis
         return value;
     }

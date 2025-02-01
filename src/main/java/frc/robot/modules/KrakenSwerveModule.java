@@ -43,7 +43,7 @@ public class KrakenSwerveModule {
         steerConfig
                 .smartCurrentLimit(20)
                 .idleMode(IdleMode.kBrake)
-                .inverted(true);
+                .inverted(false);
 
         steerConfig.encoder
                 .positionConversionFactor(Math.PI * STEER_REDUCTION)
@@ -116,19 +116,19 @@ public class KrakenSwerveModule {
     }
 
     public void set(double driveVolts, double targetAngle) {
-        // syncSteerEncoders();
+        syncSteerEncoders();
 
-        targetAngle %= PI2;
-        targetAngle += (targetAngle < 0.0) ? PI2 : 0.0;
+        // targetAngle %= PI2;
+        // targetAngle += (targetAngle < 0.0) ? PI2 : 0.0;
 
-        desiredAngle = targetAngle;
+        // desiredAngle = targetAngle;
 
-        double diff = targetAngle -    steerMotor.getEncoder().getPosition();
+        // double diff = targetAngle - angle();
 
-        if (diff > (Math.PI / 2.0) || diff < -(Math.PI / 2.0)) {
-            targetAngle = (targetAngle + Math.PI) % PI2;
-            driveVolts *= -1.0;
-        }
+        // if (diff > (Math.PI / 2.0) || diff < -(Math.PI / 2.0)) {
+        //     targetAngle = (targetAngle + Math.PI) % PI2;
+        //     driveVolts *= -1.0;
+        // }
 
         driveMotor.set(driveVolts);
         steerMotor.getClosedLoopController().setReference(targetAngle, ControlType.kPosition);
