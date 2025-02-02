@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+
+import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -219,5 +221,16 @@ public class Swerve extends SubsystemBase {
         SmartDashboard.putNumber("Pigeon Roll", pigeon2.getRoll().getValueAsDouble());
 
         SmartDashboard.putString("Drive Mode", (field_oritented) ? "Field-Oriented" : "Robot-Oriented");
+
+        DogLog.log("Swerve/current_states", moduleStates(modules));
+        DogLog.log("Swerve/target_states", states);
+        DogLog.log("Swerve/pose", pose);
+        DogLog.log("Swerve/X_position", pose.getX());
+        DogLog.log("Swerve/Y_position", pose.getY());
+        DogLog.log("Swerve/Odometry_rotation", rotation().getDegrees());
+        DogLog.log("Swerve/Pigeon_Yaw", pigeon2.getYaw().getValueAsDouble());
+        DogLog.log("Swerve/Pigeon_Pitch", pigeon2.getPitch().getValueAsDouble());
+        DogLog.log("Swerve/Pigeon_Roll", pigeon2.getRoll().getValueAsDouble());
+        DogLog.log("Swerve/Drive_Mode", (field_oritented) ? "Field-Oriented" : "Robot-Oriented");
     }
 }
