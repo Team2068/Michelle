@@ -3,15 +3,15 @@ package frc.robot.commands;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.utility.Util;
-import frc.robot.subsystems.Swerve;
 import frc.robot.utility.IO;
+import frc.robot.utility.SwerveConstants;
 
 import java.util.function.DoubleSupplier;
 
 public class DefaultDrive extends Command {
 
     private final IO io;
+    private CommandXboxController controller;
     private final DoubleSupplier x_supplier;
     private final DoubleSupplier y_supplier;
     private final DoubleSupplier rotation_supplier;
@@ -21,9 +21,10 @@ public class DefaultDrive extends Command {
     }
 
     public DefaultDrive(IO io, CommandXboxController controller) {
-        this(io, () -> modifyAxis(controller.getLeftY()) * Swerve.Drive.MAX_VELOCITY,
-        () -> modifyAxis(controller.getLeftX()) * Swerve.Drive.MAX_VELOCITY,
-        () -> modifyAxis(controller.getRightX()) * Swerve.Drive.MAX_VELOCITY);
+        this(io, () -> modifyAxis(controller.getLeftY()) * SwerveConstants.MAX_VELOCITY,
+        () -> modifyAxis(controller.getLeftX()) * SwerveConstants.MAX_VELOCITY,
+        () -> modifyAxis(controller.getRightX()) * SwerveConstants.MAX_VELOCITY);
+        this.controller = controller;
     }
   
     public DefaultDrive(IO io,
@@ -41,29 +42,21 @@ public class DefaultDrive extends Command {
     
     @Override
     public void execute() {
-        double down_scale = 1 - modifyAxis(io.main.controller.getLeftTriggerAxis());
-        double up_scale = modifyAxis(io.main.controller.getRightTriggerAxis());
+        double down_scale = 1.25 - modifyAxis(controller.getLeftTriggerAxis());
+        double up_scale = (SwerveConstants.MAX_VELOCITY * .2) * modifyAxis(controller.getRightTriggerAxis());
 
-        // double scale = (double) DebugTable.get("Translation Scale", 1.0) * down_scale + up_scale;
-        // double rot_scale = (double) DebugTable.get("Rotation Scale", 0.65) * down_scale + up_scale; //0.65 for Shaan. 0.75 for Tristan.
+        double scale = 0.8 * down_scale + up_scale;
+        double rot_scale = .48 * down_scale + up_scale; //0.48 for Shaan. 0.6 for Tristan.
 
-        double scale = 1.0 * down_scale + up_scale;
-        double rot_scale = (double) Util.get("Rotation Scale", 0.65) * down_scale + up_scale; //0.65 for Shaan. 0.75 for Tristan.
-
-        // double xSpeed = x_supplier.getAsDouble() * scale;
-        // double ySpeed = y_supplier.getAsDouble() * scale;
-        // double rotationSpeed = rotation_supplier.getAsDouble() * rot_scale;
-
-        double xSpeed = Math.pow(x_supplier.getAsDouble() * scale, 3.0);
-        double ySpeed = Math.pow(y_supplier.getAsDouble() * scale, 3.0);
-        double rotationSpeed = Math.pow(rotation_supplier.getAsDouble() * rot_scale, 3.0);
+        double xSpeed = x_supplier.getAsDouble() * scale;
+        double ySpeed = y_supplier.getAsDouble() * scale;
+        double rotationSpeed = rotation_supplier.getAsDouble() * down_scale * rot_scale;
 
         
         ChassisSpeeds output = new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed);
 
-        if (io.chassis.field_oritented){
+        if (io.chassis.field_oritented)
             output = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rotationSpeed, io.chassis.rotation());
-        }
 
         io.chassis.drive(output);
     }
