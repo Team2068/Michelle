@@ -9,19 +9,26 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
+import static edu.wpi.first.units.Units.Radians;
+
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.reduxrobotics.sensors.canandmag.Canandmag;
 import com.reduxrobotics.sensors.canandmag.CanandmagSettings;
 
 public class KrakenSwerveModule {
     public final TalonFX driveMotor;
     public final SparkMax steerMotor;
-    public final Canandmag steerEncoder;
+    public final CANcoder steerEncoder;
 
     double desiredAngle;
 
@@ -35,7 +42,7 @@ public class KrakenSwerveModule {
     public KrakenSwerveModule(ShuffleboardLayout tab, int driveID, int steerID, int steerCANID) {
         driveMotor = new TalonFX(driveID, "rio");
         steerMotor = new SparkMax(steerID, MotorType.kBrushless);
-        steerEncoder = new Canandmag(steerCANID);
+        steerEncoder = new CANcoder(steerCANID);
 
         SparkMaxConfig steerConfig = new SparkMaxConfig();
 
@@ -57,11 +64,14 @@ public class KrakenSwerveModule {
         steerConfig.signals.primaryEncoderPositionAlwaysOn(false);
         steerConfig.signals.primaryEncoderPositionPeriodMs(20);
 
-        CanandmagSettings settings = new CanandmagSettings();
-        settings.setInvertDirection(true);
+        // CanandmagSettings settings = new CanandmagSettings();
+        // settings.setInvertDirection(true);
+
+        MagnetSensorConfigs magnetConfig = new MagnetSensorConfigs();
+        magnetConfig.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
         steerEncoder.clearStickyFaults();
-        steerEncoder.setSettings(settings);
+        steerEncoder.getConfigurator().apply(magnetConfig);
 
         TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -96,7 +106,8 @@ public class KrakenSwerveModule {
     }
 
     public void resetAbsolute() {
-        steerEncoder.setAbsPosition(0, 250);
+        // steerEncoder.setAbsPosition(0, 250);
+        steerEncoder.setPosition(0);
     }
 
     public double drivePosition() {
@@ -108,7 +119,7 @@ public class KrakenSwerveModule {
     }
 
     public double angle() {
-        return (steerEncoder.getAbsPosition() * PI2) % PI2;
+        return steerEncoder.getAbsolutePosition().getValue().in(Radians);
     }
 
     public void stop() {
