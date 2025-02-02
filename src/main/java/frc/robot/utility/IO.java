@@ -2,6 +2,8 @@ package frc.robot.utility;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -18,6 +20,7 @@ public class IO extends SubsystemBase {
         public final Swerve chassis = new Swerve();
         public final AlgaeIntake algaeIntake = new AlgaeIntake();
         public final Elevator elevator = new Elevator();
+        public final Limelight limelight = new Limelight();
 
         public CommandScheduler scheduler = CommandScheduler.getInstance();
 
@@ -65,7 +68,14 @@ public class IO extends SubsystemBase {
 
         @Override
         public void periodic() {
-
+                
+                LimelightHelpers.setCameraPose_RobotSpace("limelight", 
+                0.0, 
+                0.0, 
+                0.0, 
+                0.0, 
+                0.0, 
+                0.0);
                 // field localization
                 robotyaw = chassis.getYaw();
                 LimelightHelpers.SetRobotOrientation("", robotyaw, 0.0, 0.0, 0.0, 0.0, 0.0);
@@ -75,16 +85,5 @@ public class IO extends SubsystemBase {
 
                 chassis.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
                 chassis.poseEstimator.addVisionMeasurement(limelightMeasurement.pose, limelightMeasurement.timestampSeconds);
-
-                  /* LIMELIGHT OFFSET NEED TODO 
-                LimelightHelpers.setCameraPose_RobotSpace("", 
-                0.5,    // Forward offset (meters)
-                0.0,    // Side offset (meters)
-                0.5,    // Height offset (meters)
-                0.0,    // Roll (degrees)
-                30.0,   // Pitch (degrees)
-                0.0     // Yaw (degrees)
-                );
-                */
         }
 }

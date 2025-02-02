@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Limelight extends SubsystemBase {
   double area;
-  double x;
+  public double x;
   double y;
   double robotyaw;
   double latency;
@@ -20,15 +20,10 @@ public class Limelight extends SubsystemBase {
   /** Creates a new Limelight. */
   public Limelight() {
     final NetworkTable table = NetworkTableInstance.getDefault().getTable("Limelight");
-    NetworkTableEntry tx = table.getEntry("tx");
-    NetworkTableEntry ty = table.getEntry("ty");
-    NetworkTableEntry ta = table.getEntry("ta");
-    NetworkTableEntry tl = table.getEntry("tl");
-
-    x = tx.getDouble(0.0);
-    y= ty.getDouble(0.0);
-    area= ta.getDouble(0.0);
-    latency = tl.getDouble(0.0);
+    x = table.getEntry("tx").getDouble(0.0);
+    y = table.getEntry("ty").getDouble(0.0);
+    area = table.getEntry("ta").getDouble(0.0);
+    latency =  table.getEntry("tl").getDouble(0.0);
   }
 
   @Override
