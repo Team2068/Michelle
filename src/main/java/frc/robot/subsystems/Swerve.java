@@ -13,7 +13,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.modules.KrakenSwerveModule;
+import frc.robot.swerve.Module;
 import frc.robot.swerve.Swerve.Constants;
 import frc.robot.utility.Util;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -40,7 +40,7 @@ public class Swerve extends SubsystemBase {
             .getStructTopic("Current pose", Pose2d.struct).publish();
     
     final SwerveDriveOdometry odometry;
-    final KrakenSwerveModule[] modules = new KrakenSwerveModule[4];
+    final Module[] modules = new Module[4];
     ChassisSpeeds speeds = new ChassisSpeeds();
     public final Constants constants = new Constants();
 
@@ -59,13 +59,14 @@ public class Swerve extends SubsystemBase {
         
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
         for (int i = 0; i < modules.length; i++) {
-            modules[i] = new KrakenSwerveModule(
+            modules[i] = new Module(
                     tab.getLayout(Constants.LAYOUT_TITLE[i], BuiltInLayouts.kList)
                             .withSize(2, 4)
                             .withPosition(i * 2, 0),
                     Constants.CHASSIS_ID[i],
                     Constants.CHASSIS_ID[i],
-                    Constants.ENCODER_ID[i]);
+                    Constants.ENCODER_ID[i],
+                    constants.comp);
         }
 
         odometry = new SwerveDriveOdometry(kinematics, rotation(), modulePositions(),
@@ -103,11 +104,11 @@ public class Swerve extends SubsystemBase {
         return distance(new Pose2d(reference_point[0], reference_point[2], new Rotation2d(reference_point[3])));
     }
 
-    private SwerveModulePosition modulePosition(KrakenSwerveModule module) {
+    private SwerveModulePosition modulePosition(Module module) {
         return new SwerveModulePosition(module.drivePosition(), Rotation2d.fromRadians(module.angle()));
     }
 
-    private SwerveModuleState moduleState(KrakenSwerveModule module) {
+    private SwerveModuleState moduleState(Module module) {
         return new SwerveModuleState(module.velocity(), new Rotation2d(module.angle()));
     }
 
@@ -118,7 +119,7 @@ public class Swerve extends SubsystemBase {
         return pos;
     }
 
-    public SwerveModuleState[] moduleStates(KrakenSwerveModule[] modules) {
+    public SwerveModuleState[] moduleStates(Module[] modules) {
         SwerveModuleState[] state = new SwerveModuleState[4];
         for (int i = 0; i < modules.length; i++)
             state[i] = moduleState(modules[i]);
@@ -156,22 +157,22 @@ public class Swerve extends SubsystemBase {
     }
 
     public void resetPosition() {
-        for (KrakenSwerveModule mod : modules)
+        for (Module mod : modules)
             mod.resetDrivePosition();
     }
 
     public void syncEncoders() {
-        for (KrakenSwerveModule mod : modules)
-            mod.syncSteerEncoders();
+        for (Module mod : modules)
+            mod.syncEncoders();
     }
 
     public void zeroAbsolute() {
-        for (KrakenSwerveModule mod : modules)
+        for (Module mod : modules)
             mod.zeroAbsolute();
     }
 
     public void resetSteerPositions() {
-        for (KrakenSwerveModule mod : modules)
+        for (Module mod : modules)
             mod.set(0, 0);
     }
 
@@ -199,7 +200,7 @@ public class Swerve extends SubsystemBase {
     public void disable() {
         active = false;
 
-        for (KrakenSwerveModule mod : modules)
+        for (Module mod : modules)
             mod.stop();
     }
 

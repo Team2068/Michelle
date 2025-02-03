@@ -37,11 +37,11 @@ public class Module {
 
         steerConfig
                 .smartCurrentLimit(20)
-                .idleMode(IdleMode.kCoast)
-                .inverted(false);
+                .idleMode(IdleMode.kBrake)
+                .inverted(true);
 
         steerConfig.encoder
-                .positionConversionFactor(2 * Math.PI * STEER_REDUCTION)
+                .positionConversionFactor(Math.PI * STEER_REDUCTION)
                 .velocityConversionFactor(Math.PI * STEER_REDUCTION / 60);
 
         steerConfig.closedLoop
@@ -71,7 +71,7 @@ public class Module {
         drive.getConfigurator().apply(config);
 
         tab.addDouble("Absolute Angle", () -> Math.toDegrees(angle()));
-        // tab.addDouble("Current Angle", () -> Math.toDegrees(steer.getEncoder().getPosition()));
+        tab.addDouble("Current Angle", () -> Math.toDegrees(steer.getEncoder().getPosition()));
         tab.addDouble("Angle Difference", () -> Math.toDegrees(angle() - steer.getEncoder().getPosition()));
         tab.addDouble("Target Angle", () -> Math.toDegrees(desiredAngle));
         tab.addBoolean("Active", encoder::connected);
@@ -81,7 +81,7 @@ public class Module {
         drive.setPosition(0.0);
     }
 
-    public void syncencoders() {
+    public void syncEncoders() {
         steer.getEncoder().setPosition(encoder.angle());
     }
 
@@ -107,7 +107,7 @@ public class Module {
     }
 
     public void set(double driveVolts, double targetAngle) {
-        syncencoders();
+        syncEncoders();
 
         drive.set(driveVolts);
         steer.getClosedLoopController().setReference(targetAngle, ControlType.kPosition);
