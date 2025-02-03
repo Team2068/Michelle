@@ -2,6 +2,9 @@ package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
+import dev.doglog.DogLog;
+
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -110,5 +113,11 @@ public class Elevator extends SubsystemBase {
 
     SmartDashboard.putNumber("Elevator Speed", motor.getEncoder().getVelocity());
     SmartDashboard.putNumber("Elevator cTarget Velocity", out.velocity);
+
+    DogLog.log("Elevator/Height", motor.getEncoder().getPosition());
+    DogLog.log("Elevator/Target Height", target);
+    DogLog.log("Elevator/cTarget Height", out.position);
+    DogLog.log("Elevator/Speed", motor.getEncoder().getVelocity());
+    DogLog.log("Elevator/cTarget Velocity", out.velocity);
   }
 }

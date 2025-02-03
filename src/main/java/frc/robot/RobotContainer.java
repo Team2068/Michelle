@@ -9,6 +9,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import dev.doglog.DogLog;
+import dev.doglog.DogLogOptions;
 import frc.robot.commands.DefaultDrive;
 import frc.robot.utility.AutomatedController;
 import frc.robot.utility.IO;
@@ -37,6 +39,7 @@ public class RobotContainer {
     SmartDashboard.putData("Main-Controller Mode", main.selector);
     SmartDashboard.putData("Backup-Controller Mode", main.selector);
     io.chassis.setDefaultCommand(new DefaultDrive(io, main.controller));
+    DogLog.setOptions(new DogLogOptions().withCaptureDs(true));
     // SmartDashboard.putData("Autonomous", ); // TBD
   }
 
