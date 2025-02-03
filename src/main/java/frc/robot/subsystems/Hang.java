@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Hang extends SubsystemBase {
-  public TalonFX hang = new TalonFX(0, "rio");
+  public TalonFX hang = new TalonFX(10, "rio");
 
   public static final double HANG_MAX_ANGLE = 0;
 

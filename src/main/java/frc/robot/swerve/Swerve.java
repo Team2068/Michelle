@@ -12,7 +12,7 @@ public class Swerve {
     public static final double PI2 = 2.0 * Math.PI;
 
     public static class Constants {
-        public boolean comp = true;
+        public boolean comp = false;
 
         public double TRACKWIDTH = 19.5; // 30.0 for MKi
         public double WHEELBASE = 21.5; // 30.0 for MKi

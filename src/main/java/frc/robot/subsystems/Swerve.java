@@ -211,22 +211,22 @@ public class Swerve extends SubsystemBase {
         if (active && speeds != new ChassisSpeeds())
             setModuleStates(states);
 
-        current_states.set(moduleStates(modules));
-        target_states.set(states);
+        // current_states.set(moduleStates(modules));
+        // target_states.set(states);
 
 
         Pose2d pose = odometry.update(rotation(), modulePositions());
-        posePublisher.set(pose);
+        // posePublisher.set(pose);
 
-        SmartDashboard.putNumber("X position", pose.getX());
-        SmartDashboard.putNumber("Y position", pose.getY());
+        // SmartDashboard.putNumber("X position", pose.getX());
+        // SmartDashboard.putNumber("Y position", pose.getY());
 
-        SmartDashboard.putNumber("Odometry rotation", rotation().getDegrees());
-        SmartDashboard.putNumber("Pigeon Yaw", pigeon2.getYaw().getValueAsDouble());
-        SmartDashboard.putNumber("Pigeon Pitch", pigeon2.getPitch().getValueAsDouble());
-        SmartDashboard.putNumber("Pigeon Roll", pigeon2.getRoll().getValueAsDouble());
+        // SmartDashboard.putNumber("Odometry rotation", rotation().getDegrees());
+        // SmartDashboard.putNumber("Pigeon Yaw", pigeon2.getYaw().getValueAsDouble());
+        // SmartDashboard.putNumber("Pigeon Pitch", pigeon2.getPitch().getValueAsDouble());
+        // SmartDashboard.putNumber("Pigeon Roll", pigeon2.getRoll().getValueAsDouble());
 
-        SmartDashboard.putString("Drive Mode", (field_oritented) ? "Field-Oriented" : "Robot-Oriented");
+        // SmartDashboard.putString("Drive Mode", (field_oritented) ? "Field-Oriented" : "Robot-Oriented");
 
         DogLog.log("Swerve/current_states", moduleStates(modules));
         DogLog.log("Swerve/target_states", states);

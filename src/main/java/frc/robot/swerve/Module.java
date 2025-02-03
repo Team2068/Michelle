@@ -38,7 +38,7 @@ public class Module {
         steerConfig
                 .smartCurrentLimit(20)
                 .idleMode(IdleMode.kBrake)
-                .inverted(true);
+                .inverted(comp);
 
         steerConfig.encoder
                 .positionConversionFactor(Math.PI * STEER_REDUCTION)
