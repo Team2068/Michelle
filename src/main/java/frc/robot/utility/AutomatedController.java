@@ -103,8 +103,8 @@ public class AutomatedController {
         // controller.povUp().and( manual() ).onTrue(Util.Do(io.chassis::enable));
         // controller.povDown().and( manual() ).onTrue(Util.Do(io.chassis::disable)).debounce(1.5);
         // controller.povLeft().and( manual() ).onTrue(Util.Do(io.chassis::syncEncoders));
-        // controller.povRight().and( manual() ).and(() -> {return !io.chassis.active;}).onTrue(new InstantCommand(io.chassis::resetAbsolute)); // Add the Rumble effect
+        // controller.povRight().and( manual() ).and(() -> {return !io.chassis.active;}).onTrue(new InstantCommand(io.chassis::zeroAbsolute)); // Add the Rumble effect
 
-        // controller.povRight().and( manual() ).and(() -> {return !io.chassis.active;}).onTrue(new Rumble(0, .5, controller.getHID(), io.chassis::resetAbsolute)); // Add the Rumble effect
+        // controller.povRight().and( manual() ).and(() -> {return !io.chassis.active;}).onTrue(new Rumble(0, .5, controller.getHID(), io.chassis::zeroAbsolute)); // Add the Rumble effect
     }
 }

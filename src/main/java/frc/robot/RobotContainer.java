@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.DefaultDrive;
 import frc.robot.utility.AutomatedController;
 import frc.robot.utility.IO;
-import frc.robot.utility.SwerveConstants;
 
 public class RobotContainer {
   public IO io = new IO();

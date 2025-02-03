@@ -14,7 +14,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.modules.KrakenSwerveModule;
-import frc.robot.utility.SwerveConstants;
+import frc.robot.swerve.Swerve.Constants;
 import frc.robot.utility.Util;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -27,17 +27,9 @@ public class Swerve extends SubsystemBase {
 
     public boolean field_oritented = true;
     public boolean slow_mode = false;
-    private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
-            new Translation2d(SwerveConstants.TRACKWIDTH / 2.0,
-                    SwerveConstants.WHEELBASE / 2.0),
-            new Translation2d(SwerveConstants.TRACKWIDTH / 2.0,
-                    -SwerveConstants.WHEELBASE / 2.0),
-            new Translation2d(-SwerveConstants.TRACKWIDTH / 2.0,
-                    SwerveConstants.WHEELBASE / 2.0),
-            new Translation2d(-SwerveConstants.TRACKWIDTH / 2.0,
-                    -SwerveConstants.WHEELBASE / 2.0));
+    private final SwerveDriveKinematics kinematics;
 
-    public final Pigeon2 pigeon2 = new Pigeon2(SwerveConstants.PIGEON_ID);
+    public final Pigeon2 pigeon2 = new Pigeon2(Constants.PIGEON_ID);
     public final Timer syncTimer = new Timer();
 
     StructArrayPublisher<SwerveModuleState> current_states = Util.table
@@ -50,20 +42,30 @@ public class Swerve extends SubsystemBase {
     final SwerveDriveOdometry odometry;
     final KrakenSwerveModule[] modules = new KrakenSwerveModule[4];
     ChassisSpeeds speeds = new ChassisSpeeds();
+    Constants constants = new Constants();
 
     public boolean active = true;
 
     public Swerve() {
-        new SwerveConstants();
+        kinematics = new SwerveDriveKinematics(
+            new Translation2d(constants.TRACKWIDTH / 2.0,
+                    constants.WHEELBASE / 2.0),
+            new Translation2d(constants.TRACKWIDTH / 2.0,
+                    -constants.WHEELBASE / 2.0),
+            new Translation2d(-constants.TRACKWIDTH / 2.0,
+                    constants.WHEELBASE / 2.0),
+            new Translation2d(-constants.TRACKWIDTH / 2.0,
+                    -constants.WHEELBASE / 2.0));
+        
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
         for (int i = 0; i < modules.length; i++) {
             modules[i] = new KrakenSwerveModule(
-                    tab.getLayout(SwerveConstants.LAYOUT_TITLE[i], BuiltInLayouts.kList)
+                    tab.getLayout(Constants.LAYOUT_TITLE[i], BuiltInLayouts.kList)
                             .withSize(2, 4)
                             .withPosition(i * 2, 0),
-                    SwerveConstants.CHASSIS_ID[i],
-                    SwerveConstants.CHASSIS_ID[i],
-                    SwerveConstants.ENCODER_ID[i]);
+                    Constants.CHASSIS_ID[i],
+                    Constants.CHASSIS_ID[i],
+                    Constants.ENCODER_ID[i]);
         }
 
         odometry = new SwerveDriveOdometry(kinematics, rotation(), modulePositions(),
@@ -163,9 +165,9 @@ public class Swerve extends SubsystemBase {
             mod.syncSteerEncoders();
     }
 
-    public void resetAbsolute() {
+    public void zeroAbsolute() {
         for (KrakenSwerveModule mod : modules)
-            mod.resetAbsolute();
+            mod.zeroAbsolute();
     }
 
     public void resetSteerPositions() {
@@ -174,11 +176,11 @@ public class Swerve extends SubsystemBase {
     }
 
     public void setModuleStates(SwerveModuleState[] states) { 
-        SwerveDriveKinematics.desaturateWheelSpeeds(states, SwerveConstants.MAX_VELOCITY);
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.MAX_VELOCITY);
         for (int i = 0; i < modules.length; i++) {
             states[i].optimize(new Rotation2d(modules[i].angle()));
             // states[i].cosineScale(new Rotation2d(modules[i].angle())); // Cosine Compensation
-            modules[i].set((states[i].speedMetersPerSecond / SwerveConstants.MAX_VELOCITY) * .8 , states[i].angle.getRadians());
+            modules[i].set((states[i].speedMetersPerSecond / Constants.MAX_VELOCITY) * .8 , states[i].angle.getRadians());
         }
     }
 
