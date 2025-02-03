@@ -3,9 +3,8 @@ package frc.robot.commands;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.utility.Util;
+import frc.robot.swerve.Swerve;
 import frc.robot.utility.IO;
-import frc.robot.utility.SwerveConstants;
 
 import java.util.function.DoubleSupplier;
 
@@ -22,9 +21,9 @@ public class DefaultDrive extends Command {
     }
 
     public DefaultDrive(IO io, CommandXboxController controller) {
-        this(io, () -> modifyAxis(controller.getLeftY()) * SwerveConstants.MAX_VELOCITY,
-        () -> modifyAxis(controller.getLeftX()) * SwerveConstants.MAX_VELOCITY,
-        () -> modifyAxis(controller.getRightX()) * SwerveConstants.MAX_VELOCITY);
+        this(io, () -> modifyAxis(controller.getLeftY()) * Swerve.Constants.MAX_VELOCITY,
+        () -> modifyAxis(controller.getLeftX()) * Swerve.Constants.MAX_VELOCITY,
+        () -> modifyAxis(controller.getRightX()) * Swerve.Constants.MAX_VELOCITY);
         this.controller = controller;
     }
   
@@ -44,16 +43,15 @@ public class DefaultDrive extends Command {
     @Override
     public void execute() {
         double down_scale = 1.25 - modifyAxis(controller.getLeftTriggerAxis());
-        double up_scale = (SwerveConstants.MAX_VELOCITY * .2) * modifyAxis(controller.getRightTriggerAxis());
+        double up_scale = (Swerve.Constants.MAX_VELOCITY * .2) * modifyAxis(controller.getRightTriggerAxis());
 
-        double scale = 0.8 * down_scale + up_scale;
-        double rot_scale = .48 * down_scale + up_scale; //0.48 for Shaan. 0.6 for Tristan.
+        double scale = io.chassis.constants.transFactor * down_scale + up_scale;
+        double rot_scale = io.chassis.constants.rotFactor * down_scale + up_scale;
 
         double xSpeed = x_supplier.getAsDouble() * scale;
         double ySpeed = y_supplier.getAsDouble() * scale;
         double rotationSpeed = rotation_supplier.getAsDouble() * down_scale * rot_scale;
 
-        
         ChassisSpeeds output = new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed);
 
         if (io.chassis.field_oritented)

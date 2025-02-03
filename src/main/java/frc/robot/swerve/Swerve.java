@@ -23,6 +23,11 @@ public class Swerve {
         public double TRACKWIDTH = 19.5; // 30.0 for MKi
         public double WHEELBASE = 21.5; // 30.0 for MKi
         public double GEAR_RATIO;
+
+        public int driver = 0;
+        public double transFactor = .8; // factor = x/125, with x being the percentage of our max speed, same for the thing below
+        public double rotFactor = .48; // .6 for tristan
+
         public static final double MAX_VELOCITY = 5.4;
         public static final String[] LAYOUT_TITLE = { "Front Left", "Front Right", "Back Left", "Back Right" };
         public static final int[] CHASSIS_ID = { 2, 3, 4, 5 }; // FL, FR, BL, BR
@@ -39,6 +44,13 @@ public class Swerve {
                 TRACKWIDTH = 19.5;
                 WHEELBASE = 21.5;
                 GEAR_RATIO = 6.12; // L3
+            }
+
+            switch (driver) {
+                default: // Shaan
+                transFactor = .8;
+                rotFactor = .48;
+                    break;
             }
         }
     }

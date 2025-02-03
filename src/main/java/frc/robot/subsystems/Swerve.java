@@ -42,7 +42,7 @@ public class Swerve extends SubsystemBase {
     final SwerveDriveOdometry odometry;
     final KrakenSwerveModule[] modules = new KrakenSwerveModule[4];
     ChassisSpeeds speeds = new ChassisSpeeds();
-    Constants constants = new Constants();
+    public final Constants constants = new Constants();
 
     public boolean active = true;
 
