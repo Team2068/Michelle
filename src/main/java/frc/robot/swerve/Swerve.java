@@ -3,25 +3,42 @@ package frc.robot.swerve;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.reduxrobotics.sensors.canandmag.Canandmag;
 import com.reduxrobotics.sensors.canandmag.CanandmagSettings;
 import static edu.wpi.first.units.Units.Radians;
+
+import java.io.IOException;
+
+import org.json.simple.parser.ParseException;
 
 public class Swerve {
 
     public static final double PI2 = 2.0 * Math.PI;
 
     public static class Constants {
-        public boolean comp = false;
+        // BOT SWITCHING
+        public boolean comp = true;
 
         public double TRACKWIDTH = 19.5; // 30.0 for MKi
         public double WHEELBASE = 21.5; // 30.0 for MKi
         public double GEAR_RATIO;
 
+        // DRIVER SETTINGS
         public int driver = 0;
         public double transFactor = .8; // factor = x/125, with x being the percentage of our max speed, same for the thing below
         public double rotFactor = .48; // .6 for tristan
 
+        // AUTON CONSTANTS
+        public double XControllerP = 0.0;
+        public double XControllerD = 0.0;
+        public double ThetaControllerP = 0.0;
+        public double ThetaControllerD = 0.0;
+        public RobotConfig autoConfig;
+
+        // BASE CHASSIS CONFIGURATION
         public static final double MAX_VELOCITY = 5.4;
         public static final String[] LAYOUT_TITLE = { "Front Left", "Front Right", "Back Left", "Back Right" };
         public static final int[] CHASSIS_ID = { 2, 3, 4, 5 }; // FL, FR, BL, BR
@@ -46,6 +63,14 @@ public class Swerve {
                 transFactor = .8;
                 rotFactor = .48;
                     break;
+            }
+            
+            try {
+                autoConfig = RobotConfig.fromGUISettings();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
         }
     }

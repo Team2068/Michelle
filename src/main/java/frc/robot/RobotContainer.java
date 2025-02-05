@@ -9,6 +9,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
 import frc.robot.commands.DefaultDrive;
@@ -24,7 +25,7 @@ public class RobotContainer {
 
 
   private final SendableChooser<Command> auto_selector;
-  private Command current_auto;
+  private Command current_auto = new PrintCommand("Temp");
 
   public RobotContainer() {
     main = new AutomatedController(0, io);

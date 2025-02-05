@@ -1,28 +1,31 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.swerve.Module;
 import frc.robot.swerve.Swerve.Constants;
 import frc.robot.utility.Util;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-
-import edu.wpi.first.wpilibj.Timer;
 
 public class Swerve extends SubsystemBase {
 
@@ -31,7 +34,6 @@ public class Swerve extends SubsystemBase {
     private final SwerveDriveKinematics kinematics;
 
     public final Pigeon2 pigeon2 = new Pigeon2(Constants.PIGEON_ID);
-    public final Timer syncTimer = new Timer();
 
     StructArrayPublisher<SwerveModuleState> current_states = Util.table
             .getStructArrayTopic("Current Module States", SwerveModuleState.struct).publish();
@@ -70,9 +72,24 @@ public class Swerve extends SubsystemBase {
                     constants.comp);
         }
 
+  AutoBuilder.configure(
+                this::pose,
+                this::resetOdometry,
+                () -> speeds,
+                (speeds, feedforwards) -> drive(speeds),
+                new PPHolonomicDriveController(
+                        new PIDConstants(constants.XControllerP, 0.0, constants.XControllerD), // Translation PID constants
+                        new PIDConstants(constants.ThetaControllerP, 0, constants.XControllerD, 0.0) // Rotation PID constants
+                ),
+                constants.autoConfig,
+                () -> {
+                    var alliance = DriverStation.getAlliance();
+                    return alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red;
+                },
+                this);
+
         odometry = new SwerveDriveOdometry(kinematics, rotation(), modulePositions(),
                 new Pose2d(0, 0, new Rotation2d()));
-        syncTimer.start();
     }
 
     public void zeroGyro() {
