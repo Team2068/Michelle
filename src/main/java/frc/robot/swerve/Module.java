@@ -90,7 +90,7 @@ public class Module {
     }
 
     public double drivePosition() {
-        return drive.getPosition().getValueAsDouble() * .502 * WHEEL_DIAMETER;
+        return drive.getPosition().getValueAsDouble() * .432 * WHEEL_DIAMETER;
     }
 
     public double velocity() {

@@ -79,7 +79,7 @@ public class Swerve extends SubsystemBase {
                 (speeds, feedforwards) -> drive(speeds),
                 new PPHolonomicDriveController(
                         new PIDConstants(constants.XControllerP, 0.0, constants.XControllerD), // Translation PID constants
-                        new PIDConstants(constants.ThetaControllerP, 0, constants.XControllerD, 0.0) // Rotation PID constants
+                        new PIDConstants(constants.ThetaControllerP, 0, constants.ThetaControllerD, 0.0) // Rotation PID constants
                 ),
                 constants.autoConfig,
                 () -> {

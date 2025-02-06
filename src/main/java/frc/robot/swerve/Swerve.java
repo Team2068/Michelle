@@ -20,7 +20,7 @@ public class Swerve {
 
     public static class Constants {
         // BOT SWITCHING
-        public boolean comp = true;
+        public boolean comp = false;
 
         public double TRACKWIDTH = 19.5; // 30.0 for MKi
         public double WHEELBASE = 21.5; // 30.0 for MKi
@@ -32,10 +32,10 @@ public class Swerve {
         public double rotFactor = .48; // .6 for tristan
 
         // AUTON CONSTANTS
-        public double XControllerP = 0.0;
+        public double XControllerP = 0.1;
         public double XControllerD = 0.0;
-        public double ThetaControllerP = 0.0;
-        public double ThetaControllerD = 0.0;
+        public double ThetaControllerP = 0.05;
+        public double ThetaControllerD = 0.005;
         public RobotConfig autoConfig;
 
         // BASE CHASSIS CONFIGURATION
