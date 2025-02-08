@@ -16,7 +16,9 @@ public class Limelight extends SubsystemBase {
   double y;
   double robotyaw;
   double latency;
-  
+  int tagNumber; 
+
+  int[] tagLocation;
   /** Creates a new Limelight. */
   public Limelight() {
     final NetworkTable table = NetworkTableInstance.getDefault().getTable("Limelight");
@@ -24,6 +26,7 @@ public class Limelight extends SubsystemBase {
     y = table.getEntry("ty").getDouble(0.0);
     area = table.getEntry("ta").getDouble(0.0);
     latency =  table.getEntry("tl").getDouble(0.0);
+    tagNumber = (int) table.getEntry("tid").getInteger(0);
   }
 
   @Override
@@ -33,5 +36,41 @@ public class Limelight extends SubsystemBase {
     SmartDashboard.putNumber("LimelightY", y);              //MIGHT NEED TO CHANGE THIS
     SmartDashboard.putNumber("LimelightArea", area); 
     SmartDashboard.putNumber("Limelight Latency", latency); 
+  }
+
+  public int[] TagLocationProcessing() {
+    /*{red/blue, zone}
+      {  1/2,     1-3}
+    zone 1 = coral
+    zone 2 = coral station
+    zone 3 =  processor
+
+    ** if returns 0 and 0 there is no tag in view  **
+    */
+    // return red or blue
+    if (tagNumber > 0){
+      if (tagNumber <= 11){
+        tagLocation[0] = 1;
+      }
+      else {
+        tagLocation[0] = 2;
+      }
+    
+      // return zone
+      if (tagNumber >=6 && tagNumber <= 11 || tagNumber >= 17 && tagNumber <= 22){
+        tagLocation[1] = 1;
+      }
+      else if (tagNumber >=1 && tagNumber <= 2 || tagNumber >= 12 && tagNumber <= 13) {
+        tagLocation[1] = 2;
+      }
+      else {
+       tagLocation[1] = 3;
+      }
+    }
+    else {
+      tagLocation[0] = 0;
+      tagLocation[1] = 0;
+    }
+    return tagLocation;
   }
 }
