@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import dev.doglog.DogLog;
@@ -18,14 +17,11 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.swerve.Module;
 import frc.robot.swerve.Swerve.Constants;
 import frc.robot.utility.Util;
@@ -33,7 +29,6 @@ import frc.robot.utility.Util;
 public class Swerve extends SubsystemBase {
 
     public boolean field_oritented = true;
-    public boolean slow_mode = false;
     private final SwerveDriveKinematics kinematics;
 
     public final Pigeon2 pigeon2 = new Pigeon2(Constants.PIGEON_ID);
@@ -44,7 +39,7 @@ public class Swerve extends SubsystemBase {
             .getStructArrayTopic("Target Module States", SwerveModuleState.struct).publish();
     StructPublisher<Pose2d> posePublisher = NetworkTableInstance.getDefault().getTable("Debug")
             .getStructTopic("Current pose", Pose2d.struct).publish();
-    
+
     final SwerveDriveOdometry odometry;
     final Module[] modules = new Module[4];
     ChassisSpeeds speeds = new ChassisSpeeds();
@@ -54,15 +49,11 @@ public class Swerve extends SubsystemBase {
 
     public Swerve() {
         kinematics = new SwerveDriveKinematics(
-            new Translation2d(constants.TRACKWIDTH / 2.0,
-                    constants.WHEELBASE / 2.0),
-            new Translation2d(constants.TRACKWIDTH / 2.0,
-                    -constants.WHEELBASE / 2.0),
-            new Translation2d(-constants.TRACKWIDTH / 2.0,
-                    constants.WHEELBASE / 2.0),
-            new Translation2d(-constants.TRACKWIDTH / 2.0,
-                    -constants.WHEELBASE / 2.0));
-        
+                createTranslation(constants.TRACKWIDTH / 2.0, constants.WHEELBASE / 2.0),
+                createTranslation(constants.TRACKWIDTH / 2.0, -constants.WHEELBASE / 2.0),
+                createTranslation(-constants.TRACKWIDTH / 2.0, constants.WHEELBASE / 2.0),
+                createTranslation(-constants.TRACKWIDTH / 2.0, -constants.WHEELBASE / 2.0));
+
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
         for (int i = 0; i < modules.length; i++) {
             modules[i] = new Module(
@@ -75,14 +66,16 @@ public class Swerve extends SubsystemBase {
                     constants.comp);
         }
 
-  AutoBuilder.configure(
+        AutoBuilder.configure(
                 this::pose,
                 this::resetOdometry,
                 () -> speeds,
                 (speeds, feedforwards) -> drive(speeds),
                 new PPHolonomicDriveController(
-                        new PIDConstants(constants.XControllerP, 0.0, constants.XControllerD), // Translation PID constants
-                        new PIDConstants(constants.ThetaControllerP, 0, constants.ThetaControllerD, 0.0) // Rotation PID constants
+                        new PIDConstants(constants.XControllerP, 0.0, constants.XControllerD), // Translation PID
+                                                                                               // constants
+                        new PIDConstants(constants.ThetaControllerP, 0, constants.ThetaControllerD, 0.0) // Rotation PID
+                                                                                                         // constants
                 ),
                 constants.autoConfig,
                 () -> {
@@ -93,6 +86,10 @@ public class Swerve extends SubsystemBase {
 
         odometry = new SwerveDriveOdometry(kinematics, rotation(), modulePositions(),
                 new Pose2d(0, 0, new Rotation2d()));
+    }
+
+    private Translation2d createTranslation(double x, double y) {
+        return new Translation2d(x, y);
     }
 
     public void zeroGyro() {
@@ -146,11 +143,9 @@ public class Swerve extends SubsystemBase {
             state[i] = moduleState(modules[i]);
         return state;
     }
-
+    
     public void adjustRotation() {
-        double rotation = (absoluteRotation() - 180) % 360;
-        rotation += (rotation < 0) ? 360 : 0;
-        pigeon2.setYaw(rotation);
+        pigeon2.setYaw((absoluteRotation() + 180) % 360);
     }
 
     public Pose2d pose() {
@@ -158,27 +153,14 @@ public class Swerve extends SubsystemBase {
     }
 
     public void resetOdometry() {
-        setOdometry(new Pose2d());
+        resetOdometry(new Pose2d());
     }
 
     public void resetOdometry(Pose2d pose) {
-        pigeon2.setYaw(0);
-        resetPosition();
-
-        odometry.resetPosition(rotation(), modulePositions(), pose);
-        odometry.resetPosition(rotation(), modulePositions(), pose);
-    }
-
-    public void setOdometry(Pose2d pose) {
         zeroGyro();
         resetPosition();
 
         odometry.resetPosition(rotation(), modulePositions(), pose);
-        odometry.resetPosition(rotation(), modulePositions(), pose);
-    }
-
-    public void zeroHeading(){
-        pigeon2.setYaw(0);
     }
 
     public void resetPosition() {
@@ -201,12 +183,12 @@ public class Swerve extends SubsystemBase {
             mod.set(0, 0);
     }
 
-    public void setModuleStates(SwerveModuleState[] states) { 
+    public void setModuleStates(SwerveModuleState[] states) {
         SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.MAX_VELOCITY);
         for (int i = 0; i < modules.length; i++) {
             states[i].optimize(new Rotation2d(modules[i].angle()));
-            // states[i].cosineScale(new Rotation2d(modules[i].angle())); // Cosine Compensation
-            modules[i].set((states[i].speedMetersPerSecond / Constants.MAX_VELOCITY) * .8 , states[i].angle.getRadians());
+            modules[i].set((states[i].speedMetersPerSecond / Constants.MAX_VELOCITY) * .8,
+                    states[i].angle.getRadians());
         }
     }
 
@@ -218,31 +200,14 @@ public class Swerve extends SubsystemBase {
         return pigeon2.getRoll().getValueAsDouble();
     }
 
-    public void enable() {
-        active = true;
+    public void toggle() {
+        active = !active;
+
+        if (!active) {
+            for (Module mod : modules)
+                mod.stop();
+        }
     }
-
-    public void disable() {
-        active = false;
-
-        for (Module mod : modules)
-            mod.stop();
-    }
-
-    // public void characterizeDrive(double volts){
-    //     for(int i = 0; i < modules.length; i++){
-
-    //     }
-    // }
-
-    // private final SysIdRoutine driveCharacterization = new SysIdRoutine(
-    //     new SysIdRoutine.Config(),
-    //     new SysIdRoutine.Mechanism(
-    //         (Measure<Voltage> volts) -> {
-                
-    //         },
-    //     )
-    // );
 
     public void periodic() {
         SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
@@ -252,7 +217,6 @@ public class Swerve extends SubsystemBase {
         current_states.set(moduleStates(modules));
         target_states.set(states);
 
-
         Pose2d pose = odometry.update(rotation(), modulePositions());
         posePublisher.set(pose);
 
@@ -261,10 +225,13 @@ public class Swerve extends SubsystemBase {
 
         // SmartDashboard.putNumber("Odometry rotation", rotation().getDegrees());
         // SmartDashboard.putNumber("Pigeon Yaw", pigeon2.getYaw().getValueAsDouble());
-        // SmartDashboard.putNumber("Pigeon Pitch", pigeon2.getPitch().getValueAsDouble());
-        // SmartDashboard.putNumber("Pigeon Roll", pigeon2.getRoll().getValueAsDouble());
+        // SmartDashboard.putNumber("Pigeon Pitch",
+        // pigeon2.getPitch().getValueAsDouble());
+        // SmartDashboard.putNumber("Pigeon Roll",
+        // pigeon2.getRoll().getValueAsDouble());
 
-        // SmartDashboard.putString("Drive Mode", (field_oritented) ? "Field-Oriented" : "Robot-Oriented");
+        // SmartDashboard.putString("Drive Mode", (field_oritented) ? "Field-Oriented" :
+        // "Robot-Oriented");
 
         // DogLog.log("Swerve/current_states", moduleStates(modules));
         // DogLog.log("Swerve/target_states", states);
@@ -275,6 +242,7 @@ public class Swerve extends SubsystemBase {
         // DogLog.log("Swerve/Pigeon_Yaw", pigeon2.getYaw().getValueAsDouble());
         // DogLog.log("Swerve/Pigeon_Pitch", pigeon2.getPitch().getValueAsDouble());
         // DogLog.log("Swerve/Pigeon_Roll", pigeon2.getRoll().getValueAsDouble());
-        // DogLog.log("Swerve/Drive_Mode", (field_oritented) ? "Field-Oriented" : "Robot-Oriented");
+        // DogLog.log("Swerve/Drive_Mode", (field_oritented) ? "Field-Oriented" :
+        // "Robot-Oriented");
     }
 }

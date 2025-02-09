@@ -5,8 +5,6 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.GrabAlgae;
-import frc.robot.commands.ReleaseAlgae;
 
 public class AutomatedController {
     public final CommandXboxController controller;
@@ -58,8 +56,7 @@ public class AutomatedController {
         // RB align Right and Score Coral & Score Processor 
 
         // controller.y().and( automated() ).onTrue(Util.D      
-        controller.povUp().and( manual() ).onTrue(Util.Do(io.chassis::enable));
-        controller.povDown().and( manual() ).onTrue(Util.Do(io.chassis::disable)).debounce(1.5);
+        controller.povDown().and( manual() ).onTrue(Util.Do(io.chassis::toggle));
         controller.povLeft().and( manual() ).onTrue(Util.Do(io.chassis::syncEncoders));
         controller.povRight().and( manual() ).and(() -> {return !io.chassis.active;}).onTrue(new InstantCommand(io.chassis::zeroAbsolute)); // Add the Rumble effect
 
