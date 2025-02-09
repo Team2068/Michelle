@@ -13,29 +13,25 @@ import frc.robot.utility.IO;
 public class aimbot extends Command {
 
   IO io;
-  PIDController pid = new PIDController(0.00, 0.00, 0.00);
+  PIDController pid = new PIDController(0.01, 0.00, 0.00);
   double tolerance = 5;
 
-  /** Creates a new aimbot. */
   public aimbot(IO io) {
-        io.chassis.drive(new ChassisSpeeds(0, pid.calculate(io.limelight.x), 0));
-    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(io.limelight, io.chassis);
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {}
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    io.chassis.drive(new ChassisSpeeds(0, pid.calculate(io.limelight.x), 0));
+  }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return Math.abs(pid.getError()) < tolerance;
