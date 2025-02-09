@@ -32,8 +32,6 @@ public class KrakenSwerveModule {
     public static final double DRIVE_REDUCTION = (15.0 / 32.0) * (10.0 / 60.0);
     public static final double STEER_REDUCTION = (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0);
     public static final double DRIVE_CONVERSION_FACTOR = Math.PI * WHEEL_DIAMETER * DRIVE_REDUCTION;
-    public double positional_error = 0;
-    public double in_volts = 0;
 
     public KrakenSwerveModule(ShuffleboardLayout tab, int driveID, int steerID, int steerCANID) {
         driveMotor = new TalonFX(driveID, "rio");
@@ -54,23 +52,25 @@ public class KrakenSwerveModule {
         steerConfig.closedLoop
                 .positionWrappingEnabled(true)
                 .positionWrappingMaxInput(PI2)
-                .feedbackSensor(FeedbackSensor.kPrimaryEncoder).pid(0.2, 0.0, 0.0);
-
+                .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                .pid(0.2, 0.0, 0.0);
+                
         steerConfig.signals.primaryEncoderPositionPeriodMs(20);
 
         CanandmagSettings settings = new CanandmagSettings();
         settings.setInvertDirection(true);
 
         steerEncoder.clearStickyFaults();
-        steerEncoder.resetFactoryDefaults(false);
         steerEncoder.setSettings(settings);
 
         TalonFXConfiguration config = new TalonFXConfiguration();
 
         config.CurrentLimits.StatorCurrentLimit = 80;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
+
         config.CurrentLimits.SupplyCurrentLimit = 20;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
+        
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -83,8 +83,6 @@ public class KrakenSwerveModule {
         tab.addDouble("Absolute Angle", () -> Math.toDegrees(angle()));
         tab.addDouble("Current Angle", () -> Math.toDegrees(steerMotor.getEncoder().getPosition()));
         tab.addDouble("Target Angle", () -> Math.toDegrees(desiredAngle));
-        tab.addDouble("Drive Volts", () -> in_volts);
-        tab.addDouble("Positional Error", () -> positional_error);
         tab.addBoolean("Active", steerEncoder::isConnected);
     }
 
@@ -92,7 +90,7 @@ public class KrakenSwerveModule {
         driveMotor.setPosition(0.0);
     }
 
-    public void resetSteerPosition() {
+    public void syncSteerEncoders() {
         steerMotor.getEncoder().setPosition(angle());
     }
 
@@ -118,21 +116,20 @@ public class KrakenSwerveModule {
     }
 
     public void set(double driveVolts, double targetAngle) {
-        resetSteerPosition();
+        // syncSteerEncoders();
 
         targetAngle %= PI2;
         targetAngle += (targetAngle < 0.0) ? PI2 : 0.0;
 
         desiredAngle = targetAngle;
 
-        double diff = targetAngle - angle();
+        double diff = targetAngle -    steerMotor.getEncoder().getPosition();
 
         if (diff > (Math.PI / 2.0) || diff < -(Math.PI / 2.0)) {
             targetAngle = (targetAngle + Math.PI) % PI2;
             driveVolts *= -1.0;
         }
 
-        in_volts = driveVolts;
         driveMotor.set(driveVolts);
         steerMotor.getClosedLoopController().setReference(targetAngle, ControlType.kPosition);
     }

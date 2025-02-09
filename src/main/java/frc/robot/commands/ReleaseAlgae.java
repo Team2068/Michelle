@@ -3,11 +3,15 @@
 // import edu.wpi.first.wpilibj2.command.Command;
 // import frc.robot.utility.IO;
 
-// public class GrabAlgae extends Command {
+// public class ReleaseAlgae extends Command {
 //   IO io;
 
-//   public GrabAlgae(IO io) {
+//   double speed;
+
+//   public ReleaseAlgae(IO io, boolean spit_out) {
 //     this.io = io;
+
+//     speed = (spit_out) ? -12 : 12;
 //     addRequirements(io.intake);
 //   }
 
@@ -16,7 +20,7 @@
 
 //   @Override
 //   public void execute() {
-//     io.intake.volts(12);
+//     io.intake.volts(speed);
 //   }
 
 //   @Override
@@ -26,6 +30,6 @@
 
 //   @Override
 //   public boolean isFinished() {
-//     return io.intake.grabbed();
+//     return !io.intake.grabbed();
 //   }
 // }

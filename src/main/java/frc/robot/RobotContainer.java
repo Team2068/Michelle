@@ -4,26 +4,27 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.DefaultDrive;
+import frc.robot.utility.AutomatedController;
 import frc.robot.utility.IO;
 
 public class RobotContainer {
-  SendableChooser<Runnable> bindings = new SendableChooser<Runnable>();
 
-  public IO io = new IO(bindings);
+  public IO io = new IO();
+  public final AutomatedController main;
+  public final AutomatedController backup;
+
 
   public RobotContainer() {
-    SmartDashboard.putData("Bindings", bindings);
-    SmartDashboard.putData("Autonomous", new SequentialCommandGroup(
-        new InstantCommand(() -> io.chassis.field_oritented = true)));
-
-    io.configGlobal();
-    io.config1Player();
+    main = new AutomatedController(0, io);
+    backup = new AutomatedController(1, io);
+    SmartDashboard.putData("Main-Controller Mode", main.selector);
+    SmartDashboard.putData("Backup-Controller Mode", main.selector);
+    io.chassis.setDefaultCommand(new DefaultDrive(io, main.controller));
+    // SmartDashboard.putData("Autonomous", ); // TBD
   }
 
   public Command getAutonomousCommand() {
