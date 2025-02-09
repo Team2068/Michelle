@@ -4,30 +4,47 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import dev.doglog.DogLog;
+import dev.doglog.DogLogOptions;
 import frc.robot.commands.DefaultDrive;
 import frc.robot.utility.AutomatedController;
 import frc.robot.utility.IO;
+import frc.robot.utility.Util;
 
 public class RobotContainer {
-
+  
   public IO io = new IO();
   public final AutomatedController main;
   public final AutomatedController backup;
 
 
+  private final SendableChooser<Command> auto_selector;
+  private Command current_auto = new PrintCommand("Temp");
+
   public RobotContainer() {
     main = new AutomatedController(0, io);
     backup = new AutomatedController(1, io);
+
+    auto_selector = AutoBuilder.buildAutoChooser();
+    auto_selector.onChange((command) -> {current_auto = command;});
+
+    SmartDashboard.putData("Autos",auto_selector);
+    SmartDashboard.putData("Run Test Auto", Util.Do(current_auto::schedule));
+
     SmartDashboard.putData("Main-Controller Mode", main.selector);
     SmartDashboard.putData("Backup-Controller Mode", main.selector);
     io.chassis.setDefaultCommand(new DefaultDrive(io, main.controller));
+    // DogLog.setOptions(new DogLogOptions().withCaptureDs(true));
     // SmartDashboard.putData("Autonomous", ); // TBD
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return auto_selector.getSelected();
   }
 }
