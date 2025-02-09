@@ -143,7 +143,7 @@ public class Swerve extends SubsystemBase {
             state[i] = moduleState(modules[i]);
         return state;
     }
-    
+
     public void adjustRotation() {
         pigeon2.setYaw((absoluteRotation() + 180) % 360);
     }
