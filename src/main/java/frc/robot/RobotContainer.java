@@ -40,7 +40,7 @@ public class RobotContainer {
     SmartDashboard.putData("Main-Controller Mode", main.selector);
     SmartDashboard.putData("Backup-Controller Mode", main.selector);
     io.chassis.setDefaultCommand(new DefaultDrive(io, main.controller));
-    DogLog.setOptions(new DogLogOptions().withCaptureDs(true));
+    // DogLog.setOptions(new DogLogOptions().withCaptureDs(true));
     // SmartDashboard.putData("Autonomous", ); // TBD
   }
 

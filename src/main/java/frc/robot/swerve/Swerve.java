@@ -28,14 +28,14 @@ public class Swerve {
 
         // DRIVER SETTINGS
         public int driver = 0;
-        public double transFactor = .8; // factor = x/125, with x being the percentage of our max speed, same for the thing below
-        public double rotFactor = .48; // .6 for tristan
+        public double transFactor = .65; // factor = x/125, with x being the percentage of our max speed, same for the thing below
+        public double rotFactor = .30; // .6 for tristan
 
         // AUTON CONSTANTS
-        public double XControllerP = 0.1;
+        public double XControllerP = 3.35;
         public double XControllerD = 0.0;
-        public double ThetaControllerP = 0.05;
-        public double ThetaControllerD = 0.005;
+        public double ThetaControllerP = 0;
+        public double ThetaControllerD = 0;
         public RobotConfig autoConfig;
 
         // BASE CHASSIS CONFIGURATION
@@ -60,7 +60,7 @@ public class Swerve {
 
             switch (driver) {
                 default: // Shaan
-                transFactor = .8;
+                transFactor = .65;
                 rotFactor = .48;
                     break;
             }

@@ -41,6 +41,6 @@ public class AlgaeIntake extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putBoolean("Intake Full", grabbed());
-    DogLog.log("Intake/Full", grabbed());
+    // DogLog.log("Intake/Full", grabbed());
   }
 }

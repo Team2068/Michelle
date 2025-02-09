@@ -18,11 +18,14 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.swerve.Module;
 import frc.robot.swerve.Swerve.Constants;
 import frc.robot.utility.Util;
@@ -226,17 +229,32 @@ public class Swerve extends SubsystemBase {
             mod.stop();
     }
 
+    // public void characterizeDrive(double volts){
+    //     for(int i = 0; i < modules.length; i++){
+
+    //     }
+    // }
+
+    // private final SysIdRoutine driveCharacterization = new SysIdRoutine(
+    //     new SysIdRoutine.Config(),
+    //     new SysIdRoutine.Mechanism(
+    //         (Measure<Voltage> volts) -> {
+                
+    //         },
+    //     )
+    // );
+
     public void periodic() {
         SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
         if (active && speeds != new ChassisSpeeds())
             setModuleStates(states);
 
-        // current_states.set(moduleStates(modules));
-        // target_states.set(states);
+        current_states.set(moduleStates(modules));
+        target_states.set(states);
 
 
         Pose2d pose = odometry.update(rotation(), modulePositions());
-        // posePublisher.set(pose);
+        posePublisher.set(pose);
 
         // SmartDashboard.putNumber("X position", pose.getX());
         // SmartDashboard.putNumber("Y position", pose.getY());
@@ -248,15 +266,15 @@ public class Swerve extends SubsystemBase {
 
         // SmartDashboard.putString("Drive Mode", (field_oritented) ? "Field-Oriented" : "Robot-Oriented");
 
-        DogLog.log("Swerve/current_states", moduleStates(modules));
-        DogLog.log("Swerve/target_states", states);
-        DogLog.log("Swerve/pose", pose);
-        DogLog.log("Swerve/X_position", pose.getX());
-        DogLog.log("Swerve/Y_position", pose.getY());
-        DogLog.log("Swerve/Odometry_rotation", rotation().getDegrees());
-        DogLog.log("Swerve/Pigeon_Yaw", pigeon2.getYaw().getValueAsDouble());
-        DogLog.log("Swerve/Pigeon_Pitch", pigeon2.getPitch().getValueAsDouble());
-        DogLog.log("Swerve/Pigeon_Roll", pigeon2.getRoll().getValueAsDouble());
-        DogLog.log("Swerve/Drive_Mode", (field_oritented) ? "Field-Oriented" : "Robot-Oriented");
+        // DogLog.log("Swerve/current_states", moduleStates(modules));
+        // DogLog.log("Swerve/target_states", states);
+        // DogLog.log("Swerve/pose", pose);
+        // DogLog.log("Swerve/X_position", pose.getX());
+        // DogLog.log("Swerve/Y_position", pose.getY());
+        // DogLog.log("Swerve/Odometry_rotation", rotation().getDegrees());
+        // DogLog.log("Swerve/Pigeon_Yaw", pigeon2.getYaw().getValueAsDouble());
+        // DogLog.log("Swerve/Pigeon_Pitch", pigeon2.getPitch().getValueAsDouble());
+        // DogLog.log("Swerve/Pigeon_Roll", pigeon2.getRoll().getValueAsDouble());
+        // DogLog.log("Swerve/Drive_Mode", (field_oritented) ? "Field-Oriented" : "Robot-Oriented");
     }
 }
