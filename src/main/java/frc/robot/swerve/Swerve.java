@@ -3,15 +3,15 @@ package frc.robot.swerve;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
 import com.reduxrobotics.sensors.canandmag.Canandmag;
 import com.reduxrobotics.sensors.canandmag.CanandmagSettings;
 
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
-
 import static edu.wpi.first.units.Units.Radians;
+
+import java.io.IOException;
+
+import org.json.simple.parser.ParseException;
 
 public class Swerve {
 
@@ -63,32 +63,30 @@ public class Swerve {
                 MASS = 47.0;
             }
 
-            double trackwidthMeters = Units.inchesToMeters(TRACKWIDTH);
-            double wheelbaseMeters = Units.inchesToMeters(WHEELBASE);
-            Translation2d[] swerve_offsets =
-                new Translation2d[] {
-                    new Translation2d(trackwidthMeters / 2, wheelbaseMeters / 2),
-                    new Translation2d(trackwidthMeters / 2, -wheelbaseMeters / 2),
-                    new Translation2d(-trackwidthMeters / 2, wheelbaseMeters / 2),
-                    new Translation2d(-trackwidthMeters / 2, -wheelbaseMeters / 2)
-                };
+            // double trackwidthMeters = Units.inchesToMeters(TRACKWIDTH);
+            // double wheelbaseMeters = Units.inchesToMeters(WHEELBASE);
+            // Translation2d[] swerve_offsets =
+            //     new Translation2d[] {
+            //         new Translation2d(trackwidthMeters / 2, wheelbaseMeters / 2),
+            //         new Translation2d(trackwidthMeters / 2, -wheelbaseMeters / 2),
+            //         new Translation2d(-trackwidthMeters / 2, wheelbaseMeters / 2),
+            //         new Translation2d(-trackwidthMeters / 2, -wheelbaseMeters / 2)
+            //     };
 
-            double moi = 1/12 * MASS * (trackwidthMeters * trackwidthMeters + wheelbaseMeters * wheelbaseMeters); // estimate of moi
-            ModuleConfig moduleConfigs = new ModuleConfig(WHEEL_RADIUS, 5.4, 1.2, null, GEAR_RATIO, 59, 4);
-            autoConfig = new RobotConfig(
-                MASS,
-                moi,
-                moduleConfigs,
-                swerve_offsets
-            );
+            // double moi = 1/12 * MASS * (trackwidthMeters * trackwidthMeters + wheelbaseMeters * wheelbaseMeters); // estimate of moi
+            // ModuleConfig moduleConfigs = new ModuleConfig(WHEEL_RADIUS, 5.4, 1.2, null, GEAR_RATIO, 59, 4);
+            // autoConfig = new RobotConfig(
+            //     MASS,
+            //     moi,
+            //     moduleConfigs,
+            //     swerve_offsets
+            // );
 
-                        // try {
-            //     autoConfig = RobotConfig.fromGUISettings();
-            // } catch (IOException e) {
-            //     e.printStackTrace();
-            // } catch (ParseException e) {
-            //     e.printStackTrace();
-            // }
+                try {
+                    autoConfig = RobotConfig.fromGUISettings();
+                } catch (IOException | ParseException e) {
+                    e.printStackTrace();
+                }
 
             switch (driver) {
                 default: // Shaan
