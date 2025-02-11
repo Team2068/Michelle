@@ -16,7 +16,7 @@ public class GrabAlgae extends Command {
 
   @Override
   public void execute() {
-    io.intake.volts(12);
+    io.intake.IntakeVolts(12);
   }
 
   @Override

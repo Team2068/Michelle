@@ -20,7 +20,7 @@ public class ReleaseAlgae extends Command {
 
   @Override
   public void execute() {
-    io.intake.volts(speed);
+    io.intake.IntakeVolts(speed);
   }
 
   @Override
