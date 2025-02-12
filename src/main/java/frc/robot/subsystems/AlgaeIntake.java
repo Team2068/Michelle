@@ -20,7 +20,7 @@ public class AlgaeIntake extends SubsystemBase {
   SparkMaxConfig pivotConfig = new SparkMaxConfig();
   public DutyCycleEncoder encoder = new DutyCycleEncoder(0);
 
-  public static final double CLOSED_ANGLE = 0;
+  public final double closedAngle = 0;
   public boolean closed;
 
   public AlgaeIntake() {
@@ -30,7 +30,7 @@ public class AlgaeIntake extends SubsystemBase {
     pivotConfig.idleMode(SparkMaxConfig.IdleMode.kCoast);
     pivot.configure(rollerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    closed = (angle() > CLOSED_ANGLE);
+    closed = (angle() > closedAngle);
   }
 
   public void IntakeVolts(double volts){
@@ -49,8 +49,12 @@ public class AlgaeIntake extends SubsystemBase {
     pivot.setVoltage(volts);
   }
 
-  public void stop(){
+  public void stopIntake(){
     roller.stopMotor();
+  }
+
+  public void stopPivot(){
+    pivot.stopMotor();
   }
 
   public boolean grabbed(){
@@ -64,7 +68,7 @@ public class AlgaeIntake extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putBoolean("Intake Full", grabbed());
-    closed = (angle() < CLOSED_ANGLE);
+    closed = (angle() < closedAngle);
     SmartDashboard.putNumber("Pivot Angle", angle());
     // DogLog.log("Intake/Full", grabbed());
   }

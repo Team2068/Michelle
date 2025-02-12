@@ -21,7 +21,7 @@ public class GrabAlgae extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    io.intake.stop();
+    io.intake.stopIntake();
   }
 
   @Override
