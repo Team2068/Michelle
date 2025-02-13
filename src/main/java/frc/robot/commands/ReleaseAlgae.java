@@ -8,10 +8,11 @@ public class ReleaseAlgae extends Command {
 
   double speed;
 
-  public ReleaseAlgae(IO io, boolean spit_out) {
+  public ReleaseAlgae(IO io) {
     this.io = io;
 
-    speed = (spit_out) ? -12 : 12;
+    speed = 12;
+    
     addRequirements(io.intake);
   }
 

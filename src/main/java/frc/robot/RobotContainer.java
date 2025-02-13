@@ -5,6 +5,8 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,32 +21,36 @@ import frc.robot.utility.Util;
 
 public class RobotContainer {
   
-  public IO io = new IO();
-  public final AutomatedController main;
-  public final AutomatedController backup;
+  // public IO io = new IO();
+  // public final AutomatedController main;
+  // public final AutomatedController backup;
 
 
-  private final SendableChooser<Command> auto_selector;
-  private Command current_auto = new PrintCommand("Temp");
+  // private final SendableChooser<Command> auto_selector;
+  // private Command current_auto = new PrintCommand("Temp");
+
+  private SparkMax s = new SparkMax(2, MotorType.kBrushed);
 
   public RobotContainer() {
-    main = new AutomatedController(0, io);
-    backup = new AutomatedController(1, io);
+    s.set(1);
+    // main = new AutomatedController(0, io);
+    // backup = new AutomatedController(1, io);
 
-    auto_selector = AutoBuilder.buildAutoChooser();
-    auto_selector.onChange((command) -> {current_auto = command;});
+    // auto_selector = AutoBuilder.buildAutoChooser();
+    // auto_selector.onChange((command) -> {current_auto = command;});
 
-    SmartDashboard.putData("Autos",auto_selector);
-    SmartDashboard.putData("Run Test Auto", Util.Do(current_auto::schedule));
+    // SmartDashboard.putData("Autos",auto_selector);
+    // SmartDashboard.putData("Run Test Auto", Util.Do(current_auto::schedule));
 
-    SmartDashboard.putData("Main-Controller Mode", main.selector);
-    SmartDashboard.putData("Backup-Controller Mode", main.selector);
-    io.chassis.setDefaultCommand(new DefaultDrive(io, main.controller));
-    // DogLog.setOptions(new DogLogOptions().withCaptureDs(true));
-    // SmartDashboard.putData("Autonomous", ); // TBD
+    // SmartDashboard.putData("Main-Controller Mode", main.selector);
+    // SmartDashboard.putData("Backup-Controller Mode", main.selector);
+    // io.chassis.setDefaultCommand(new DefaultDrive(io, main.controller));
+    // // DogLog.setOptions(new DogLogOptions().withCaptureDs(true));
+    // // SmartDashboard.putData("Autonomous", ); // TBD
   }
 
   public Command getAutonomousCommand() {
-    return auto_selector.getSelected();
+    // return auto_selector.getSelected();
+    return new PrintCommand("");
   }
 }

@@ -5,6 +5,10 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.ReleaseAlgae;
+import frc.robot.commands.ScoreBarge;
+import frc.robot.commands.ScoreReef;
+import frc.robot.commands.aimbot;
 
 public class AutomatedController {
     public final CommandXboxController controller;
@@ -53,9 +57,16 @@ public class AutomatedController {
 
         // Based on the nearest element and our field orientation
         // LB align Left and Score Coral & Score Barge
-        // RB align Right and Score Coral & Score Processor 
+        // RB align Right and Score Coral & Score Processor
 
-        // controller.y().and( automated() ).onTrue(Util.D      
+        // controller.leftBumper().and(automated()).onTrue(new ConditionalCommand(new ScoreReef(io, false), new ScoreBarge(io),
+        //     io.limelight::reefZone));
+
+        // controller.rightBumper().and(automated()).onTrue(new ConditionalCommand(new ScoreReef(io, true), new ReleaseAlgae(io),
+        //     io.limelight::reefZone));
+
+        controller.a().toggleOnTrue(new aimbot(io));
+
         controller.povDown().and( manual() ).onTrue(Util.Do(io.chassis::toggle));
         controller.povLeft().and( manual() ).onTrue(Util.Do(io.chassis::syncEncoders));
         controller.povRight().and( manual() ).and(() -> {return !io.chassis.active;}).onTrue(new InstantCommand(io.chassis::zeroAbsolute)); // Add the Rumble effect

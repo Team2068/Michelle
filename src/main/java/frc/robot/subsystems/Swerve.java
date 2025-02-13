@@ -34,7 +34,7 @@ public class Swerve extends SubsystemBase {
 
     public final Pigeon2 pigeon2 = new Pigeon2(Constants.PIGEON_ID);
 
-    public SwerveDrivePoseEstimator poseEstimator;
+    // public SwerveDrivePoseEstimator poseEstimator;
     StructArrayPublisher<SwerveModuleState> current_states = Util.table
             .getStructArrayTopic("Current Module States", SwerveModuleState.struct).publish();
     StructArrayPublisher<SwerveModuleState> target_states = Util.table
@@ -56,7 +56,7 @@ public class Swerve extends SubsystemBase {
                 createTranslation(-constants.TRACKWIDTH / 2.0, constants.WHEELBASE / 2.0),
                 createTranslation(-constants.TRACKWIDTH / 2.0, -constants.WHEELBASE / 2.0));
 
-        poseEstimator = new SwerveDrivePoseEstimator(kinematics, rotation(), modulePositions(), pose());
+        // poseEstimator = new SwerveDrivePoseEstimator(kinematics, rotation(), modulePositions(), pose());
 
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
         for (int i = 0; i < modules.length; i++) {

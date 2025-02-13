@@ -45,7 +45,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousExit() {
-    m_robotContainer.io.chassis.adjustRotation();
+    // m_robotContainer.io.chassis.adjustRotation();
   }
 
   @Override
