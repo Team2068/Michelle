@@ -4,23 +4,30 @@
 
 package frc.robot;
 
+import org.ironmaple.simulation.SimulatedArena;
+
+import com.ctre.phoenix6.SignalLogger;
+
 // import org.ironmaple.simulation.SimulatedArena;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Simulation.Constants;
 import frc.robot.subsystems.Simulation.ElevatorSimulation;
+import frc.robot.subsystems.Simulation.MapleSim;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
-final ElevatorSimulation m_elevator = new ElevatorSimulation();
+  final ElevatorSimulation m_elevator = new ElevatorSimulation();
+
   public Robot() {
     m_robotContainer = new RobotContainer();
-  
+
   }
 
   @Override
@@ -36,10 +43,12 @@ final ElevatorSimulation m_elevator = new ElevatorSimulation();
   }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+  }
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+  }
 
   @Override
   public void autonomousInit() {
@@ -51,7 +60,8 @@ final ElevatorSimulation m_elevator = new ElevatorSimulation();
   }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
   public void autonomousExit() {
@@ -77,7 +87,8 @@ final ElevatorSimulation m_elevator = new ElevatorSimulation();
   }
 
   @Override
-  public void teleopExit() {}
+  public void teleopExit() {
+  }
 
   @Override
   public void testInit() {
@@ -85,21 +96,24 @@ final ElevatorSimulation m_elevator = new ElevatorSimulation();
   }
 
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+  }
 
   @Override
-  public void testExit() {}
-  
+  public void testExit() {
+  }
+
   @Override
   public void simulationPeriodic() {
     // Update the simulation model.
     m_elevator.simulationPeriodic();
-  // SimulatedArena.getInstance().simulationPeriodic();
+    MapleSim.Arena().getInstance().simulationPeriodic();
+    // Logger.recordOutput("FieldSimulation/Algae",
+    //     SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
+    // Logger.recordOutput("FieldSimulation/Coral",
+    //     SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
+
   }
-
- 
-
- 
 
   @Override
   public void close() {

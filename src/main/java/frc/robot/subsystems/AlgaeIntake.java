@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class AlgaeIntake extends SubsystemBase {
   public SparkMax roller = new SparkMax(9, MotorType.kBrushless);
- // public DigitalInput beamBreak = new DigitalInput(0);
+  // public DigitalInput beamBreak = new DigitalInput(0);
   SparkMaxConfig rollerConfig = new SparkMaxConfig();
 
   public AlgaeIntake() {
@@ -21,21 +21,21 @@ public class AlgaeIntake extends SubsystemBase {
     roller.configure(rollerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-  public void volts(double volts){
+  public void volts(double volts) {
     roller.setVoltage(volts);
   }
 
-  public void speed(double speed){
+  public void speed(double speed) {
     roller.setVoltage(speed);
   }
 
-  public void stop(){
+  public void stop() {
     roller.stopMotor();
   }
 
-  public boolean grabbed(){
+  public boolean grabbed() {
     // return beamBreak.get();
-     return true;
+    return true;
   }
 
   @Override
