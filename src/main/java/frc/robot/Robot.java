@@ -9,6 +9,8 @@ import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.SignalLogger;
 
+import edu.wpi.first.math.geometry.Pose3d;
+
 // import org.ironmaple.simulation.SimulatedArena;
 
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -109,13 +111,14 @@ public class Robot extends TimedRobot {
     // Update the simulation model.
     m_elevator.simulationPeriodic();
     MapleSim.Arena().getInstance().simulationPeriodic();
-    Logger.recordOutput("FieldSimulation/Algae",
-        SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
-    Logger.recordOutput("FieldSimulation/Coral",
-        SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
-
+    
   }
-
+void periodic() {
+  Logger.recordOutput("FieldSimulation/Algae", 
+  SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
+Logger.recordOutput("FieldSimulation/Coral", 
+  SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
+}
   @Override
   public void close() {
     m_elevator.close();
