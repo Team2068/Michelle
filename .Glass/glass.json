@@ -57,8 +57,7 @@
   },
   "NetworkTables Settings": {
     "mode": "Client (NT4)",
-    "serverTeam": "localhost",
-    "visible": false
+    "serverTeam": "localhost"
   },
   "Plots": {
     "Plot <0>": {

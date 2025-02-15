@@ -33,30 +33,30 @@ public class ElevatorSimulation implements AutoCloseable {
   // Standard classes for controlling our elevator
   private final ProfiledPIDController m_controller =
       new ProfiledPIDController(
-          0.8,
-          0,
-          0,
-          new TrapezoidProfile.Constraints(2.45, 2.45));
+        Constants.kElevatorKp,
+        Constants.kElevatorKi,
+        Constants.kElevatorKd,
+        new TrapezoidProfile.Constraints(2.45, 2.45));
           ElevatorFeedforward m_feedforward =
           new ElevatorFeedforward(
               0.0,
               0.0,
               0.0,
               0.0);
-  private final Encoder m_encoder = new Encoder(0,1);
-  private final PWMSparkMax m_motor = new PWMSparkMax(0);
+  private final Encoder m_encoder = new Encoder(Constants.kEncoderAChannel,Constants.kEncoderBChannel);
+  private final PWMSparkMax m_motor = new PWMSparkMax(Constants.kMotorPort);
 
   // Simulation classes help us simulate what's going on, including gravity.
   private final ElevatorSim m_elevatorSim =
       new ElevatorSim(
           m_elevatorGearbox,
-          12.0,
-          4.0,
-          Units.inchesToMeters(2.0),
-          0,
-          1.25,
+          Constants.kElevatorGearing,
+          Constants.kCarriageMass,
+          Constants.kElevatorDrumRadius,
+          Constants.kMinElevatorHeightMeters,
+          Constants.kMaxElevatorHeightMeters,
           true,
-          0,
+          Constants.kMinElevatorHeightMeters,
           0.01,
           0.0);
 
@@ -72,7 +72,7 @@ public class ElevatorSimulation implements AutoCloseable {
 
   /** Subsystem constructor. */
   public ElevatorSimulation() {
-    m_encoder.setDistancePerPulse( 2.0 * Math.PI *Units.inchesToMeters(2.0) / 4096);
+    m_encoder.setDistancePerPulse(Constants.kElevatorEncoderDistPerPulse);
 
     // Publish Mechanism2d to SmartDashboard
     // To view the Elevator visualization, select Network Tables -> SmartDashboard -> Elevator Sim

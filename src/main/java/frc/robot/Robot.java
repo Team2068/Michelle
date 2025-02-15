@@ -4,10 +4,13 @@
 
 package frc.robot;
 
+// import org.ironmaple.simulation.SimulatedArena;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Simulation.Constants;
 import frc.robot.subsystems.Simulation.ElevatorSimulation;
 
 public class Robot extends TimedRobot {
@@ -66,7 +69,7 @@ final ElevatorSimulation m_elevator = new ElevatorSimulation();
   public void teleopPeriodic() {
     if (true) {
       // Here, we set the constant setpoint of 0.75 meters.
-      m_elevator.reachGoal(0.75);
+      m_elevator.reachGoal(Constants.kSetpointMeters);
     } else {
       // Otherwise, we update the setpoint to 0.
       m_elevator.reachGoal(0.0);
@@ -91,6 +94,7 @@ final ElevatorSimulation m_elevator = new ElevatorSimulation();
   public void simulationPeriodic() {
     // Update the simulation model.
     m_elevator.simulationPeriodic();
+  // SimulatedArena.getInstance().simulationPeriodic();
   }
 
  
