@@ -5,6 +5,7 @@
 package frc.robot;
 
 import org.ironmaple.simulation.SimulatedArena;
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.SignalLogger;
 
@@ -108,10 +109,10 @@ public class Robot extends TimedRobot {
     // Update the simulation model.
     m_elevator.simulationPeriodic();
     MapleSim.Arena().getInstance().simulationPeriodic();
-    // Logger.recordOutput("FieldSimulation/Algae",
-    //     SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
-    // Logger.recordOutput("FieldSimulation/Coral",
-    //     SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
+    Logger.recordOutput("FieldSimulation/Algae",
+        SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
+    Logger.recordOutput("FieldSimulation/Coral",
+        SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
 
   }
 
