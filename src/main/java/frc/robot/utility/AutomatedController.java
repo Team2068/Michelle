@@ -5,6 +5,7 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 public class AutomatedController {
     public final CommandXboxController controller;
@@ -45,7 +46,6 @@ public class AutomatedController {
     }
 
     public void configure(){
-        
         controller.start().and(controller.getHID()::getBackButtonPressed).onTrue(Util.Do(this::toggleMode));
         controller.back().onTrue(Util.Do(io.chassis::resetOdometry, io.chassis));
 
@@ -55,7 +55,12 @@ public class AutomatedController {
         // LB align Left and Score Coral & Score Barge
         // RB align Right and Score Coral & Score Processor 
 
-        // controller.y().and( automated() ).onTrue(Util.D      
+        controller.x().onTrue(io.chassis.routine.quasistatic(SysIdRoutine.Direction.kForward));
+        controller.a().onTrue(io.chassis.routine.quasistatic(SysIdRoutine.Direction.kReverse));
+        controller.y().onTrue(io.chassis.routine.dynamic(SysIdRoutine.Direction.kForward));
+        controller.b().onTrue(io.chassis.routine.dynamic(SysIdRoutine.Direction.kReverse));
+
+
         controller.povDown().and( manual() ).onTrue(Util.Do(io.chassis::toggle));
         controller.povLeft().and( manual() ).onTrue(Util.Do(io.chassis::syncEncoders));
         controller.povRight().and( manual() ).and(() -> {return !io.chassis.active;}).onTrue(new InstantCommand(io.chassis::zeroAbsolute)); // Add the Rumble effect

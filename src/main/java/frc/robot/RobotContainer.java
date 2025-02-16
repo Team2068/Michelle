@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -27,6 +28,7 @@ public class RobotContainer {
   private final SendableChooser<Command> auto_selector;
   private Command current_auto = new PrintCommand("Temp");
 
+
   public RobotContainer() {
     main = new AutomatedController(0, io);
     backup = new AutomatedController(1, io);
@@ -40,6 +42,9 @@ public class RobotContainer {
     SmartDashboard.putData("Main-Controller Mode", main.selector);
     SmartDashboard.putData("Backup-Controller Mode", main.selector);
     io.chassis.setDefaultCommand(new DefaultDrive(io, main.controller));
+
+    SignalLogger.setPath("/media/sda1/ctre-logs/");
+
     // DogLog.setOptions(new DogLogOptions().withCaptureDs(true));
     // SmartDashboard.putData("Autonomous", ); // TBD
   }

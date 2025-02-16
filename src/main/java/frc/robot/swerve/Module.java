@@ -97,6 +97,10 @@ public class Module {
         return drive.getRotorVelocity().getValueAsDouble() * Swerve.PI2 * .502 * Units.inchesToMeters(3);
     }
 
+    public double voltage(){
+        return drive.getMotorVoltage().getValueAsDouble();
+    }
+
     public double angle() {
         return encoder.angle();
     }
