@@ -4,29 +4,29 @@
 
 package frc.robot;
 
-import org.ironmaple.simulation.SimulatedArena;
-import org.littletonrobotics.junction.Logger;
+// import edu.wpi.first.math.geometry.Pose2d;
+// import edu.wpi.first.networktables.NetworkTableInstance;
+// import edu.wpi.first.networktables.StructPublisher;
 
-import com.ctre.phoenix6.SignalLogger;
+// import com.ctre.phoenix6.SignalLogger;
 
-import edu.wpi.first.math.geometry.Pose3d;
-
-// import org.ironmaple.simulation.SimulatedArena;
+// import edu.wpi.first.math.geometry.Pose3d;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.Elevator;
+// import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Simulation.Constants;
 import frc.robot.subsystems.Simulation.ElevatorSimulation;
-import frc.robot.subsystems.Simulation.MapleSim;
+import frc.robot.subsystems.MapleSim.*;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
   final ElevatorSimulation m_elevator = new ElevatorSimulation();
+  final MapleSim Arena = new MapleSim();
 
   public Robot() {
     m_robotContainer = new RobotContainer();
@@ -83,9 +83,9 @@ public class Robot extends TimedRobot {
     if (true) {
       // Here, we set the constant setpoint of 0.75 meters.
       m_elevator.reachGoal(Constants.kSetpointMeters);
-    } else {
-      // Otherwise, we update the setpoint to 0.
-      m_elevator.reachGoal(0.0);
+      // } else {
+      // // Otherwise, we update the setpoint to 0.
+      // m_elevator.reachGoal(0.0);
     }
   }
 
@@ -110,15 +110,14 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {
     // Update the simulation model.
     m_elevator.simulationPeriodic();
-    MapleSim.Arena().getInstance().simulationPeriodic();
-    
+    Arena.simulationPeriodic();
+
   }
-void periodic() {
-  Logger.recordOutput("FieldSimulation/Algae", 
-  SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
-Logger.recordOutput("FieldSimulation/Coral", 
-  SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
-}
+
+  void periodic() {
+
+  }
+
   @Override
   public void close() {
     m_elevator.close();
