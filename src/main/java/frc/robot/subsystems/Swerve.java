@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -24,6 +26,8 @@ import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
+import edu.wpi.first.units.measure.MutAngle;
+import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -203,9 +207,13 @@ public class Swerve extends SubsystemBase {
         }
     }
 
-    final MutVoltage appliedVoltage = Volts.mutable(0);
-    final MutDistance distance = Meters.mutable(0);
-    final MutLinearVelocity velocity = MetersPerSecond.mutable(0);
+    final MutVoltage[] driveVoltage = {Volts.mutable(0), Volts.mutable(0), Volts.mutable(0), Volts.mutable(0)};
+    final MutDistance[] distance = {Meters.mutable(0), Meters.mutable(0), Meters.mutable(0), Meters.mutable(0)};
+    final MutLinearVelocity[] velocity = {MetersPerSecond.mutable(0),MetersPerSecond.mutable(0),MetersPerSecond.mutable(0),MetersPerSecond.mutable(0)};
+
+    final MutVoltage[] steerVoltage = {Volts.mutable(0), Volts.mutable(0), Volts.mutable(0), Volts.mutable(0)};
+    final MutAngle[] angle = {Radians.mutable(0),Radians.mutable(0),Radians.mutable(0),Radians.mutable(0)};
+    final MutAngularVelocity[] angularVelocity = {RadiansPerSecond.mutable(0),RadiansPerSecond.mutable(0),RadiansPerSecond.mutable(0),RadiansPerSecond.mutable(0)};
 
 
     public final SysIdRoutine routine = new SysIdRoutine(new Config(), 
@@ -214,10 +222,15 @@ public class Swerve extends SubsystemBase {
             mod.set(voltage.magnitude(), 0);
     }, log -> {
         for (int i = 0; i < 4; i++){
-            log.motor(frc.robot.swerve.Swerve.Constants.LAYOUT_TITLE[i])
-            .voltage(appliedVoltage.mut_replace(modules[i].voltage(), Volts))
-            .linearPosition(distance.mut_replace(modules[i].drivePosition(), Meters))
-            .linearVelocity(velocity.mut_replace(modules[i].velocity(), MetersPerSecond));
+            log.motor(constants.LAYOUT_TITLE[i] + " [Drive]")
+            .voltage(driveVoltage[i].mut_replace(modules[i].voltage(), Volts))
+            .linearPosition(distance[i].mut_replace(modules[i].drivePosition(), Meters))
+            .linearVelocity(velocity[i].mut_replace(modules[i].velocity(), MetersPerSecond));
+
+            log.motor(constants.LAYOUT_TITLE[i] + " [Steer]")
+            .voltage(steerVoltage[i].mut_replace(modules[i].steerVoltage(), Volts))
+            .angularPosition(angle[i].mut_replace(modules[i].angle(), Radians))
+            .angularVelocity(angularVelocity[i].mut_replace(modules[i].steerVelocity(), RadiansPerSecond));
         }
     }, this));
 

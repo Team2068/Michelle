@@ -9,12 +9,14 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.util.Units;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
 
 public class Module {
     public final TalonFX drive;
@@ -103,6 +105,14 @@ public class Module {
 
     public double angle() {
         return encoder.angle();
+    }
+
+    public double steerVelocity(){
+        return steer.getVelocity().getValue().in(RadiansPerSecond);
+    }
+
+    public double steerVoltage(){
+        return steer.getMotorVoltage().getValueAsDouble();
     }
 
     public void stop() {
