@@ -6,6 +6,7 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -38,6 +39,14 @@ public class Util {
 
     public static InstantCommand Do(Runnable action, Subsystem... systems) {
         return new InstantCommand(action, systems);
+    }
+
+    public static Command Do(Runnable action, Runnable end, Subsystem... systems) {
+        return Commands.runEnd(action, end, systems);
+    }
+
+    public static Command DoUntil(Runnable action, Runnable end, BooleanSupplier Condition, Subsystem... systems) {
+        return Commands.runEnd(action, end, systems).until(Condition);
     }
 
     public static ConditionalCommand Do(Command onTrue, Command onFalse, BooleanSupplier condition){
