@@ -38,8 +38,8 @@ public class AlgaeIntake extends SubsystemBase {
     return true;
   }
 
-  @Override
-  public void periodic() {
-    // SmartDashboard.putBoolean("Intake Full", grabbed());
-  }
+  // @Override
+  // public void periodic() {
+  //   // SmartDashboard.putBoolean("Intake Full", grabbed());
+  // }
 }

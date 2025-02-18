@@ -27,8 +27,8 @@ public class Hang extends SubsystemBase {
     hang.stopMotor();
   }
 
-  @Override
-  public void periodic() {
-    SmartDashboard.putNumber("Hang Pos", hang.getPosition().getValueAsDouble());
-  }
+  // @Override
+  // public void periodic() {
+  //   SmartDashboard.putNumber("Hang Pos", hang.getPosition().getValueAsDouble());
+  // }
 }

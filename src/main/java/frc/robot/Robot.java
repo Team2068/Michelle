@@ -114,9 +114,7 @@ public class Robot extends TimedRobot {
 
   }
 
-  void periodic() {
-
-  }
+  
 
   @Override
   public void close() {

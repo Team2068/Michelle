@@ -95,20 +95,20 @@ public class Elevator extends SubsystemBase {
     move(L4);
   }
 
-  @Override
-  public void periodic() {
-    if (stopped) return;
+  // @Override
+  // public void periodic() {
+  //   if (stopped) return;
 
-    State out = profile.calculate(time.get(), new State(L2, Barge), new State(target, 0));
-    motor.getClosedLoopController().setReference(out.position, ControlType.kPosition);
+  //   State out = profile.calculate(time.get(), new State(L2, Barge), new State(target, 0));
+  //   motor.getClosedLoopController().setReference(out.position, ControlType.kPosition);
     
-    // TODO: Maybe log Supplied Volts
-    SmartDashboard.putNumber("Elevator Height", motor.getEncoder().getPosition());
+  //   // TODO: Maybe log Supplied Volts
+  //   SmartDashboard.putNumber("Elevator Height", motor.getEncoder().getPosition());
     
-    SmartDashboard.putNumber("Elevator Target Height", target);
-    SmartDashboard.putNumber("Elevator cTarget Height", out.position);
+  //   SmartDashboard.putNumber("Elevator Target Height", target);
+  //   SmartDashboard.putNumber("Elevator cTarget Height", out.position);
 
-    SmartDashboard.putNumber("Elevator Speed", motor.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Elevator cTarget Velocity", out.velocity);
-  }
+  //   SmartDashboard.putNumber("Elevator Speed", motor.getEncoder().getVelocity());
+  //   SmartDashboard.putNumber("Elevator cTarget Velocity", out.velocity);
+  // }
 }

@@ -63,8 +63,8 @@ public class IO extends SubsystemBase {
         StructPublisher<Pose2d> estimated_pose = NetworkTableInstance.getDefault().getTable("Debug")
                         .getStructTopic("Estimated Pose", Pose2d.struct).publish();
 
-        @Override
-        public void periodic() {
+        // @Override
+        // public void periodic() {
 
-        }
+        // }
 }
