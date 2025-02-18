@@ -221,17 +221,17 @@ public class Swerve extends SubsystemBase {
         for (Module mod : modules)
             mod.set(voltage.magnitude(), 0);
     }, log -> {
-        for (int i = 0; i < 4; i++){
-            log.motor(constants.LAYOUT_TITLE[i] + " [Drive]")
-            .voltage(driveVoltage[i].mut_replace(modules[i].voltage(), Volts))
-            .linearPosition(distance[i].mut_replace(modules[i].drivePosition(), Meters))
-            .linearVelocity(velocity[i].mut_replace(modules[i].velocity(), MetersPerSecond));
+        // for (int i = 0; i < 4; i++){
+        //     log.motor(constants.LAYOUT_TITLE[i] + " [Drive]")
+        //     .voltage(modules[i].voltage())
+        //     .linearPosition(distance[i].mut_replace(modules[i].drivePosition(), Meters))
+        //     .linearVelocity(modules[i].velocity());
 
-            log.motor(constants.LAYOUT_TITLE[i] + " [Steer]")
-            .voltage(steerVoltage[i].mut_replace(modules[i].steerVoltage(), Volts))
-            .angularPosition(angle[i].mut_replace(modules[i].angle(), Radians))
-            .angularVelocity(angularVelocity[i].mut_replace(modules[i].steerVelocity(), RadiansPerSecond));
-        }
+        //     log.motor(constants.LAYOUT_TITLE[i] + " [Steer]")
+        //     .voltage(modules[i].steerVoltage())
+        //     .angularPosition(angle[i].mut_replace(modules[i].angle(), Radians))
+        //     .angularVelocity(modules[i].steerVelocity());
+        // }
     }, this));
 
     public ChassisSpeeds getSpeeds() {

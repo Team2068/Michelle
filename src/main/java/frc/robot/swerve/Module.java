@@ -9,7 +9,13 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.util.Units;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Voltage;
+
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Volts;
+
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -95,24 +101,24 @@ public class Module {
         return drive.getPosition().getValueAsDouble() * .432 * WHEEL_DIAMETER;
     }
 
-    public double velocity() {
-        return drive.getRotorVelocity().getValueAsDouble() * Swerve.PI2 * .502 * Units.inchesToMeters(3);
+    public LinearVelocity velocity() {
+        return MetersPerSecond.of(drive.getVelocity().getValueAsDouble() * Swerve.PI2 * .432 * WHEEL_DIAMETER);
     }
 
-    public double voltage(){
-        return drive.getMotorVoltage().getValueAsDouble();
+    public Voltage voltage(){
+        return drive.getMotorVoltage().getValue();
     }
 
     public double angle() {
         return encoder.angle();
     }
 
-    public double steerVelocity(){
-        return steer.getVelocity().getValue().in(RadiansPerSecond);
+    public AngularVelocity steerVelocity(){
+        return encoder.velocity();
     }
 
-    public double steerVoltage(){
-        return steer.getMotorVoltage().getValueAsDouble();
+    public Voltage steerVoltage(){
+        return Volts.of(steer.getBusVoltage());
     }
 
     public void stop() {

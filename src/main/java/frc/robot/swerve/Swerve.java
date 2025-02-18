@@ -7,7 +7,11 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.reduxrobotics.sensors.canandmag.Canandmag;
 import com.reduxrobotics.sensors.canandmag.CanandmagSettings;
 
+import edu.wpi.first.units.AngularAccelerationUnit;
+import edu.wpi.first.units.measure.AngularVelocity;
+
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import java.io.IOException;
 
@@ -101,6 +105,7 @@ public class Swerve {
         public void zero();
         public boolean connected();
         public double angle();
+        public AngularVelocity velocity();
     }
 
     public static class Cancoder implements Encoder {
@@ -128,6 +133,10 @@ public class Swerve {
         public double angle() {
             return ((encoder.getAbsolutePosition().getValue().in(Radians) + PI2) % PI2);
         }
+
+        public AngularVelocity velocity(){
+            return encoder.getVelocity().getValue();
+        }
     }
 
     public static class Canand implements Encoder {
@@ -151,6 +160,10 @@ public class Swerve {
 
         public double angle() {
             return (encoder.getAbsPosition() * PI2) % PI2;
+        }
+
+        public AngularVelocity velocity(){
+            return RadiansPerSecond.of(encoder.getVelocity());
         }
     }
 }
