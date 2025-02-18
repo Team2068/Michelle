@@ -12,12 +12,12 @@ import frc.robot.utility.IO;
 import frc.robot.utility.LimelightHelpers;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class aimbot extends Command {
+public class Aimbot extends Command {
 
   IO io;
   PIDController pid = new PIDController(0.1, 0.00, 0.00);
 
-  public aimbot(IO io) {
+  public Aimbot(IO io) {
     this.io = io;
     pid.setTolerance(10);
     addRequirements(io.limelight, io.chassis);

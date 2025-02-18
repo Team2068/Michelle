@@ -5,12 +5,13 @@
 package frc.robot.commands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.utility.IO;
-import frc.robot.utility.LimelightHelpers;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class aimbot_two_point_o extends Command {
+public class AutoAlign extends Command {
   IO io;
 
   public static final int LEFT = 0;
@@ -22,7 +23,7 @@ public class aimbot_two_point_o extends Command {
   public static final int ROTATION = 2;
   public static final double[][][] TagPose = {
     // all units in meters and all rotations in degrees
-    // {x, y, rotation}     {left pole}, {center tag}, {right pole}
+    // {x, y, rotation}     {left pole}, {center tag}, {right pole}                           **origin of blue reef is (4.48932, 4.0259), origin of red reef is (13.05831, 4.0259)
 
     {{0.0,        0.0,       0.0}, {16.6972,  0.65532,  126}, {0.0,        0.0,       0.0}}, // TAG 1
     {{0.0,        0.0,       0.0}, {16.6972,  7.39648,  234}, {0.0,        0.0,       0.0}}, // TAG 2
@@ -56,15 +57,53 @@ public class aimbot_two_point_o extends Command {
   public double poleX;
   public double poleY;
   public double tagRotation;
-  /** Creates a new aimbot_two_point_o. */
-  public aimbot_two_point_o(int side /** make sure that the number is either 1 or 3*/) {
-    poleX = TagPose[io.limelight.tag-1][side][X];
-    poleY = TagPose[io.limelight.tag-1][side][Y];
-    tagRotation = TagPose[io.limelight.tag][CENTRE][ROTATION];
+  int side;
+  int tag;
+  int zone;
+
+  public AutoAlign(int side /** make sure that the number is either 0 or 2*/) {
+    this.side = side;
+    pidR.enableContinuousInput(0.0, 360.0); // CHECK IF THIS ACTUALLY ALLOWS WRAPPING
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    // find zone first
+    Boolean cZone = DriverStation.getAlliance().get() == Alliance.Blue;
+    zone = (cZone)? 
+    (int) Math.atan((io.chassis.pose().getY()- 4.0259)/(io.chassis.pose().getX()-4.48932)): 
+    (int) Math.atan((io.chassis.pose().getY()- 4.0259)/(io.chassis.pose().getX()-13.05831));
+    zone = zone/60;
+
+    switch (zone) {
+      case 1:
+        tag = (cZone)? 20: 8;
+        break;
+      case 2:
+        tag = (cZone)? 19: 9;
+        break;
+      case 3:
+        tag = (cZone)? 18: 10;
+        break;
+      case 4:
+        tag = (cZone)? 17: 11;
+        break;
+      case 5:
+        tag = (cZone)? 22: 6;
+        break;
+      default:
+        tag = (cZone)? 21: 7;
+        break;
+    }
+    // then check if the zone 
+
+    // tag = zone
+    // poleX = TagPose[tag][side][X];
+    // poleY = TagPose[tag][side][Y];
+    poleX = TagPose[tag - 1][side][X];
+    poleY = TagPose[tag - 1][side][Y];
+    tagRotation = TagPose[tag - 1][CENTRE][ROTATION];
+  }
 
   @Override
   public void execute() {
@@ -77,10 +116,12 @@ public class aimbot_two_point_o extends Command {
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    io.chassis.drive(new ChassisSpeeds());
+  }
 
   @Override
   public boolean isFinished() {
-    return pidX.atSetpoint() && pidY.atSetpoint() && pidR.atSetpoint() || !LimelightHelpers.getTV("limelight-main");
+    return (pidX.atSetpoint() && pidY.atSetpoint() && pidR.atSetpoint());
   }
 }
