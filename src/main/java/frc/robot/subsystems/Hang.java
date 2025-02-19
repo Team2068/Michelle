@@ -3,7 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Hang extends SubsystemBase {
@@ -29,6 +29,6 @@ public class Hang extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Hang Pos", hang.getPosition().getValueAsDouble());
+    DogLog.log("Hang/Position", hang.getPosition().getValueAsDouble());
   }
 }

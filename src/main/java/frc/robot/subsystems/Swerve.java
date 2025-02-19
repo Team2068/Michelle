@@ -6,7 +6,6 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import dev.doglog.DogLog;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -228,28 +227,17 @@ public class Swerve extends SubsystemBase {
         Pose2d pose = odometry.update(rotation(), modulePositions());
         posePublisher.set(pose);
 
-        // SmartDashboard.putNumber("X position", pose.getX());
-        // SmartDashboard.putNumber("Y position", pose.getY());
+        DogLog.log("Swerve/Current States", moduleStates(modules));
+        DogLog.log("Swerve/Target States", states);
 
-        // SmartDashboard.putNumber("Odometry rotation", rotation().getDegrees());
-        // SmartDashboard.putNumber("Pigeon Yaw", pigeon2.getYaw().getValueAsDouble());
-        // SmartDashboard.putNumber("Pigeon Pitch",
-        // pigeon2.getPitch().getValueAsDouble());
-        // SmartDashboard.putNumber("Pigeon Roll",
-        // pigeon2.getRoll().getValueAsDouble());
+        DogLog.log("Swerve/X Position", pose.getX());
+        DogLog.log("Swerve/Y Position", pose.getY());
+        DogLog.log("Swerve/Pose", pose);
+        DogLog.log("Swerve/Odometry Rotation", rotation().getDegrees());
 
-        // SmartDashboard.putString("Drive Mode", (field_oritented) ? "Field-Oriented" : "Robot-Oriented");
-
-        // DogLog.log("Swerve/current_states", moduleStates(modules));
-        // DogLog.log("Swerve/target_states", states);
-        // DogLog.log("Swerve/pose", pose);
-        // DogLog.log("Swerve/X_position", pose.getX());
-        // DogLog.log("Swerve/Y_position", pose.getY());
-        // DogLog.log("Swerve/Odometry_rotation", rotation().getDegrees());
-        // DogLog.log("Swerve/Pigeon_Yaw", pigeon2.getYaw().getValueAsDouble());
-        // DogLog.log("Swerve/Pigeon_Pitch", pigeon2.getPitch().getValueAsDouble());
-        // DogLog.log("Swerve/Pigeon_Roll", pigeon2.getRoll().getValueAsDouble());
-        // DogLog.log("Swerve/Drive_Mode", (field_oritented) ? "Field-Oriented" :
-        // "Robot-Oriented");
+        DogLog.log("Swerve/Pigeon Yaw", pigeon2.getYaw().getValueAsDouble());
+        DogLog.log("Swerve/Pigeon Pitch", pigeon2.getPitch().getValueAsDouble());
+        DogLog.log("Swerve/Pigeon Roll", pigeon2.getRoll().getValueAsDouble());
+        DogLog.log("Swerve/Drive Mode", (field_oritented) ? "Field-Oriented" : "Robot-Oriented");
     }
 }

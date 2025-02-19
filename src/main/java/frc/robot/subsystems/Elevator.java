@@ -14,7 +14,6 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.*;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Elevator extends SubsystemBase {
@@ -106,18 +105,11 @@ public class Elevator extends SubsystemBase {
     motor.getClosedLoopController().setReference(out.position, ControlType.kPosition);
     
     // TODO: Maybe log Supplied Volts
-    SmartDashboard.putNumber("Elevator Height", motor.getEncoder().getPosition());
-    
-    SmartDashboard.putNumber("Elevator Target Height", target);
-    SmartDashboard.putNumber("Elevator cTarget Height", out.position);
-
-    SmartDashboard.putNumber("Elevator Speed", motor.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Elevator cTarget Velocity", out.velocity);
-
-    // DogLog.log("Elevator/Height", motor.getEncoder().getPosition());
-    // DogLog.log("Elevator/Target Height", target);
-    // DogLog.log("Elevator/cTarget Height", out.position);
-    // DogLog.log("Elevator/Speed", motor.getEncoder().getVelocity());
-    // DogLog.log("Elevator/cTarget Velocity", out.velocity);
+    DogLog.log("Elevator/Height", motor.getEncoder().getPosition());
+    DogLog.log("Elevator/Target Height", target);
+    DogLog.log("Elevator/Profiled Target Height", out.position);
+    DogLog.log("Elevator/Speed", motor.getEncoder().getVelocity());
+    DogLog.log("Elevator/Profiled Target Velocity", out.velocity);
+    // DogLog.log("Elevator/Supplied Voltage [Lead]", );
   }
 }
