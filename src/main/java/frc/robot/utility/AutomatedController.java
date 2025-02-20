@@ -63,13 +63,14 @@ public class AutomatedController {
         // controller.leftBumper().and(automated()).onTrue(new ConditionalCommand(new ScoreReef(io, false), new ScoreBarge(io),
         //     io.limelight::reefZone));
 
-        controller.leftBumper().onTrue(new AutoAlign(0));
-        controller.rightBumper().onTrue(new AutoAlign(2));
+        controller.leftBumper().onTrue(new AutoAlign(0, io));
+        controller.rightBumper().onTrue(new AutoAlign(2, io));
 
         // controller.rightBumper().and(automated()).onTrue(new ConditionalCommand(new ScoreReef(io, true), new ReleaseAlgae(io),
         //     io.limelight::reefZone));
 
         controller.a().toggleOnTrue(new Aimbot(io));
+        controller.b().toggleOnTrue(new AutoAlign(0, io));
 
         controller.povDown().and( manual() ).onTrue(Util.Do(io.chassis::toggle));
         controller.povLeft().and( manual() ).onTrue(Util.Do(io.chassis::syncEncoders));

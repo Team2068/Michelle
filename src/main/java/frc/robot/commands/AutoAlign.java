@@ -61,8 +61,9 @@ public class AutoAlign extends Command {
   int tag;
   int zone;
 
-  public AutoAlign(int side /** make sure that the number is either 0 or 2*/) {
+  public AutoAlign(int side /** make sure that the number is either 0 or 2*/, IO io) {
     this.side = side;
+    this.io = io;
     pidR.enableContinuousInput(0.0, 360.0); // CHECK IF THIS ACTUALLY ALLOWS WRAPPING
   }
 

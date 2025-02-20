@@ -6,6 +6,8 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -24,6 +26,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.swerve.Module;
 import frc.robot.swerve.Swerve.Constants;
+import frc.robot.utility.LimelightHelpers;
 import frc.robot.utility.Util;
 
 public class Swerve extends SubsystemBase {
@@ -33,14 +36,17 @@ public class Swerve extends SubsystemBase {
 
     public final Pigeon2 pigeon2 = new Pigeon2(Constants.PIGEON_ID);
 
-    // public SwerveDrivePoseEstimator poseEstimator;
     StructArrayPublisher<SwerveModuleState> current_states = Util.table
             .getStructArrayTopic("Current Module States", SwerveModuleState.struct).publish();
     StructArrayPublisher<SwerveModuleState> target_states = Util.table
             .getStructArrayTopic("Target Module States", SwerveModuleState.struct).publish();
     StructPublisher<Pose2d> posePublisher = NetworkTableInstance.getDefault().getTable("Debug")
             .getStructTopic("Current pose", Pose2d.struct).publish();
+    StructPublisher<Pose2d> estimatedPosePublisher = Util.table
+            .getStructTopic("Estimated Pose", Pose2d.struct).publish();
 
+    SwerveDrivePoseEstimator estimator;
+ 
     final SwerveDriveOdometry odometry;
     final Module[] modules = new Module[4];
     ChassisSpeeds speeds = new ChassisSpeeds();
@@ -55,8 +61,6 @@ public class Swerve extends SubsystemBase {
                 createTranslation(-constants.TRACKWIDTH / 2.0, constants.WHEELBASE / 2.0),
                 createTranslation(-constants.TRACKWIDTH / 2.0, -constants.WHEELBASE / 2.0));
 
-        // poseEstimator = new SwerveDrivePoseEstimator(kinematics, rotation(), modulePositions(), pose());
-
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
         for (int i = 0; i < modules.length; i++) {
             modules[i] = new Module(
@@ -69,6 +73,11 @@ public class Swerve extends SubsystemBase {
                     constants.comp);
         }
 
+        odometry = new SwerveDriveOdometry(kinematics, rotation(), modulePositions(),
+                new Pose2d(0, 0, new Rotation2d()));
+
+        estimator = new SwerveDrivePoseEstimator(kinematics, rotation(), modulePositions(), odometry.getPoseMeters());
+
         AutoBuilder.configure(
                 this::pose,
                 this::resetOdometry,
@@ -76,9 +85,7 @@ public class Swerve extends SubsystemBase {
                 (speeds, feedforwards) -> drive(speeds),
                 new PPHolonomicDriveController(
                         new PIDConstants(constants.XControllerP, 0.0, constants.XControllerD), // Translation PID
-                                                                                               // constants
                         new PIDConstants(constants.ThetaControllerP, 0, constants.ThetaControllerD, 0.0) // Rotation PID
-                                                                                                         // constants
                 ),
                 constants.autoConfig,
                 () -> {
@@ -86,9 +93,6 @@ public class Swerve extends SubsystemBase {
                     return alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red;
                 },
                 this);
-
-        odometry = new SwerveDriveOdometry(kinematics, rotation(), modulePositions(),
-                new Pose2d(0, 0, new Rotation2d()));
     }
 
     private Translation2d createTranslation(double x, double y) {
@@ -157,6 +161,7 @@ public class Swerve extends SubsystemBase {
 
     public Pose2d pose() {
         return odometry.getPoseMeters();
+        // return estimatePose();
     }
 
     public void resetOdometry() {
@@ -216,6 +221,18 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    public Pose2d estimatePose() {
+        LimelightHelpers.SetRobotOrientation("limelight-main", absoluteRotation(), 0,0,0,0,0);
+        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-main");
+        if (mt2 == null) return new Pose2d();
+        if (!(Math.abs(pigeon2.getAngularVelocityXWorld().getValueAsDouble()) > 720|| mt2.tagCount == 0)){
+            estimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+            estimator.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
+            estimatedPosePublisher.set(mt2.pose);
+        }
+        return mt2.pose;
+    }
+
     public void periodic() {
         SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
         if (active && speeds != new ChassisSpeeds())
@@ -225,7 +242,9 @@ public class Swerve extends SubsystemBase {
         target_states.set(states);
 
         Pose2d pose = odometry.update(rotation(), modulePositions());
+        estimatePose();
         posePublisher.set(pose);
+
 
         DogLog.log("Swerve/Current States", moduleStates(modules));
         DogLog.log("Swerve/Target States", states);
