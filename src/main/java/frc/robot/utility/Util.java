@@ -45,6 +45,12 @@ public class Util {
         return Commands.runEnd(action, end, systems);
     }
 
+    public static InstantCommand blank = new InstantCommand();
+
+    public static Command DoCheck(Command cmd, BooleanSupplier condition, Subsystem... systems){
+        return new ConditionalCommand(cmd, blank, condition);
+    }
+
     public static Command DoUntil(Runnable action, Runnable end, BooleanSupplier Condition, Subsystem... systems) {
         return Commands.runEnd(action, end, systems).until(Condition);
     }

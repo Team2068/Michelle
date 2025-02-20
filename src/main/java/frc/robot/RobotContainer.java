@@ -5,8 +5,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -27,7 +25,7 @@ public class RobotContainer {
 
 
   private final SendableChooser<Command> auto_selector;
-  private Command current_auto = new PrintCommand("Temp");
+  private Command current_auto = new PrintCommand("");
 
   public RobotContainer() {
     main = new AutomatedController(0, io);
@@ -42,8 +40,13 @@ public class RobotContainer {
     SmartDashboard.putData("Main-Controller Mode", main.selector);
     SmartDashboard.putData("Backup-Controller Mode", main.selector);
     io.chassis.setDefaultCommand(new DefaultDrive(io, main.controller));
-    // DogLog.setOptions(new DogLogOptions().withCaptureDs(true));
-    // SmartDashboard.putData("Autonomous", ); // TBD
+
+    DogLog.setOptions(new DogLogOptions()
+    .withCaptureDs(true)
+    .withCaptureConsole(true)
+    .withLogExtras(true));
+
+    DogLog.setEnabled( false); // TODO: Turn back on when we're testing proper
   }
 
   public Command getAutonomousCommand() {

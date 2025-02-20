@@ -5,18 +5,20 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.utility.IO;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ScoreBarge extends ParallelCommandGroup {
-  /** Creates a new ScoreBarge. */
-  public ScoreBarge(IO io) {
-    addCommands(
-      // TODO: Move to Height
-      // TODO: Release Algae
-      // TODO: Move back to Resting Position
+public class ScoreAlgae extends ParallelCommandGroup {
+
+  public ScoreAlgae(IO io, boolean barge) {
+    addCommands( 
+      //TODO: Check if we have Algae
+      io.elevator.move((barge) ? 5 : 0),
+      new AutoAlign(1),
+      new WaitUntilCommand(io.elevator::atPosition),
+      new Intake(io, false, true),
+      io.elevator.move(0)
     );
   }
 }

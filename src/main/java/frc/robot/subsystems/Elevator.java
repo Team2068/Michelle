@@ -14,6 +14,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.*;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Elevator extends SubsystemBase {
@@ -73,6 +74,23 @@ public class Elevator extends SubsystemBase {
     time.restart();
   }
 
+  public InstantCommand move(int level){
+    return new InstantCommand(() -> {
+      switch (level) {
+        case 2: L2();
+          break;
+        case 3: L3();
+          break;
+        case 4: L4();
+          break;
+        case 5: Barge();
+        break;
+        default: rest(); // LEVEL 1 // TODO: See if we need to change the height we go to
+          break;
+      }
+    },this);
+  }
+
   public double elevatorPos() {
     return motor.getEncoder().getPosition();
   }
@@ -95,6 +113,14 @@ public class Elevator extends SubsystemBase {
 
   public void L4(){
     move(L4);
+  }
+
+  public void Barge(){
+    move(Barge);
+  }
+
+  public boolean atPosition(){
+    return profile.isFinished(time.get());
   }
 
   @Override

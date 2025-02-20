@@ -5,16 +5,19 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.utility.IO;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ScoreReef extends SequentialCommandGroup {
 
-  public ScoreReef(IO io, boolean score_right) {
+  public ScoreReef(IO io, boolean score_right, int Level) {
     addCommands(
-
+      // TODO: Check if we have coral & if we don't have
+      io.elevator.move(Level),
+      new AutoAlign((score_right) ? 2 : 1),
+      new WaitUntilCommand(io.elevator::atPosition), // TODO: Wait until we're at the height
+      new Intake(io, true, true), // TODO: Set to Reef Scoring Angle
+      io.elevator.move(0)
     );
   }
 }

@@ -5,9 +5,6 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.ReleaseAlgae;
-import frc.robot.commands.ScoreBarge;
-import frc.robot.commands.ScoreReef;
 import frc.robot.commands.Aimbot;
 import frc.robot.commands.AutoAlign;
 
