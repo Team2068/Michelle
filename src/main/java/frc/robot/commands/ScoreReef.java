@@ -14,7 +14,7 @@ public class ScoreReef extends SequentialCommandGroup {
     addCommands(
       // TODO: Check if we have coral & if we don't have
       io.elevator.move(Level),
-      new AutoAlign((score_right) ? 2 : 1),
+      new AutoAlign((score_right) ? 2 : 1, io),
       new WaitUntilCommand(io.elevator::atPosition), // TODO: Wait until we're at the height
       new Intake(io, true, true), // TODO: Set to Reef Scoring Angle
       io.elevator.move(0)

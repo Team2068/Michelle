@@ -52,7 +52,7 @@ public class AutoAlign extends Command {
   // will eventually be seperatly adjusted
   PIDController pidY = new PIDController(0.10, 0.00, 0.00);
   PIDController pidX = new PIDController(0.10, 0.00, 0.00);
-  PIDController pidR = new PIDController(0.10, 0.00, 0.00);
+  PIDController pidR = new PIDController(0.01, 0.00, 0.00);
 
   public double poleX;
   public double poleY;

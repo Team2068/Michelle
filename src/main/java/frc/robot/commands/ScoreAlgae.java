@@ -15,7 +15,7 @@ public class ScoreAlgae extends ParallelCommandGroup {
     addCommands( 
       //TODO: Check if we have Algae
       io.elevator.move((barge) ? 5 : 0),
-      new AutoAlign(1),
+      new AutoAlign(1, io),
       new WaitUntilCommand(io.elevator::atPosition),
       new Intake(io, false, true),
       io.elevator.move(0)
