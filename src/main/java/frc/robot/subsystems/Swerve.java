@@ -215,23 +215,27 @@ public class Swerve extends SubsystemBase {
     final MutAngle[] angle = {Radians.mutable(0),Radians.mutable(0),Radians.mutable(0),Radians.mutable(0)};
     final MutAngularVelocity[] angularVelocity = {RadiansPerSecond.mutable(0),RadiansPerSecond.mutable(0),RadiansPerSecond.mutable(0),RadiansPerSecond.mutable(0)};
 
-
-    public final SysIdRoutine routine = new SysIdRoutine(new Config(), 
+    public final SysIdRoutine routine = new SysIdRoutine(new Config(
+        null,
+        Volts.of(4),
+        null,
+        null
+    ), 
     new SysIdRoutine.Mechanism(voltage -> {
         for (Module mod : modules)
             mod.set(voltage.magnitude(), 0);
     }, log -> {
-        // for (int i = 0; i < 4; i++){
-        //     log.motor(constants.LAYOUT_TITLE[i] + " [Drive]")
-        //     .voltage(modules[i].voltage())
-        //     .linearPosition(distance[i].mut_replace(modules[i].drivePosition(), Meters))
-        //     .linearVelocity(modules[i].velocity());
+        for (int i = 0; i < 4; i++){
+            log.motor(constants.LAYOUT_TITLE[i] + " [Drive]")
+            .voltage(modules[i].voltage())
+            .linearPosition(distance[i].mut_replace(modules[i].drivePosition(), Meters))
+            .linearVelocity(modules[i].velocity());
 
-        //     log.motor(constants.LAYOUT_TITLE[i] + " [Steer]")
-        //     .voltage(modules[i].steerVoltage())
-        //     .angularPosition(angle[i].mut_replace(modules[i].angle(), Radians))
-        //     .angularVelocity(modules[i].steerVelocity());
-        // }
+            log.motor(constants.LAYOUT_TITLE[i] + " [Steer]")
+            .voltage(modules[i].steerVoltage())
+            .angularPosition(angle[i].mut_replace(modules[i].angle(), Radians))
+            .angularVelocity(modules[i].steerVelocity());
+        }
     }, this));
 
     public ChassisSpeeds getSpeeds() {

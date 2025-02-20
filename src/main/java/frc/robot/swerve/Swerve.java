@@ -36,8 +36,10 @@ public class Swerve {
         public double rotFactor = .30; // .6 for tristan
 
         // AUTON CONSTANTS
-        public double XControllerP = 3.35;
-        public double XControllerD = 0.0;
+        public double XControllerP = 6.6544;
+        public double XControllerD = 4.833;
+        public double kV = 1;
+        public double kA = 1;
         public double ThetaControllerP = 0;
         public double ThetaControllerD = 0;
         public RobotConfig autoConfig;

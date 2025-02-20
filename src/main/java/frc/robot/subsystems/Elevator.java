@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -127,7 +128,7 @@ public class Elevator extends SubsystemBase {
   public final SysIdRoutine routine = new SysIdRoutine(new Config(
       null,
       Volts.of(4),
-      null,
+      Seconds.of(5),
       (state) -> SignalLogger.writeString("state", state.toString())
     ), new Mechanism(
       (volts) -> lead.setControl(new VoltageOut(volts.in(Volts))),
