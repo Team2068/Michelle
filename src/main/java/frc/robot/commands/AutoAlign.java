@@ -112,7 +112,7 @@ public class AutoAlign extends Command {
     double currentPositionY = io.chassis.pose().getY();
 
 
-    io.chassis.drive(new ChassisSpeeds(pidX.calculate(currentPositionX, poleX), pidY.calculate(currentPositionY, poleY), pidR.calculate(currentRotation, tagRotation)));
+    io.chassis.drive(new ChassisSpeeds(pidY.calculate(currentPositionY, poleY), pidX.calculate(currentPositionX, poleX), pidR.calculate(currentRotation, tagRotation)));
   }
 
   @Override
