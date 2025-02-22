@@ -71,6 +71,7 @@ public class AutomatedController {
 
         controller.a().toggleOnTrue(new Aimbot(io));
         controller.b().toggleOnTrue(new AutoAlign(0, io));
+        controller.x().onTrue(Util.Do(io.chassis::resetAngle));
 
         controller.povDown().and( manual() ).onTrue(Util.Do(io.chassis::toggle));
         controller.povLeft().and( manual() ).onTrue(Util.Do(io.chassis::syncEncoders));

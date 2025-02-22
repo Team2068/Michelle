@@ -148,6 +148,10 @@ public class Swerve extends SubsystemBase {
         return pigeon2.getYaw().getValueAsDouble();
     }
 
+    public void resetAngle(){
+        pigeon2.setYaw(180);
+    }
+
     public SwerveModuleState[] moduleStates(Module[] modules) {
         SwerveModuleState[] state = new SwerveModuleState[4];
         for (int i = 0; i < modules.length; i++)
@@ -165,7 +169,7 @@ public class Swerve extends SubsystemBase {
     }
 
     public void resetOdometry() {
-        resetOdometry(new Pose2d());
+        resetOdometry(new Pose2d(new Translation2d(), new Rotation2d(180)));
     }
 
     public void resetOdometry(Pose2d pose) {
