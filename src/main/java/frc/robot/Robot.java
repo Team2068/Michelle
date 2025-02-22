@@ -4,32 +4,54 @@
 
 package frc.robot;
 
+// import edu.wpi.first.math.geometry.Pose2d;
+// import edu.wpi.first.networktables.NetworkTableInstance;
+// import edu.wpi.first.networktables.StructPublisher;
+
+// import com.ctre.phoenix6.SignalLogger;
+
+// import edu.wpi.first.math.geometry.Pose3d;
+
 import edu.wpi.first.wpilibj.TimedRobot;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+// import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Simulation.Constants;
+import frc.robot.subsystems.Simulation.ElevatorSimulation;
+import frc.robot.subsystems.MapleSim.*;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
+  final ElevatorSimulation m_elevator = new ElevatorSimulation();
+  final MapleSim Arena = new MapleSim();
 
   public Robot() {
     m_robotContainer = new RobotContainer();
+
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    m_elevator.updateTelemetry();
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    // This just makes sure that our simulation code knows that the motor's off.
+    m_elevator.stop();
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+  }
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+  }
 
   @Override
   public void autonomousInit() {
@@ -41,7 +63,8 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
   public void autonomousExit() {
@@ -56,10 +79,19 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    if (true) {
+      // Here, we set the constant setpoint of 0.75 meters.
+      m_elevator.reachGoal(Constants.kSetpointMeters);
+      // } else {
+      // // Otherwise, we update the setpoint to 0.
+      // m_elevator.reachGoal(0.0);
+    }
+  }
 
   @Override
-  public void teleopExit() {}
+  public void teleopExit() {
+  }
 
   @Override
   public void testInit() {
@@ -67,8 +99,26 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+  }
 
   @Override
-  public void testExit() {}
+  public void testExit() {
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    // Update the simulation model.
+    m_elevator.simulationPeriodic();
+    Arena.simulationPeriodic();
+
+  }
+
+  
+
+  @Override
+  public void close() {
+    m_elevator.close();
+    super.close();
+  }
 }

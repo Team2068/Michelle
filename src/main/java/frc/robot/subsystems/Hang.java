@@ -7,7 +7,7 @@ import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Hang extends SubsystemBase {
-  public TalonFX hang = new TalonFX(10, "rio");
+  public TalonFX hang = new TalonFX(0, "rio");
 
   public static final double HANG_MAX_ANGLE = 0;
 
@@ -27,8 +27,8 @@ public class Hang extends SubsystemBase {
     hang.stopMotor();
   }
 
-  @Override
-  public void periodic() {
-    DogLog.log("Hang/Position", hang.getPosition().getValueAsDouble());
-  }
+  // @Override
+  // public void periodic() {
+  //   SmartDashboard.putNumber("Hang Pos", hang.getPosition().getValueAsDouble());
+  // }
 }

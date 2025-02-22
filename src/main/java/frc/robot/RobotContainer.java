@@ -4,52 +4,29 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import dev.doglog.DogLog;
-import dev.doglog.DogLogOptions;
-import frc.robot.commands.DefaultDrive;
-import frc.robot.utility.AutomatedController;
+import edu.wpi.first.wpilibj2.command.Commands;
+// import edu.wpi.first.wpilibj2.command.InstantCommand;
+// import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.utility.IO;
-import frc.robot.utility.Util;
 
 public class RobotContainer {
-  
-  public IO io = new IO();
-  public final AutomatedController main;
-  public final AutomatedController backup;
+  SendableChooser<Runnable> bindings = new SendableChooser<Runnable>();
 
-
-  private final SendableChooser<Command> auto_selector;
-  private Command current_auto = new PrintCommand("");
+  public IO io = new IO(bindings);
 
   public RobotContainer() {
-    main = new AutomatedController(0, io);
-    backup = new AutomatedController(1, io);
+    SmartDashboard.putData("Bindings", bindings);
+    // SmartDashboard.putData("Autonomous", new SequentialCommandGroup(
+    //     new InstantCommand(() -> io.chassis.field_oritented = true)));
 
-    auto_selector = AutoBuilder.buildAutoChooser();
-    auto_selector.onChange((command) -> {current_auto = command;});
-
-    SmartDashboard.putData("Autos",auto_selector);
-    SmartDashboard.putData("Run Test Auto", Util.Do(current_auto::schedule));
-
-    SmartDashboard.putData("Main-Controller Mode", main.selector);
-    SmartDashboard.putData("Backup-Controller Mode", main.selector);
-    io.chassis.setDefaultCommand(new DefaultDrive(io, main.controller));
-
-    DogLog.setOptions(new DogLogOptions()
-    .withCaptureDs(true)
-    .withCaptureConsole(true)
-    .withLogExtras(true));
-
-    DogLog.setEnabled( false); // TODO: Turn back on when we're testing proper
+    io.configGlobal();
+    // io.config1Player();
   }
 
   public Command getAutonomousCommand() {
-    return auto_selector.getSelected();
+    return Commands.print("No autonomous command configured");
   }
 }

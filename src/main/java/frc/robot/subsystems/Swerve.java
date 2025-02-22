@@ -1,264 +1,272 @@
-package frc.robot.subsystems;
+// package frc.robot.subsystems;
 
-import com.ctre.phoenix6.hardware.Pigeon2;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+// import com.ctre.phoenix6.hardware.Pigeon2;
+// import com.pathplanner.lib.auto.AutoBuilder;
+// import com.pathplanner.lib.config.PIDConstants;
+// import com.pathplanner.lib.config.RobotConfig;
+// import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+// import edu.wpi.first.math.geometry.Pose2d;
+// import edu.wpi.first.math.geometry.Rotation2d;
+// import edu.wpi.first.math.geometry.Translation2d;
+// import edu.wpi.first.math.kinematics.ChassisSpeeds;
+// import edu.wpi.first.math.kinematics.SwerveModuleState;
+// import edu.wpi.first.math.util.Units;
+// import edu.wpi.first.networktables.NetworkTableInstance;
+// import edu.wpi.first.networktables.StructArrayPublisher;
+// import edu.wpi.first.networktables.StructPublisher;
+// import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+// import edu.wpi.first.math.kinematics.SwerveModulePosition;
+// import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+// import edu.wpi.first.wpilibj2.command.SubsystemBase;
+// import frc.robot.modules.KrakenSwerveModule;
+// import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+// import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+// import edu.wpi.first.wpilibj.DriverStation;
+// import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import dev.doglog.DogLog;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructArrayPublisher;
-import edu.wpi.first.networktables.StructPublisher;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.swerve.Module;
-import frc.robot.swerve.Swerve.Constants;
-import frc.robot.utility.LimelightHelpers;
-import frc.robot.utility.Util;
+// public class Swerve extends SubsystemBase {
 
-public class Swerve extends SubsystemBase {
+//     public static double MAX_VOLTAGE = 16;
+//     public final double MAX_VELOCITY = 20;
+//     public boolean field_oritented = true;
+//     public boolean slow_mode = false;
 
-    public boolean field_oritented = true;
-    private final SwerveDriveKinematics kinematics;
+//     public RobotConfig config;
 
-    public final Pigeon2 pigeon2 = new Pigeon2(Constants.PIGEON_ID);
+//     // private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
+//     //         new Translation2d(DriveConstants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0,
+//     //                 DriveConstants.DRIVETRAIN_WHEELBASE_METERS / 2.0),
+//     //         new Translation2d(DriveConstants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0,
+//     //                 -DriveConstants.DRIVETRAIN_WHEELBASE_METERS / 2.0),
+//     //         new Translation2d(-DriveConstants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0,
+//     //                 DriveConstants.DRIVETRAIN_WHEELBASE_METERS / 2.0),
+//     //         new Translation2d(-DriveConstants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0,
+//     //                 -DriveConstants.DRIVETRAIN_WHEELBASE_METERS / 2.0));
 
-    StructArrayPublisher<SwerveModuleState> current_states = Util.table
-            .getStructArrayTopic("Current Module States", SwerveModuleState.struct).publish();
-    StructArrayPublisher<SwerveModuleState> target_states = Util.table
-            .getStructArrayTopic("Target Module States", SwerveModuleState.struct).publish();
-    StructPublisher<Pose2d> posePublisher = NetworkTableInstance.getDefault().getTable("Debug")
-            .getStructTopic("Current pose", Pose2d.struct).publish();
-    StructPublisher<Pose2d> estimatedPosePublisher = Util.table
-            .getStructTopic("Estimated Pose", Pose2d.struct).publish();
+//     // public final Pigeon2 pigeon2 = new Pigeon2(DriveConstants.PIGEON_ID);
 
-    SwerveDrivePoseEstimator estimator;
- 
-    final SwerveDriveOdometry odometry;
-    final Module[] modules = new Module[4];
-    ChassisSpeeds speeds = new ChassisSpeeds();
-    public final Constants constants = new Constants();
+//     StructArrayPublisher<SwerveModuleState> current_states = NetworkTableInstance.getDefault().getTable("Debug")
+//             .getStructArrayTopic("Current Module States", SwerveModuleState.struct).publish();
+//     StructArrayPublisher<SwerveModuleState> target_states = NetworkTableInstance.getDefault().getTable("Debug")
+//             .getStructArrayTopic("Target Module States", SwerveModuleState.struct).publish();
+//     StructPublisher<Pose2d> posePublisher = NetworkTableInstance.getDefault().getTable("Debug")
+//             .getStructTopic("Current pose", Pose2d.struct).publish();
 
-    public boolean active = true;
+//     private final SwerveDriveOdometry odometry;
+//     private final KrakenSwerveModule[] modules = new KrakenSwerveModule[4];
+//     private ChassisSpeeds chassisSpeeds = new ChassisSpeeds();
 
-    public Swerve() {
-        kinematics = new SwerveDriveKinematics(
-                createTranslation(constants.TRACKWIDTH / 2.0, constants.WHEELBASE / 2.0),
-                createTranslation(constants.TRACKWIDTH / 2.0, -constants.WHEELBASE / 2.0),
-                createTranslation(-constants.TRACKWIDTH / 2.0, constants.WHEELBASE / 2.0),
-                createTranslation(-constants.TRACKWIDTH / 2.0, -constants.WHEELBASE / 2.0));
+//     private boolean active = true;
 
-        ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
-        for (int i = 0; i < modules.length; i++) {
-            modules[i] = new Module(
-                    tab.getLayout(Constants.LAYOUT_TITLE[i], BuiltInLayouts.kList)
-                            .withSize(2, 4)
-                            .withPosition(i * 2, 0),
-                    Constants.CHASSIS_ID[i],
-                    Constants.CHASSIS_ID[i],
-                    Constants.ENCODER_ID[i],
-                    constants.comp);
-        }
+//     public Swerve() {
+//         // ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
+//         // for (int i = 0; i < modules.length; i++) {
+//         //     modules[i] = new KrakenSwerveModule(
+//         //             tab.getLayout(DriveConstants.LAYOUT_TITLE[i], BuiltInLayouts.kList)
+//         //                     .withSize(2, 4)
+//         //                     .withPosition(i * 2, 0),
+//         //             DriveConstants.CHASSIS_ID[i],
+//         //             DriveConstants.CHASSIS_ID[i],
+//         //             DriveConstants.CHASSIS_ID[i]);
+//         // }
 
-        odometry = new SwerveDriveOdometry(kinematics, rotation(), modulePositions(),
-                new Pose2d(0, 0, new Rotation2d()));
+//         // Load the RobotConfig from the GUI settings. You should probably
+//         // store this in your Constants file
+//         try{
+//             config = RobotConfig.fromGUISettings();
+//           } catch (Exception e) {
+//             // Handle exception as needed
+//             e.printStackTrace();
+//           }
 
-        estimator = new SwerveDrivePoseEstimator(kinematics, rotation(), modulePositions(), odometry.getPoseMeters());
+//         // AutoBuilder.configure(
+//                 // this::pose,
+//                 // this::resetOdometry,
+//                 // this::getChassisSpeeds,
+//                 // (speeds, feedforwards) -> drive(speeds),
+//                 // new PPHolonomicDriveController(
+//                 //         new PIDConstants(AutoConstants.kPXController, 0.0, 0.0), // Translation PID constants
+//                 //         new PIDConstants(AutoConstants.kPThetaController, 0, 0, 0.01) // Rotation PID constants
+//                 // ),
+//                 // config,
+//                 // () -> {
+//                 //     var alliance = DriverStation.getAlliance();
+//                 //     return alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red;
+//                 // },
+//                 // this);
 
-        AutoBuilder.configure(
-                this::pose,
-                this::resetOdometry,
-                () -> speeds,
-                (speeds, feedforwards) -> drive(speeds),
-                new PPHolonomicDriveController(
-                        new PIDConstants(constants.XControllerP, 0.0, constants.XControllerD), // Translation PID
-                        new PIDConstants(constants.ThetaControllerP, 0, constants.ThetaControllerD, 0.0) // Rotation PID
-                ),
-                constants.autoConfig,
-                () -> {
-                    var alliance = DriverStation.getAlliance();
-                    return alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red;
-                },
-                this);
-    }
+//         // odometry = new SwerveDriveOdometry(kinematics, rotation(), modulePositions(),
+//         //         new Pose2d(0, 0, new Rotation2d()));
 
-    private Translation2d createTranslation(double x, double y) {
-        return new Translation2d(x, y);
-    }
+//     }
 
-    public void zeroGyro() {
-        pigeon2.setYaw(0);
-    }
+//     public void zeroGyro() {
+//         pigeon2.setYaw(0);
+//     }
 
-    public Rotation2d rotation() {
-        return new Rotation2d(absoluteRotation());
-    }
+//     public Rotation2d rotation() {
+//         return new Rotation2d(absoluteRotation());
+//     }
 
-    public double absoluteRotation() {
-        double rotation = pigeon2.getYaw().getValueAsDouble() % 360;
-        rotation += (rotation < 0) ? 360 : 0;
-        return Math.toRadians(rotation);
-    }
+//     public double absoluteRotation() {
+//         double rotation = pigeon2.getYaw().getValueAsDouble() % 360;
+//         rotation += (rotation < 0) ? 360 : 0;
+//         return Math.toRadians(rotation);
+//     }
 
-    public void drive(ChassisSpeeds speeds) {
-        this.speeds = speeds;
-    }
+//     public void drive(ChassisSpeeds chassisSpeeds) {
+//         this.chassisSpeeds = chassisSpeeds;
+//     }
 
-    public void stop() {
-        speeds = new ChassisSpeeds();
-    }
+//     public void stop() {
+//         chassisSpeeds = new ChassisSpeeds();
+//     }
 
-    public double distance(Pose2d reference_point) {
-        return odometry.getPoseMeters().getTranslation().getDistance(reference_point.getTranslation());
-    }
+//     public double distance(Pose2d reference_point) {
+//         return odometry.getPoseMeters().getTranslation().getDistance(reference_point.getTranslation());
+//     }
 
-    public double distance(double[] reference_point) {
-        return distance(new Pose2d(reference_point[0], reference_point[2], new Rotation2d(reference_point[3])));
-    }
+//     public double distance(double[] reference_point) {
+//         var reference_pose = new Pose2d(reference_point[0], reference_point[2], new Rotation2d(reference_point[3]));
+//         return distance(reference_pose);
+//     }
 
-    private SwerveModulePosition modulePosition(Module module) {
-        return new SwerveModulePosition(module.drivePosition(), Rotation2d.fromRadians(module.angle()));
-    }
+//     private SwerveModulePosition modulePosition(KrakenSwerveModule module) {
+//         return new SwerveModulePosition(module.drivePosition(), Rotation2d.fromRadians(module.angle()));
+//     }
 
-    private SwerveModuleState moduleState(Module module) {
-        return new SwerveModuleState(module.velocity(), new Rotation2d(module.angle()));
-    }
+//     private SwerveModuleState moduleState(KrakenSwerveModule module) {
+//         return new SwerveModuleState(module.velocity(), new Rotation2d(module.angle()));
+//     }
 
-    public SwerveModulePosition[] modulePositions() {
-        SwerveModulePosition[] pos = new SwerveModulePosition[4];
-        for (int i = 0; i < 4; i++)
-            pos[i] = modulePosition(modules[i]);
-        return pos;
-    }
+//     public SwerveModulePosition[] modulePositions() {
+//         SwerveModulePosition[] pos = new SwerveModulePosition[4];
+//         for (int i = 0; i < 4; i++)
+//             pos[i] = modulePosition(modules[i]);
+//         return pos;
+//     }
 
-    public double getYaw(){
-        return pigeon2.getYaw().getValueAsDouble();
-    }
+//     public SwerveModuleState[] moduleStates(KrakenSwerveModule[] modules) {
+//         SwerveModuleState[] state = new SwerveModuleState[4];
+//         for (int i = 0; i < modules.length; i++)
+//             state[i] = moduleState(modules[i]);
+//         return state;
+//     }
 
-    public SwerveModuleState[] moduleStates(Module[] modules) {
-        SwerveModuleState[] state = new SwerveModuleState[4];
-        for (int i = 0; i < modules.length; i++)
-            state[i] = moduleState(modules[i]);
-        return state;
-    }
+//     public void adjustRotation() {
+//         double rotation = (absoluteRotation() - 180) % 360;
+//         rotation += (rotation < 0) ? 360 : 0;
+//         pigeon2.setYaw(rotation);
+//     }
 
-    public void adjustRotation() {
-        pigeon2.setYaw((absoluteRotation() + 180) % 360);
-    }
+//     public Pose2d pose() {
+//         return odometry.getPoseMeters();
+//     }
 
-    public Pose2d pose() {
-        return odometry.getPoseMeters();
-        // return estimatePose();
-    }
+//     public void resetOdometry() {
+//         setOdometry(new Pose2d());
+//     }
 
-    public void resetOdometry() {
-        resetOdometry(new Pose2d());
-    }
+//     public void resetOdometry(Pose2d pose) {
+//         pigeon2.setYaw(0);
+//         resetPosition();
 
-    public void resetOdometry(Pose2d pose) {
-        zeroGyro();
-        resetPosition();
+//         odometry.resetPosition(rotation(), modulePositions(), pose);
+//         odometry.resetPosition(rotation(), modulePositions(), pose);
+//     }
 
-        odometry.resetPosition(rotation(), modulePositions(), pose);
-    }
+//     public void setOdometry(Pose2d pose) {
+//         zeroGyro();
+//         resetPosition();
 
-    public void resetPosition() {
-        for (Module mod : modules)
-            mod.resetDrivePosition();
-    }
+//         odometry.resetPosition(rotation(), modulePositions(), pose);
+//         odometry.resetPosition(rotation(), modulePositions(), pose);
+//     }
 
-    public void syncEncoders() {
-        for (Module mod : modules)
-            mod.syncEncoders();
-    }
+//     public void resetPosition() {
+//         for (KrakenSwerveModule mod : modules)
+//             mod.resetDrivePosition();
+//     }
 
-    public void zeroAbsolute() {
-        for (Module mod : modules)
-            mod.zeroAbsolute();
-    }
+//     public void syncEncoders() {
+//         for (KrakenSwerveModule mod : modules)
+//             mod.resetSteerPosition();
+//     }
 
-    public void resetSteerPositions() {
-        for (Module mod : modules)
-            mod.set(0, 0);
-    }
+//     public void resetAbsolute() {
+//         for (KrakenSwerveModule mod : modules)
+//             mod.resetAbsolute();
+//     }
 
-    public void setModuleStates(SwerveModuleState[] states) {
-        SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.MAX_VELOCITY);
-        for (int i = 0; i < modules.length; i++) {
-            states[i].optimize(new Rotation2d(modules[i].angle()));
-            modules[i].set((states[i].speedMetersPerSecond / Constants.MAX_VELOCITY) * .8,
-                    states[i].angle.getRadians());
-        }
-    }
+//     public void resetSteerPositions() {
+//         for (KrakenSwerveModule mod : modules)
+//             mod.set(0, 0);
+//     }
 
-    public ChassisSpeeds getSpeeds() {
-        return speeds;
-    }
+//     public void setModuleStates(SwerveModuleState[] states) {
+//         SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY);
+//         for (int i = 0; i < modules.length; i++) {
+//             modules[i].set((states[i].speedMetersPerSecond / MAX_VELOCITY), states[i].angle.getRadians());
+//         }
+//     }
 
-    public double getRoll() {
-        return pigeon2.getRoll().getValueAsDouble();
-    }
+//     public ChassisSpeeds getChassisSpeeds() {
+//         return chassisSpeeds;
+//     }
 
-    public void toggle() {
-        active = !active;
+//     public double getRoll() {
+//         return pigeon2.getRoll().getValueAsDouble();
+//     }
 
-        if (!active) {
-            for (Module mod : modules)
-                mod.stop();
-        }
-    }
+//     public void enable() {
+//         active = true;
+//     }
 
-    public Pose2d estimatePose() {
-        estimator.update(rotation(), modulePositions());
-        LimelightHelpers.SetRobotOrientation("limelight-main", estimator.getEstimatedPosition().getRotation().getRotations(), 0,0,0,0,0);
-        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-main");
-        if (mt2 == null) return new Pose2d();
-        if (!(Math.abs(pigeon2.getAngularVelocityXWorld().getValueAsDouble()) > 720|| mt2.tagCount == 0)){
-            estimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-            estimator.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
-            // estimatedPosePublisher.set(mt2.pose);
-            estimatedPosePublisher.set(estimator.getEstimatedPosition());
-        }
-        return mt2.pose;
-    }
+//     public void disable() {
+//         active = false;
 
-    public void periodic() {
-        SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
-        if (active && speeds != new ChassisSpeeds())
-            setModuleStates(states);
+//         for (KrakenSwerveModule mod : modules)
+//             mod.stop();
+//     }
 
-        current_states.set(moduleStates(modules));
-        target_states.set(states);
+//     // public void periodic() {
+//     //     SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
+//     //     if (active && chassisSpeeds != new ChassisSpeeds())
+//     //         setModuleStates(states);
+//     //     current_states.set(moduleStates(modules));
+//     //     target_states.set(states);
+//     //     Pose2d pose = odometry.update(rotation(), modulePositions());
+//     //     posePublisher.set(pose);
 
-        Pose2d pose = odometry.update(rotation(), modulePositions());
-        estimatePose();
-        posePublisher.set(pose);
+//     //     SmartDashboard.putNumber("X position", pose.getX());
+//     //     SmartDashboard.putNumber("Y position", pose.getY());
 
+//     //     SmartDashboard.putNumber("Odometry rotation", rotation().getDegrees());
+//     //     SmartDashboard.putNumber("Pigeon Yaw", pigeon2.getYaw().getValueAsDouble());
+//     //     SmartDashboard.putNumber("Pigeon Pitch", pigeon2.getPitch().getValueAsDouble());
+//     //     SmartDashboard.putNumber("Pigeon Roll", pigeon2.getRoll().getValueAsDouble());
 
-        DogLog.log("Swerve/Current States", moduleStates(modules));
-        DogLog.log("Swerve/Target States", states);
+//     //     SmartDashboard.putString("Drive Mode", (field_oritented) ? "Field-Oriented" : "Robot-Oriented");
+//     // }
 
-        DogLog.log("Swerve/X Position", pose.getX());
-        DogLog.log("Swerve/Y Position", pose.getY());
-        DogLog.log("Swerve/Pose", pose);
-        DogLog.log("Swerve/Odometry Rotation", rotation().getDegrees());
+//     // public static final class DriveConstants {
+//     //     public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(30);
+//     //     public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(30);
 
-        DogLog.log("Swerve/Pigeon Yaw", pigeon2.getYaw().getValueAsDouble());
-        DogLog.log("Swerve/Pigeon Pitch", pigeon2.getPitch().getValueAsDouble());
-        DogLog.log("Swerve/Pigeon Roll", pigeon2.getRoll().getValueAsDouble());
-        DogLog.log("Swerve/Drive Mode", (field_oritented) ? "Field-Oriented" : "Robot-Oriented");
-    }
-}
+//     //     public static final int[] CHASSIS_ID = { 3, 2, 4, 5 }; // FL, FR, BL, BR
+
+//     //     public static final String[] LAYOUT_TITLE = { "Front Left", "Front Right", "Back Left", "Back Right" };
+
+//     //     public static final int PIGEON_ID = 6;
+
+//     //     public static final int TURBO = 1;
+//     //     public static final int SLOW = 2;
+//     // }
+
+//     // public static final class AutoConstants {
+//     //     public static final double kMaxSpeedMetersPerSecond = 0.25;
+//     //     public static final double kPXController = 24.0;
+//     //     public static final double kPThetaController = 20.0;
+//     // }
+// }

@@ -2,9 +2,6 @@ package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
-import dev.doglog.DogLog;
-
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -99,7 +96,7 @@ public class Elevator extends SubsystemBase {
     motor.getEncoder().setPosition(0);
   }
 
-  public void rest(){
+  public void Rest(){
     move(Rest);
   }
 
@@ -115,27 +112,20 @@ public class Elevator extends SubsystemBase {
     move(L4);
   }
 
-  public void Barge(){
-    move(Barge);
-  }
+  // @Override
+  // public void periodic() {
+  //   if (stopped) return;
 
-  public boolean atPosition(){
-    return profile.isFinished(time.get());
-  }
-
-  @Override
-  public void periodic() {
-    if (stopped) return;
-
-    State out = profile.calculate(time.get(), new State(L2, Barge), new State(target, 0));
-    motor.getClosedLoopController().setReference(out.position, ControlType.kPosition);
+  //   State out = profile.calculate(time.get(), new State(L2, Barge), new State(target, 0));
+  //   motor.getClosedLoopController().setReference(out.position, ControlType.kPosition);
     
-    // TODO: Maybe log Supplied Volts
-    DogLog.log("Elevator/Height", motor.getEncoder().getPosition());
-    DogLog.log("Elevator/Target Height", target);
-    DogLog.log("Elevator/Profiled Target Height", out.position);
-    DogLog.log("Elevator/Speed", motor.getEncoder().getVelocity());
-    DogLog.log("Elevator/Profiled Target Velocity", out.velocity);
-    // DogLog.log("Elevator/Supplied Voltage [Lead]", );
-  }
+  //   // TODO: Maybe log Supplied Volts
+  //   SmartDashboard.putNumber("Elevator Height", motor.getEncoder().getPosition());
+    
+  //   SmartDashboard.putNumber("Elevator Target Height", target);
+  //   SmartDashboard.putNumber("Elevator cTarget Height", out.position);
+
+  //   SmartDashboard.putNumber("Elevator Speed", motor.getEncoder().getVelocity());
+  //   SmartDashboard.putNumber("Elevator cTarget Velocity", out.velocity);
+  // }
 }
