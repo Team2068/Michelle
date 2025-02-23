@@ -1,5 +1,13 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.VoltsPerMeterPerSecond;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -19,11 +27,19 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.units.measure.MutDistance;
+import edu.wpi.first.units.measure.MutLinearVelocity;
+import edu.wpi.first.units.measure.MutAngle;
+import edu.wpi.first.units.measure.MutAngularVelocity;
+import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.swerve.Module;
 import frc.robot.swerve.Swerve.Constants;
 import frc.robot.utility.LimelightHelpers;
@@ -207,6 +223,55 @@ public class Swerve extends SubsystemBase {
                     states[i].angle.getRadians());
         }
     }
+
+    final MutVoltage[] driveVoltage = { Volts.mutable(0), Volts.mutable(0), Volts.mutable(0), Volts.mutable(0) };
+    final MutDistance[] distance = { Meters.mutable(0), Meters.mutable(0), Meters.mutable(0), Meters.mutable(0) };
+    final MutLinearVelocity[] velocity = { MetersPerSecond.mutable(0), MetersPerSecond.mutable(0),
+            MetersPerSecond.mutable(0), MetersPerSecond.mutable(0) };
+
+    final MutVoltage[] steerVoltage = { Volts.mutable(0), Volts.mutable(0), Volts.mutable(0), Volts.mutable(0) };
+    final MutAngle[] angle = { Radians.mutable(0), Radians.mutable(0), Radians.mutable(0), Radians.mutable(0) };
+    final MutAngularVelocity[] angularVelocity = { RadiansPerSecond.mutable(0), RadiansPerSecond.mutable(0),
+            RadiansPerSecond.mutable(0), RadiansPerSecond.mutable(0) };
+
+    public final SysIdRoutine driveRoutine = new SysIdRoutine(new Config(
+            null,
+            Volts.of(2),
+            null,
+            null),
+            new SysIdRoutine.Mechanism(voltage -> {
+                for (Module mod : modules)
+                    mod.set(voltage.magnitude(), 0);
+            }, log -> {
+                for (int i = 0; i < 4; i++) {
+                    log.motor(constants.LAYOUT_TITLE[i] + " [Drive]")
+                            .voltage(modules[i].voltage())
+                            .linearPosition(distance[i].mut_replace(modules[i].drivePosition(), Meters))
+                            .linearVelocity(modules[i].velocity());
+
+                    log.motor(constants.LAYOUT_TITLE[i] + " [Steer]")
+                            .voltage(modules[i].steerVoltage())
+                            .angularPosition(angle[i].mut_replace(modules[i].angle(), Radians))
+                            .angularVelocity(modules[i].steerVelocity());
+                }
+            }, this));
+
+    public final SysIdRoutine steerRoutine = new SysIdRoutine(new Config(
+            null,
+            Volts.of(1),
+            null,
+            null),
+            new SysIdRoutine.Mechanism(voltage -> {
+                for (Module mod : modules)
+                    mod.setSteer(voltage.magnitude()); // Applies voltage to the steer motors
+            }, log -> {
+                for (int i = 0; i < 4; i++) {
+                    log.motor(constants.LAYOUT_TITLE[i] + " [Steer]")
+                            .voltage(modules[i].steerVoltage())
+                            .angularPosition(angle[i].mut_replace(modules[i].angle(), Radians))
+                            .angularVelocity(modules[i].steerVelocity());
+                }
+            }, this));
 
     public ChassisSpeeds getSpeeds() {
         return speeds;

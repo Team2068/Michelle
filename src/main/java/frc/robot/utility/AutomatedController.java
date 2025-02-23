@@ -50,7 +50,6 @@ public class AutomatedController {
     }
 
     public void configure(){
-        
         controller.start().and(controller.getHID()::getBackButtonPressed).onTrue(Util.Do(this::toggleMode));
         controller.back().onTrue(Util.Do(io.chassis::resetOdometry, io.chassis));
 

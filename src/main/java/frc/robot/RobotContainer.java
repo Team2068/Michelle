@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -23,7 +24,6 @@ public class RobotContainer {
   public final AutomatedController main;
   public final AutomatedController backup;
 
-
   private final SendableChooser<Command> auto_selector;
   private Command current_auto = new PrintCommand("");
 
@@ -34,7 +34,7 @@ public class RobotContainer {
     auto_selector = AutoBuilder.buildAutoChooser();
     auto_selector.onChange((command) -> {current_auto = command;});
 
-    SmartDashboard.putData("Autos",auto_selector);
+    SmartDashboard.putData("Autos", auto_selector);
     SmartDashboard.putData("Run Test Auto", Util.Do(current_auto::schedule));
 
     SmartDashboard.putData("Main-Controller Mode", main.selector);
@@ -47,6 +47,7 @@ public class RobotContainer {
     .withLogExtras(true));
 
     DogLog.setEnabled( false); // TODO: Turn back on when we're testing proper
+    SignalLogger.setPath("/media/sda1/ctre-logs/");
   }
 
   public Command getAutonomousCommand() {

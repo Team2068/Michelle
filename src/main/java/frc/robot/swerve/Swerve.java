@@ -7,7 +7,10 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.reduxrobotics.sensors.canandmag.Canandmag;
 import com.reduxrobotics.sensors.canandmag.CanandmagSettings;
 
+import edu.wpi.first.units.measure.AngularVelocity;
+
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import java.io.IOException;
 
@@ -30,10 +33,10 @@ public class Swerve {
         public double rotFactor = .30; // .6 for tristan
 
         // AUTON CONSTANTS
-        public double XControllerP = 3.35;
-        public double XControllerD = 0.0;
-        public double ThetaControllerP = 0;
-        public double ThetaControllerD = 0;
+        public double XControllerP = 5.1555;
+        public double XControllerD = 0.61072;
+        public double ThetaControllerP = 0.0000001;
+        public double ThetaControllerD = 0.00000001;
         public RobotConfig autoConfig;
         public double MASS = 47;
 
@@ -99,6 +102,7 @@ public class Swerve {
         public void zero();
         public boolean connected();
         public double angle();
+        public AngularVelocity velocity();
     }
 
     public static class Cancoder implements Encoder {
@@ -126,6 +130,10 @@ public class Swerve {
         public double angle() {
             return ((encoder.getAbsolutePosition().getValue().in(Radians) + PI2) % PI2);
         }
+
+        public AngularVelocity velocity(){
+            return encoder.getVelocity().getValue();
+        }
     }
 
     public static class Canand implements Encoder {
@@ -149,6 +157,10 @@ public class Swerve {
 
         public double angle() {
             return (encoder.getAbsPosition() * PI2) % PI2;
+        }
+
+        public AngularVelocity velocity(){
+            return RadiansPerSecond.of(encoder.getVelocity());
         }
     }
 }

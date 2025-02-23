@@ -1,31 +1,42 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkMax;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
+
+import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
-import dev.doglog.DogLog;
-
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.*;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 
 public class Elevator extends SubsystemBase {
-  public SparkMax motor = new SparkMax(7, MotorType.kBrushless);;
-  public SparkMax follower = new SparkMax(8, MotorType.kBrushless);
+  TalonFX lead = new TalonFX(11);
+  TalonFX follow = new TalonFX(12);
+  
   SparkMaxConfig config = new SparkMaxConfig();
 
   TrapezoidProfile profile = new TrapezoidProfile(new Constraints(100, 500));
   Timer time = new Timer();
   double target = 0;
   boolean stopped = true;
+
+  PositionVoltage positionRequest = new PositionVoltage(0).withSlot(0);
 
   // Target Heights
   public final double Rest = 0;
@@ -37,40 +48,31 @@ public class Elevator extends SubsystemBase {
 
 
   public Elevator() {
-    config
-      .idleMode(SparkMaxConfig.IdleMode.kBrake)
-      .closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-      .pid(0, 0, 0);
-    
-    motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    Slot0Configs config = new Slot0Configs();
+    config.kP = 0.0;
+    config.kI = 0.0;
+    config.kD = 0.0;
 
-    config.follow(motor, true);
-
-    follower.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-    zero();
+    lead.getConfigurator().apply(config);
+    follow.setControl(new Follower(lead.getDeviceID(), false)); // TODO: Check if we need to invert
   }
 
   public void speed(double speed) {
-    motor.set(speed);
+    lead.set(speed);
   }
   
   public void volts(double volts) {
-    motor.setVoltage(volts);
+    lead.setVoltage(volts);
   }
 
   public void stop(){
     stopped = true;
-    motor.stopMotor();
-  }
-
-  public void movePID(double height) {
-    motor.getClosedLoopController().setReference(height, ControlType.kPosition);
+    lead.stopMotor();
   }
 
   public void move(double height){ // TODO: Checkout how adding a feedforward affects the results
     stopped = false;
-    target = Math.max( Math.min( height, 0 ), MAX_HEIGHT );
+    target = Math.max( Math.min( height, 0 ), MAX_HEIGHT ); // TODO: Should be able to remove later because we know what heights we set the bot to
     time.restart();
   }
 
@@ -91,12 +93,12 @@ public class Elevator extends SubsystemBase {
     },this);
   }
 
-  public double elevatorPos() {
-    return motor.getEncoder().getPosition();
+  public double position() {
+    return lead.getPosition().getValueAsDouble(); // TODO: Convert to metres or inches
   }
 
   public void zero(){
-    motor.getEncoder().setPosition(0);
+    lead.setPosition(0);
   }
 
   public void rest(){
@@ -123,19 +125,48 @@ public class Elevator extends SubsystemBase {
     return profile.isFinished(time.get());
   }
 
+  public Voltage voltage(){
+    return lead.getMotorVoltage().getValue();
+  }
+
+  public LinearVelocity velocity(){
+    return MetersPerSecond.of(0); // TODO: Do conversions later
+  }
+
+  public final SysIdRoutine routine = new SysIdRoutine(new Config(
+      null,
+      Volts.of(4),
+      Seconds.of(5),
+      (state) -> SignalLogger.writeString("state", state.toString())
+    ), new Mechanism(
+      volts -> lead.setControl(new VoltageOut(volts.in(Volts))),
+      log -> {
+        log.motor("Elevator")
+        .voltage(voltage())
+        .linearPosition(Meters.of(0)) // TODO: Replace rotations with meters for the KRakens
+        .linearVelocity(MetersPerSecond.of(0)); // TODO: Replace rotations per second to meters per second for the KRakens
+       }, this));
+
   @Override
   public void periodic() {
     if (stopped) return;
 
     State out = profile.calculate(time.get(), new State(L2, Barge), new State(target, 0));
-    motor.getClosedLoopController().setReference(out.position, ControlType.kPosition);
+    lead.setControl(positionRequest.withPosition(out.position));
     
-    // TODO: Maybe log Supplied Volts
-    DogLog.log("Elevator/Height", motor.getEncoder().getPosition());
-    DogLog.log("Elevator/Target Height", target);
-    DogLog.log("Elevator/Profiled Target Height", out.position);
-    DogLog.log("Elevator/Speed", motor.getEncoder().getVelocity());
-    DogLog.log("Elevator/Profiled Target Velocity", out.velocity);
-    // DogLog.log("Elevator/Supplied Voltage [Lead]", );
+    SmartDashboard.putNumber("Elevator Motor Voltage", voltage().magnitude());
+    SmartDashboard.putNumber("Elevator Height", position());
+    
+    SmartDashboard.putNumber("Elevator Target Height", target);
+    SmartDashboard.putNumber("Elevator cTarget Height", out.position);
+
+    SmartDashboard.putNumber("Elevator Velocity", velocity().magnitude());
+    SmartDashboard.putNumber("Elevator cTarget Velocity", out.velocity);
+
+    // DogLog.log("Elevator/Height", motor.getEncoder().getPosition());
+    // DogLog.log("Elevator/Target Height", target);
+    // DogLog.log("Elevator/cTarget Height", out.position);
+    // DogLog.log("Elevator/Speed", motor.getEncoder().getVelocity());
+    // DogLog.log("Elevator/cTarget Velocity", out.velocity);
   }
 }
