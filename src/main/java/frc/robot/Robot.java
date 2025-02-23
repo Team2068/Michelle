@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 // import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Simulation.Constants;
 import frc.robot.subsystems.Simulation.ElevatorSimulation;
@@ -23,7 +24,7 @@ import frc.robot.subsystems.MapleSim.*;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-
+  
   private final RobotContainer m_robotContainer;
   final ElevatorSimulation m_elevator = new ElevatorSimulation();
   final MapleSim Arena = new MapleSim();
@@ -35,6 +36,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+    
+    CommandScheduler.getInstance().setPeriod(0.05);
     CommandScheduler.getInstance().run();
     m_elevator.updateTelemetry();
   }

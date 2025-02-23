@@ -17,8 +17,8 @@ public class IO extends SubsystemBase {
 
         // public final Swerve chassis = new Swerve();
         public final AlgaeIntake algaeIntake = new AlgaeIntake();
-        public final Elevator elevator = new Elevator();
-        public final Hang hang = new Hang();
+        // public final Elevator elevator = new Elevator();
+        // public final Hang hang = new Hang();
 
        
         public CommandScheduler scheduler = CommandScheduler.getInstance();
