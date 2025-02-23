@@ -242,7 +242,7 @@ public class Swerve extends SubsystemBase {
 
     public final SysIdRoutine steerRoutine = new SysIdRoutine(new Config(
             null,
-            Volts.of(2),
+            Volts.of(1),
             null,
             null),
             new SysIdRoutine.Mechanism(voltage -> {
