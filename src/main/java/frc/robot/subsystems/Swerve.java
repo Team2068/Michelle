@@ -44,7 +44,7 @@
 //     //         new Translation2d(-DriveConstants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0,
 //     //                 -DriveConstants.DRIVETRAIN_WHEELBASE_METERS / 2.0));
 
-//     // public final Pigeon2 pigeon2 = new Pigeon2(DriveConstants.PIGEON_ID);
+    // public final Pigeon2 pigeon2 = new Pigeon2(DriveConstants.PIGEON_ID);
 
 //     StructArrayPublisher<SwerveModuleState> current_states = NetworkTableInstance.getDefault().getTable("Debug")
 //             .getStructArrayTopic("Current Module States", SwerveModuleState.struct).publish();
