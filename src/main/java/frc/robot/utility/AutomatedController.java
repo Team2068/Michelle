@@ -55,10 +55,10 @@ public class AutomatedController {
         // LB align Left and Score Coral & Score Barge
         // RB align Right and Score Coral & Score Processor 
 
-        // controller.x().toggleOnTrue(io.chassis.routine.quasistatic(SysIdRoutine.Direction.kForward));
-        // controller.a().toggleOnTrue(io.chassis.routine.quasistatic(SysIdRoutine.Direction.kReverse));
-        // controller.y().toggleOnTrue(io.chassis.routine.dynamic(SysIdRoutine.Direction.kForward));
-        // controller.b().toggleOnTrue(io.chassis.routine.dynamic(SysIdRoutine.Direction.kReverse));
+        controller.x().toggleOnTrue(io.chassis.steerRoutine.quasistatic(SysIdRoutine.Direction.kForward));
+        controller.a().toggleOnTrue(io.chassis.steerRoutine.quasistatic(SysIdRoutine.Direction.kReverse));
+        controller.y().toggleOnTrue(io.chassis.steerRoutine.dynamic(SysIdRoutine.Direction.kForward));
+        controller.b().toggleOnTrue(io.chassis.steerRoutine.dynamic(SysIdRoutine.Direction.kReverse));
 
 
         controller.povDown().and( manual() ).onTrue(Util.Do(io.chassis::toggle));
