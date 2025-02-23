@@ -24,7 +24,6 @@ public class RobotContainer {
   public final AutomatedController main;
   public final AutomatedController backup;
 
-
   private final SendableChooser<Command> auto_selector;
   private Command current_auto = new PrintCommand("Temp");
 

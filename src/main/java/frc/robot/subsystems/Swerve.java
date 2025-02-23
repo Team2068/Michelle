@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.VoltsPerMeterPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
@@ -97,7 +98,7 @@ public class Swerve extends SubsystemBase {
                     var alliance = DriverStation.getAlliance();
                     return alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red;
                 },
-                this);
+                this); 
 
         odometry = new SwerveDriveOdometry(kinematics, rotation(), modulePositions(),
                 new Pose2d(0, 0, new Rotation2d()));
@@ -217,7 +218,31 @@ public class Swerve extends SubsystemBase {
 
     public final SysIdRoutine routine = new SysIdRoutine(new Config(
         null,
-        Volts.of(4),
+        Volts.of(2),
+        null,
+        null
+    ), 
+    new SysIdRoutine.Mechanism(voltage -> {
+        for (Module mod : modules)
+            mod.set(voltage.magnitude(), 0);
+    }, log -> {
+        for (int i = 0; i < 4; i++){
+            log.motor(constants.LAYOUT_TITLE[i] + " [Drive]")
+            .voltage(modules[i].voltage())
+            .linearPosition(distance[i].mut_replace(modules[i].drivePosition(), Meters))
+            .linearVelocity(modules[i].velocity());
+
+            log.motor(constants.LAYOUT_TITLE[i] + " [Steer]")
+            .voltage(modules[i].steerVoltage())
+            .angularPosition(angle[i].mut_replace(modules[i].angle(), Radians))
+            .angularVelocity(modules[i].steerVelocity());
+        }
+    }, this));
+
+
+    public final SysIdRoutine steerRoutine = new SysIdRoutine(new Config(
+        null,
+        Volts.of(2),
         null,
         null
     ), 
