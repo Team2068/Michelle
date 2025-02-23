@@ -133,4 +133,10 @@ public class Module {
         steer.getClosedLoopController().setReference(targetAngle, ControlType.kPosition);
     }
 
+    public void setSteer(double steerVolts){
+        syncEncoders();
+        drive.set(0);
+        steer.set(steerVolts);
+    }
+
 }
