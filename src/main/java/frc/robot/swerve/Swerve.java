@@ -28,9 +28,10 @@ public class Swerve {
         public double WHEEL_RADIUS;
 
         // DRIVER SETTINGS
-        public int driver = 0;
-        public double transFactor = .65; // factor = x/125, with x being the percentage of our max speed, same for the thing below
-        public double rotFactor = .30; // .6 for tristan
+        public static int driver = 0;
+        public static double transFactor = .65; // factor = x/125, with x being the percentage of our max speed, same for the thing below
+        public static double rotFactor = .30; // .6 for tristan
+        public static String[] drivers = {"Shaan", "Norah", "Jason", "Uriel"};
 
         // AUTON CONSTANTS
         public double XControllerP = 5.1555;
@@ -53,13 +54,13 @@ public class Swerve {
             if (comp) {
                 TRACKWIDTH = 30.0;
                 WHEELBASE = 30.0;
-                GEAR_RATIO = 8.14; // L1
+                GEAR_RATIO = 8.14; // L1 Ratio
                 WHEEL_RADIUS = 0.1143;
                 MASS = 60.0;
             } else {
                 TRACKWIDTH = 19.5;
                 WHEELBASE = 21.5;
-                GEAR_RATIO = 6.12; // L3
+                GEAR_RATIO = 6.12; // L3 Ratio
                 WHEEL_RADIUS = 0.1016;
                 MASS = 47.0;
             }
@@ -88,8 +89,23 @@ public class Swerve {
             } catch (IOException | org.json.simple.parser.ParseException e) {
                 e.printStackTrace();
             }
-            
+            SwitchDriver(driver);
+        }
+
+        public static void SwitchDriver(int driver){
             switch (driver) {
+                case 4: // DEBUG
+                break;
+
+                case 3: // Uriel
+                break;
+
+                case 2: // Jason
+                break;
+                
+                case 1: // Norah
+                break;
+                
                 default: // Shaan
                 transFactor = .65;
                 rotFactor = .48;

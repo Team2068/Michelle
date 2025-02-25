@@ -1,17 +1,20 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.spark.config.SoftLimitConfig;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Hang extends SubsystemBase {
-  public TalonFX hang = new TalonFX(10, "rio");
+  public TalonFX hang = new TalonFX(16, "rio"); // We Don't actually know the motor yet
 
   public static final double HANG_MAX_ANGLE = 0;
 
   public Hang() {
+    // TODO: Configure a soft limit switch
     hang.setNeutralMode(NeutralModeValue.Brake);
   }
 

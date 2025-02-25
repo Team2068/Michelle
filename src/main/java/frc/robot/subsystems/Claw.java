@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
@@ -7,6 +9,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.fasterxml.jackson.databind.util.Converter;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -20,6 +23,7 @@ import dev.doglog.DogLog;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
@@ -49,6 +53,10 @@ public class Claw extends SubsystemBase {
 
     config.closedLoop.pidf(0.0, 0.0, 0.0, 0.0, ClosedLoopSlot.kSlot0);
     config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+    // config.softLimit.forwardSoftLimitEnabled(true);
+    // config.softLimit.forwardSoftLimit(0); // TODO: Find the Forward soft limit
+    // config.softLimit.reverseSoftLimitEnabled(true);
+    // config.softLimit.reverseSoftLimit(0); // TODO: Find the Reverse soft limit
     pivot.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
@@ -114,18 +122,19 @@ public class Claw extends SubsystemBase {
     time.restart();
   }
 
+
   public final SysIdRoutine routine = new SysIdRoutine(new Config(
       null,
       Volts.of(4),
       Seconds.of(5),
-      (state) -> SignalLogger.writeString("state", state.toString())
+      null
     ), new Mechanism(
       volts -> pivot.setVoltage(volts),
       log -> {
         log.motor("Claw Pivot")
         .voltage(voltage())
-        .linearPosition(Meters.of(0)) // TODO: Replace rotations with meters for the KRakens
-        .linearVelocity(MetersPerSecond.of(0)); // TODO: Replace rotations per second to meters per second for the KRakens
+        .angularPosition(Degree.of(angle()))
+        .angularVelocity(DegreesPerSecond.of(pivot.getAbsoluteEncoder().getVelocity()));
        }, this));
 
   @Override

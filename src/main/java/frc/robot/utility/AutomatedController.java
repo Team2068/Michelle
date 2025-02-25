@@ -11,7 +11,11 @@ import frc.robot.commands.AutoAlign;
 public class AutomatedController {
     public final CommandXboxController controller;
     public final SendableChooser<Runnable> selector = new SendableChooser<Runnable>();
-    public boolean manual = true;
+    public int mode = 0;
+
+    final int AUTOMATED = 0;
+    final int MANUAL = 1;
+    final int DEBUG = 2;
 
     Rumble rumble;
     IO io;
@@ -19,10 +23,11 @@ public class AutomatedController {
     public AutomatedController(int port, IO io){
         this.io = io;
 
-        selector.setDefaultOption("Automated", () -> {manual = false;});
-        selector.addOption("Manual", () -> {manual = true;});
+        selector.setDefaultOption("Automated", () -> {mode = 0;});
+        selector.addOption("Manual", () -> {mode = 1;});
+        selector.addOption("Debug", () -> {mode = 2;});
 
-        selector.onChange((x) -> {x.run();}); // TODO: See if this allows us to have the selector always be up-to-date and add the same for auton testing
+        selector.onChange((x) -> {x.run();});
 
         controller = new CommandXboxController(port);
         rumble = new Rumble(controller.getHID());
@@ -31,26 +36,31 @@ public class AutomatedController {
         controller.leftStick().onTrue(new InstantCommand(io.chassis::resetOdometry));
         // controller.back().onTrue(Util.Do(io.elevator::rest));
         // controller.start().onTrue(Util.Do(io.elevator::zero));
-        controller.start().onTrue(Util.Do( () -> manual = !manual)).debounce(3);
         configure();
     }
+
+    public BooleanSupplier mode(int targetMode){
+        return () -> {return mode == targetMode;};
+    }
+
     public BooleanSupplier automated(){
-        return () -> { return !manual; };
+        return mode(0);
     }
-
+    
     public BooleanSupplier manual(){
-        return () -> { return manual; };
+        return mode(1);
     }
 
-    public BooleanSupplier toggleMode(){
-        return () -> {
-            manual = !manual;
-            return manual;
-        };
+    public BooleanSupplier debug(){
+        return mode(2);
+    }
+
+    public void switchMode(){
+        mode = (mode + 1) % 3;
     }
 
     public void configure(){
-        controller.start().and(controller.getHID()::getBackButtonPressed).onTrue(Util.Do(this::toggleMode));
+        controller.start().and(controller.getHID()::getBackButtonPressed).onTrue(Util.Do(this::switchMode));
         controller.back().onTrue(Util.Do(io.chassis::resetOdometry, io.chassis));
 
         // AUTOMATED
