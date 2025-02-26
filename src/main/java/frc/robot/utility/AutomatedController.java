@@ -79,7 +79,8 @@ public class AutomatedController {
         controller.b().and(automated()).onTrue(Util.Do(io.elevator::L3,io.elevator));
         controller.x().and(automated()).onTrue(Util.Do(io.elevator::L2,io.elevator));
         controller.a().and(automated()).onTrue(Util.Do(io.elevator::L1,io.elevator));
-
+        controller.povUp().and(automated()).onTrue(Util.Do(io.elevator::Barge,io.elevator));
+        
         controller.povLeft().and(automated()).onTrue(Util.Do(() -> io.elevator.volts(4), io.elevator));
         controller.povDown().and(automated()).onTrue(Util.Do(() -> io.elevator.volts(-4), io.elevator));
 
