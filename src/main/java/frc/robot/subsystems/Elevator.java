@@ -54,6 +54,7 @@ public class Elevator extends SubsystemBase {
     config.kP = 0.0;
     config.kI = 0.0;
     config.kD = 0.0;
+    config.kG = 0.0;
 
     lead.getConfigurator().apply(config);
     // lead.getConfigurator().apply(new SoftwareLimitSwitchConfigs().withForwardSoftLimitEnable(true).withReverseSoftLimitEnable(true)
@@ -74,10 +75,10 @@ public class Elevator extends SubsystemBase {
     lead.stopMotor();
   }
 
-  public void move(double height) { // TODO: Checkout how adding a feedforward affects the results
+  public void move(double height) {
     stopped = false;
-    target = Math.max(Math.min(height, 0), MAX_HEIGHT); // TODO: Should be able to remove later because we know what
-                                                        // heights we set the bot to
+    // target = Math.max(Math.min(height, 0), MAX_HEIGHT);
+    target = height;
     time.restart();
   }
 
