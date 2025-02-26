@@ -37,6 +37,7 @@ public class AutomatedController {
         // controller.back().onTrue(Util.Do(io.elevator::rest));
         // controller.start().onTrue(Util.Do(io.elevator::zero));
         configure();
+        configureDebug();
     }
 
     public BooleanSupplier mode(int targetMode){
@@ -78,9 +79,7 @@ public class AutomatedController {
         // controller.rightBumper().and(automated()).onTrue(new ConditionalCommand(new ScoreReef(io, true), new ReleaseAlgae(io),
         //     io.limelight::reefZone));
 
-        controller.a().toggleOnTrue(new Aimbot(io));
-        controller.b().toggleOnTrue(new AutoAlign(0, io));
-        controller.x().onTrue(Util.Do(io.chassis::resetAngle));
+       
 
         controller.povDown().and( manual() ).onTrue(Util.Do(io.chassis::toggle));
         controller.povLeft().and( manual() ).onTrue(Util.Do(io.chassis::syncEncoders));
@@ -93,5 +92,11 @@ public class AutomatedController {
         //         }, rumble::End, rumble::finished,
         // io.chassis));
         // controller.povRight().and( manual() ).and(() -> {return !io.chassis.active;}).onTrue(new Rumble(0, .5, controller.getHID(), io.chassis::zeroAbsolute)); // Add the Rumble effect
+    }
+
+    private void configureDebug(){
+        controller.a().and(debug()).toggleOnTrue(new Aimbot(io));
+        controller.b().and(debug()).toggleOnTrue(new AutoAlign(0, io));
+        controller.x().and(debug()).onTrue(Util.Do(io.chassis::resetAngle));
     }
 }
