@@ -5,6 +5,7 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.Aimbot;
 import frc.robot.commands.AutoAlign;
 
@@ -33,7 +34,7 @@ public class AutomatedController {
         rumble = new Rumble(controller.getHID());
 
         controller.rightStick().onTrue(new InstantCommand(() -> io.chassis.field_oritented = !io.chassis.field_oritented));
-        controller.leftStick().onTrue(new InstantCommand(io.chassis::resetOdometry));
+        controller.leftStick().debounce(2).onTrue(new InstantCommand(io.chassis::resetAngle));
         // controller.back().onTrue(Util.Do(io.elevator::rest));
         // controller.start().onTrue(Util.Do(io.elevator::zero));
         configure();
@@ -62,7 +63,7 @@ public class AutomatedController {
 
     public void configure(){
         controller.start().and(controller.getHID()::getBackButtonPressed).onTrue(Util.Do(this::switchMode));
-        controller.back().onTrue(Util.Do(io.chassis::resetOdometry, io.chassis));
+        controller.back().onTrue(Util.Do(io.elevator::rest, io.elevator));
 
         // AUTOMATED
 
@@ -70,16 +71,19 @@ public class AutomatedController {
         // LB align Left and Score Coral & Score Barge
         // RB align Right and Score Coral & Score Processor
 
-        // controller.leftBumper().and(automated()).onTrue(new ConditionalCommand(new ScoreReef(io, false), new ScoreBarge(io),
-        //     io.limelight::reefZone));
+        controller.leftBumper().and(automated()).toggleOnTrue(new AutoAlign(0, io));
+        controller.rightBumper().and(automated()).toggleOnTrue(new AutoAlign(2, io));
 
-        controller.leftBumper().onTrue(new AutoAlign(0, io));
-        controller.rightBumper().onTrue(new AutoAlign(2, io));
+        // [DEBUG] FOR TESTING for rn
+        controller.y().and(automated()).onTrue(Util.Do(io.elevator::L4,io.elevator));
+        controller.b().and(automated()).onTrue(Util.Do(io.elevator::L3,io.elevator));
+        controller.x().and(automated()).onTrue(Util.Do(io.elevator::L2,io.elevator));
+        controller.a().and(automated()).onTrue(Util.Do(io.elevator::L1,io.elevator));
 
-        // controller.rightBumper().and(automated()).onTrue(new ConditionalCommand(new ScoreReef(io, true), new ReleaseAlgae(io),
-        //     io.limelight::reefZone));
+        controller.povLeft().and(automated()).onTrue(Util.Do(() -> io.elevator.volts(4), io.elevator));
+        controller.povDown().and(automated()).onTrue(Util.Do(() -> io.elevator.volts(-4), io.elevator));
 
-       
+        // MANUAL
 
         controller.povDown().and( manual() ).onTrue(Util.Do(io.chassis::toggle));
         controller.povLeft().and( manual() ).onTrue(Util.Do(io.chassis::syncEncoders));
@@ -95,8 +99,18 @@ public class AutomatedController {
     }
 
     private void configureDebug(){
-        controller.a().and(debug()).toggleOnTrue(new Aimbot(io));
-        controller.b().and(debug()).toggleOnTrue(new AutoAlign(0, io));
-        controller.x().and(debug()).onTrue(Util.Do(io.chassis::resetAngle));
+        controller.rightTrigger().and(debug()).toggleOnTrue(new Aimbot(io));
+        controller.leftBumper().and(debug()).toggleOnTrue(new AutoAlign(0, io));
+        controller.rightBumper().and(debug()).toggleOnTrue(new AutoAlign(2, io));
+
+        controller.povUp().and(debug()).toggleOnTrue(io.chassis.driveRoutine.quasistatic(Direction.kForward));
+        controller.povDown().and(debug()).toggleOnTrue(io.chassis.driveRoutine.quasistatic(Direction.kReverse));
+        controller.povRight().and(debug()).toggleOnTrue(io.chassis.driveRoutine.dynamic(Direction.kForward));
+        controller.povLeft().and(debug()).toggleOnTrue(io.chassis.driveRoutine.dynamic(Direction.kReverse));
+
+        controller.x().and(debug()).toggleOnTrue(io.elevator.routine.quasistatic(Direction.kForward));
+        controller.a().and(debug()).toggleOnTrue(io.elevator.routine.quasistatic(Direction.kReverse));
+        controller.y().and(debug()).toggleOnTrue(io.elevator.routine.dynamic(Direction.kForward));
+        controller.b().and(debug()).toggleOnTrue(io.elevator.routine.dynamic(Direction.kReverse));
     }
 }

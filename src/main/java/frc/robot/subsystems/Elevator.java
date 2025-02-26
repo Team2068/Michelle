@@ -42,6 +42,7 @@ public class Elevator extends SubsystemBase {
 
   // Target Heights
   public final double Rest = 0;
+  public final double L1 = 0;
   public final double L2 = 0;
   public final double L3 = 0;
   public final double L4 = 0;
@@ -109,6 +110,9 @@ public class Elevator extends SubsystemBase {
   public void rest() {
     move(Rest);
   }
+  public void L1(){
+    move(L1);
+  }
 
   public void L2() {
     move(L2);
@@ -142,7 +146,8 @@ public class Elevator extends SubsystemBase {
     return MetersPerSecond.of(lead.getVelocity().getValueAsDouble() * conversion);
   }
 
-  final double conversion = Math.PI * (Units.inchesToMeters(2) / 60); // TODO: Replace 2 with the diameter of the drum
+  final double gearReduction = 1/17;
+  final double conversion = Math.PI * gearReduction *(Units.inchesToMeters(2) / 60);
 
   public final SysIdRoutine routine = new SysIdRoutine(new Config(
       null,
