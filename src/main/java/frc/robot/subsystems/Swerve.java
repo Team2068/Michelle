@@ -223,8 +223,7 @@ public class Swerve extends SubsystemBase {
             null,
             null),
             new SysIdRoutine.Mechanism(voltage -> {
-                for (Module mod : modules)
-                    mod.setSteer(voltage.magnitude()); // Applies voltage to the steer motors
+                speeds = new ChassisSpeeds(0, 0, (voltage/16.0) * Constants.MAX_VELOCITY);
             }, log -> {
                 for (int i = 0; i < 4; i++) {
                     log.motor(constants.LAYOUT_TITLE[i] + " [Steer]")
