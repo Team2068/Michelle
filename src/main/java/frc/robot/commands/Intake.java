@@ -25,18 +25,18 @@ public class Intake extends Command {
 
   public Intake(IO io, boolean coral, boolean release) { // negative is release, 1 is coral, 2 is algae, 3 is algae in ground positio
     
+    // TODO: Review and see if we can optimise it
     if (coral){
-      intake = () -> io.claw.speedCoral( (release) ? .4 : -.4);
-      stop = io.claw::stopCoral;
+      intake = () -> io.claw.speed( (release) ? .4 : -.4);
       holding = () -> (release) ? io.claw.hasCoral() :  !io.claw.hasCoral();
     } else { // Algae
       intake = () -> {
-        io.claw.speedAlgae(1);
+        io.claw.speed(1);
         // TODO: Set Claw to Reef intake Angle or Ground pickup if we
       };
-      stop = io.claw::stopAlgae;
       holding = () -> (release) ? io.claw.hasAlgae() :  !io.claw.hasAlgae();
     }
+    stop = io.claw::stop;
   }
 
   // Called when the command is initially scheduled.

@@ -28,9 +28,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 
 public class Claw extends SubsystemBase {
-  SparkMax algaeIntake = new SparkMax(13, MotorType.kBrushless);
-  TalonFX coralIntake = new TalonFX(14);
-  SparkMax pivot = new SparkMax(15, MotorType.kBrushless);
+  SparkMax intake = new SparkMax(13, MotorType.kBrushless);
+  SparkMax pivot = new SparkMax(14, MotorType.kBrushless);
 
   DigitalInput algaeBreak = new DigitalInput(0);
   DigitalInput coralBreak = new DigitalInput(1);
@@ -44,7 +43,7 @@ public class Claw extends SubsystemBase {
     SparkMaxConfig config = new SparkMaxConfig();
 
     config.idleMode(SparkMaxConfig.IdleMode.kBrake);
-    algaeIntake.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    intake.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     config.closedLoop.pidf(0.0, 0.0, 0.0, 0.0, ClosedLoopSlot.kSlot0);
     config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
@@ -55,40 +54,16 @@ public class Claw extends SubsystemBase {
     pivot.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-  public void voltsAlgae(double volts) {
-    algaeIntake.setVoltage(volts);
+  public void volts(double volts) {
+    intake.setVoltage(volts);
   }
 
-  public void speedAlgae(double speed) {
-    algaeIntake.setVoltage(speed);
-  }
-
-  public void voltsCoral(double volts) {
-    coralIntake.setVoltage(volts);
-  }
-
-  public void speedCoral(double speed) {
-    coralIntake.setVoltage(speed);
-  }
-
-  public void scoreCoral() {
-    coralIntake.set(.4);
-  }
-
-  public void stopCoral() {
-    coralIntake.set(0);
-  }
-
-  public void scoreAlgae() {
-    algaeIntake.set(1);
-  }
-
-  public void stopAlgae() {
-    algaeIntake.set(0);
+  public void speed(double speed) {
+    intake.setVoltage(speed);
   }
 
   public void stop() {
-    algaeIntake.stopMotor();
+    intake.stopMotor();
   }
 
   public boolean hasAlgae() {
@@ -100,7 +75,7 @@ public class Claw extends SubsystemBase {
   }
 
   public Voltage voltage() {
-    return Volts.of(pivot.getBusVoltage()); // TODO: Return Bus voltage
+    return Volts.of(pivot.getBusVoltage());
   }
 
   public double angle() {
@@ -129,34 +104,6 @@ public class Claw extends SubsystemBase {
                 .voltage(voltage())
                 .angularPosition(Degree.of(angle()))
                 .angularVelocity(DegreesPerSecond.of(pivot.getAbsoluteEncoder().getVelocity()));
-          }, this));
-
-  public final SysIdRoutine algaeIntakeRoutine = new SysIdRoutine(new Config(
-      null,
-      Volts.of(4),
-      Seconds.of(5),
-      null),
-      new Mechanism(
-          volts -> algaeIntake.setVoltage(volts),
-          log -> {
-            log.motor("Algae Intake")
-                .voltage(voltage())
-                .angularPosition(Degree.of(angle()))
-                .angularVelocity(DegreesPerSecond.of(algaeIntake.getAbsoluteEncoder().getVelocity()));
-          }, this));
-
-  public final SysIdRoutine coralIntakeRoutine = new SysIdRoutine(new Config(
-      null,
-      Volts.of(4),
-      Seconds.of(5),
-      null),
-      new Mechanism(
-          volts -> coralIntake.setVoltage(volts.magnitude()),
-          log -> {
-            log.motor("Coral Intake")
-                .voltage(voltage())
-                .angularPosition(Degree.of(angle()))
-                .angularVelocity(DegreesPerSecond.of(coralIntake.getVelocity().getValueAsDouble()));
           }, this));
 
   @Override

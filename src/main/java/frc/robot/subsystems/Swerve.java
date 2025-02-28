@@ -223,7 +223,7 @@ public class Swerve extends SubsystemBase {
             null,
             null),
             new SysIdRoutine.Mechanism(voltage -> {
-                speeds = new ChassisSpeeds(0, 0, (voltage/16.0) * Constants.MAX_VELOCITY);
+                speeds = new ChassisSpeeds(0, 0, (voltage.magnitude()/16.0) * Constants.MAX_VELOCITY);
             }, log -> {
                 for (int i = 0; i < 4; i++) {
                     log.motor(constants.LAYOUT_TITLE[i] + " [Steer]")
@@ -246,13 +246,15 @@ public class Swerve extends SubsystemBase {
 
     public Pose2d estimatePose() {
         estimator.update(rotation(), modulePositions());
-        LimelightHelpers.SetRobotOrientation("limelight-main", estimator.getEstimatedPosition().getRotation().getRotations(), 0,0,0,0,0);
+        double tagAngle = (LimelightHelpers.getTargetPose_CameraSpace("limelight-main")[3] + 360) %360;
+        double ourPos =  tagAngle - LimelightHelpers.getTX("limelight-main")  + 130;
+        SmartDashboard.putNumber("Our Angle", ourPos);
+        LimelightHelpers.SetRobotOrientation("limelight-main", ourPos, 0,0,0,0,0);
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-main");
         if (mt2 == null) return new Pose2d();
-        if (!(Math.abs(pigeon2.getAngularVelocityXWorld().getValueAsDouble()) > 720|| mt2.tagCount == 0)){
+        else if (!(Math.abs(pigeon2.getAngularVelocityXWorld().getValueAsDouble()) > 720|| mt2.tagCount == 0)){
             estimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
             estimator.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
-            // estimatedPosePublisher.set(mt2.pose);
             estimatedPosePublisher.set(estimator.getEstimatedPosition());
         }
         return mt2.pose;
