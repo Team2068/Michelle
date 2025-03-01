@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Top to J,I"
+            "pathName": "Top to LK"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "J,I to Station and back"
+            "pathName": "Cycle LK"
           }
         },
         {
@@ -31,25 +31,55 @@
         {
           "type": "path",
           "data": {
-            "pathName": "J,I to Station to L, K"
+            "pathName": "Cycle LK"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Score L-L4"
+            "name": "Score L-L3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "L, K to Station and back"
+            "pathName": "Cycle LK"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Score R-L4"
+            "name": "Score R-L3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Clear Low Alage"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LK to Barge"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score Barge"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Barge to Station to LK"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score L-L2"
           }
         }
       ]

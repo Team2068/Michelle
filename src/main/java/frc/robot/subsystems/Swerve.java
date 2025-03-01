@@ -254,6 +254,8 @@ public class Swerve extends SubsystemBase {
         SmartDashboard.putNumber("Our Angle", ourPos);
         LimelightHelpers.SetRobotOrientation("limelight-main", ourPos, 0,0,0,0,0);
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-main");
+        
+        
         if (mt2 == null) return new Pose2d();
         else if (!(Math.abs(pigeon2.getAngularVelocityXWorld().getValueAsDouble()) > 720|| mt2.tagCount == 0)){
             estimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
@@ -261,17 +263,6 @@ public class Swerve extends SubsystemBase {
             estimatedPosePublisher.set(estimator.getEstimatedPosition());
         }
         return mt2.pose;
-    }
-
-    public void rotateChassis(double targetAngle){
-        double yaw = getYaw();
-        double error = ((targetAngle - yaw + 180) % 360) - 180;
-
-        drive(new ChassisSpeeds(0, 0, rotationPID.calculate(yaw, targetAngle)));
-
-        if(Math.abs(error) < 1.0){
-            stop();
-        }
     }
 
     public void periodic() {
