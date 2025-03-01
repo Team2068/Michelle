@@ -12,6 +12,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -63,6 +64,8 @@ public class Swerve extends SubsystemBase {
     public final Constants constants = new Constants();
 
     public boolean active = true;
+
+    private final PIDController rotationPID = new PIDController(0.0, 0.0, 0.0); // TODO tune these if Characterization fails for Theta
 
     public Swerve() {
         kinematics = new SwerveDriveKinematics(
@@ -210,7 +213,7 @@ public class Swerve extends SubsystemBase {
                     mod.set(voltage.magnitude(), 0);
             }, log -> {
                 for (int i = 0; i < 4; i++) {
-                    log.motor(constants.LAYOUT_TITLE[i] + " [Drive]")
+                    log.motor(Constants.LAYOUT_TITLE[i] + " [Drive]")
                             .voltage(modules[i].voltage())
                             .linearPosition(distance[i].mut_replace(modules[i].drivePosition(), Meters))
                             .linearVelocity(modules[i].velocity());
@@ -226,7 +229,7 @@ public class Swerve extends SubsystemBase {
                 speeds = new ChassisSpeeds(0, 0, (voltage.magnitude()/16.0) * Constants.MAX_VELOCITY);
             }, log -> {
                 for (int i = 0; i < 4; i++) {
-                    log.motor(constants.LAYOUT_TITLE[i] + " [Steer]")
+                    log.motor(Constants.LAYOUT_TITLE[i] + " [Steer]")
                             .voltage(modules[i].steerVoltage())
                             .angularPosition(angle[i].mut_replace(modules[i].angle(), Radians))
                             .angularVelocity(modules[i].steerVelocity());
@@ -258,6 +261,17 @@ public class Swerve extends SubsystemBase {
             estimatedPosePublisher.set(estimator.getEstimatedPosition());
         }
         return mt2.pose;
+    }
+
+    public void rotateChassis(double targetAngle){
+        double yaw = getYaw();
+        double error = ((targetAngle - yaw + 180) % 360) - 180;
+
+        drive(new ChassisSpeeds(0, 0, rotationPID.calculate(yaw, targetAngle)));
+
+        if(Math.abs(error) < 1.0){
+            stop();
+        }
     }
 
     public void periodic() {
@@ -292,7 +306,7 @@ public class Swerve extends SubsystemBase {
         DogLog.log("Swerve/Pose", pose);
         DogLog.log("Swerve/Odometry Rotation", rotation().getDegrees());
 
-        DogLog.log("Swerve/Pigeon Yaw", pigeon2.getYaw().getValueAsDouble());
+        DogLog.log("Swerve/Pigeon Yaw", getYaw());
         DogLog.log("Swerve/Pigeon Pitch", pigeon2.getPitch().getValueAsDouble());
         DogLog.log("Swerve/Pigeon Roll", pigeon2.getRoll().getValueAsDouble());
         DogLog.log("Swerve/Drive Mode", (field_oritented) ? "Field-Oriented" : "Robot-Oriented");

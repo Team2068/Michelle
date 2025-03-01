@@ -4,6 +4,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.swerve.Swerve;
+import frc.robot.swerve.Swerve.Constants;
 import frc.robot.utility.IO;
 
 import java.util.function.DoubleSupplier;
@@ -45,8 +46,8 @@ public class DefaultDrive extends Command {
         double down_scale = 1.25 - modifyAxis(controller.getLeftTriggerAxis());
         double up_scale = (Swerve.Constants.MAX_VELOCITY * .2) * modifyAxis(controller.getRightTriggerAxis());
 
-        double scale = io.chassis.constants.transFactor * down_scale + up_scale;
-        double rot_scale = io.chassis.constants.rotFactor * down_scale + up_scale;
+        double scale = Constants.transFactor * down_scale + up_scale;
+        double rot_scale = Constants.rotFactor * down_scale + up_scale;
 
         double xSpeed = x_supplier.getAsDouble() * scale;
         double ySpeed = y_supplier.getAsDouble() * scale;
