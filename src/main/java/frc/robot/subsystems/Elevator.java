@@ -47,6 +47,8 @@ public class Elevator extends SubsystemBase {
   public final double L3 = 0;
   public final double L4 = 0;
   public final double Barge = 0;
+  public final double Low_Algae = 0;
+  public final double High_Algae = 0;
   public final double MAX_HEIGHT = 0;
 
   public Elevator() {
@@ -82,53 +84,38 @@ public class Elevator extends SubsystemBase {
     time.restart();
   }
 
-  public InstantCommand move(int level) {
-    return new InstantCommand(() -> {
+  public void move(int level) {
       switch (level) {
         case 2:
-          L2();
+          move(L2);
           break;
         case 3:
-          L3();
+          move(L3);
           break;
         case 4:
-          L4();
+          move(L4);
           break;
         case 5:
-          Barge();
+          move(Barge);
+          break;
+        case 6:
+          move(Low_Algae);
+          break;
+        case 7:
+          move(High_Algae);
           break;
         default:
-          rest(); // LEVEL 1 // TODO: See if we need to change the height we go to
+          move(Rest); // LEVEL 1 // TODO: See if we need to change the height we go to
           break;
       }
-    }, this);
+  }
+
+  public InstantCommand moveCommand(int level){
+    return new InstantCommand(() -> this.move(level), this);
   }
 
   public void zero() {
     lead.setPosition(0);
-  }
-
-  public void rest() {
-    move(Rest);
-  }
-  public void L1(){
-    move(L1);
-  }
-
-  public void L2() {
-    move(L2);
-  }
-
-  public void L3() {
-    move(L3);
-  }
-
-  public void L4() {
-    move(L4);
-  }
-
-  public void Barge() {
-    move(Barge);
   }
 
   public boolean atPosition() {

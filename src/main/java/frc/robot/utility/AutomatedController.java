@@ -3,8 +3,10 @@ package frc.robot.utility;
 import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.RotateChassis;
+import frc.robot.commands.SimpleAlign;
 
 public class AutomatedController {
     public final CommandXboxController controller;
@@ -48,6 +50,11 @@ public class AutomatedController {
         
         controller.start().and(controller.getHID()::getBackButtonPressed).onTrue(Util.Do(this::toggleMode));
         controller.back().onTrue(Util.Do(io.chassis::resetOdometry, io.chassis));
+
+        // controller.leftBumper().onTrue(new SimpleAlign(io, false));
+        // controller.rightBumper().onTrue(new SimpleAlign(io, true));
+        
+        controller.leftBumper().onTrue(new RotateChassis(io, 45));
 
         // AUTOMATED
 

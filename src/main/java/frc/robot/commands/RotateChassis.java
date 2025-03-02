@@ -7,7 +7,7 @@ import frc.robot.utility.IO;
 
 public class RotateChassis extends Command {
   IO io;
-  private final PIDController rotationPID = new PIDController(0.0, 0.0, 0.0);
+  private final PIDController rotationPID = new PIDController(0.01, 0.0, 0.001);
 
   private double targetAngle;
   double yaw;
@@ -17,7 +17,8 @@ public class RotateChassis extends Command {
     this.io = io;
     addRequirements(io.chassis);
     this.targetAngle = targetAngle;
-    rotationPID.setTolerance(5);
+    rotationPID.setTolerance(1);
+    rotationPID.enableContinuousInput(0, 360);
   }
 
   @Override
@@ -35,6 +36,6 @@ public class RotateChassis extends Command {
 
   @Override
   public boolean isFinished() {
-    return rotationPID.atSetpoint();
+    return Math.abs(rotationPID.getError()) < 1;
   }
 }

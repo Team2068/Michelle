@@ -24,7 +24,6 @@ public class Intake extends Command {
   // public static int INTAKE_ALGAE_GROUND = -3; // THIS WILL MATTER ONLY IF WE DO GROUND PICKUP
 
   public Intake(IO io, boolean coral, boolean release) { // negative is release, 1 is coral, 2 is algae, 3 is algae in ground positio
-    
     // TODO: Review and see if we can optimise it
     if (coral){
       intake = () -> io.claw.speed( (release) ? .4 : -.4);
@@ -37,6 +36,11 @@ public class Intake extends Command {
       holding = () -> (release) ? io.claw.hasAlgae() :  !io.claw.hasAlgae();
     }
     stop = io.claw::stop;
+  }
+
+  public Intake(IO io, boolean coral, boolean release, int level) { // negative is release, 1 is coral, 2 is algae, 3 is algae in ground positio
+    this(io, coral, release);
+    io.elevator.move(level);
   }
 
   // Called when the command is initially scheduled.
