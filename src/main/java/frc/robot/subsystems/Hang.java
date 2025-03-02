@@ -6,12 +6,12 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.config.SoftLimitConfig;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Hang extends SubsystemBase {
   public TalonFX hang = new TalonFX(16, "rio"); // We Don't actually know the motor yet
 
-  public static final double HANG_MAX_ANGLE = 0;
 
   public Hang() {
     // TODO: Configure a soft limit switch
@@ -32,6 +32,6 @@ public class Hang extends SubsystemBase {
 
   @Override
   public void periodic() {
-    DogLog.log("Hang/Position", hang.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("Hang Position", hang.getPosition().getValueAsDouble());
   }
 }

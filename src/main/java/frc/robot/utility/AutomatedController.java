@@ -5,8 +5,7 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.RotateChassis;
-import frc.robot.commands.SimpleAlign;
+import frc.robot.commands.LimelightAlign;
 
 public class AutomatedController {
     public final CommandXboxController controller;
@@ -54,7 +53,10 @@ public class AutomatedController {
         // controller.leftBumper().onTrue(new SimpleAlign(io, false));
         // controller.rightBumper().onTrue(new SimpleAlign(io, true));
         
-        controller.leftBumper().onTrue(new RotateChassis(io, 45));
+        // controller.leftBumper().onTrue(new RotateChassis(io, 45));
+        controller.leftBumper().toggleOnTrue(new LimelightAlign(io, 0));
+        controller.rightBumper().toggleOnTrue(new LimelightAlign(io, 2));
+        controller.x().toggleOnTrue(new LimelightAlign(io, 1));
 
         // AUTOMATED
 

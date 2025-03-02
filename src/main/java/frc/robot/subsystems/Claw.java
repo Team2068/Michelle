@@ -22,6 +22,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
@@ -108,9 +109,13 @@ public class Claw extends SubsystemBase {
 
   @Override
   public void periodic() {
-    DogLog.log("Claw/Algae Full", hasAlgae());
-    DogLog.log("Claw/Coral Full", hasCoral());
-    DogLog.log("Claw/Pivot Angle", angle());
+    // DogLog.log("Claw/Algae Full", hasAlgae());
+    // DogLog.log("Claw/Coral Full", hasCoral());
+    // DogLog.log("Claw/Pivot Angle", angle());
+
+    SmartDashboard.putBoolean("Have Algae", hasAlgae());
+    SmartDashboard.putBoolean("Have Algae", hasAlgae());
+    SmartDashboard.putNumber("Claw Pivot", angle());
 
     double cTime = time.get();
     if (stopped)

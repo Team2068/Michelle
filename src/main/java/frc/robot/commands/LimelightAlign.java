@@ -15,12 +15,14 @@ public class LimelightAlign extends Command {
 
   IO io;
   int positions;
-  PIDController pid = new PIDController(.2, 0, 0);
+  PIDController pid = new PIDController(.1, 0, 0);
+  String limelight = "limelight-main";
 
   public LimelightAlign(IO io, int positions) {
     this.io = io;
     this.positions = positions;
-    // pid.setTolerance(5);
+    pid.setTolerance(1);
+    addRequirements(io.chassis);
   }
 
   // Called when the command is initially scheduled.
@@ -28,33 +30,34 @@ public class LimelightAlign extends Command {
   public void initialize() {
     switch (positions) {
       case 2: // Right
-    LimelightHelpers.SetFidcuial3DOffset("limelight-main", 0.2,0, 0);
+    LimelightHelpers.SetFidcuial3DOffset(limelight, 0,0.2, 0);
         break;
-      case 1: // Centre
-    LimelightHelpers.SetFidcuial3DOffset("limelight-main", 0, 0, 0);
+      case 1: // Center
+      LimelightHelpers.SetFidcuial3DOffset(limelight, 0, 0, 0);
         break;
       default:// Left
-      LimelightHelpers.SetFidcuial3DOffset("limelight-main", -0.2, 0, 0);
+      LimelightHelpers.SetFidcuial3DOffset(limelight, 0, -0.2, 0);
         break;
     }
+    LimelightHelpers.Flush();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // io.chassis.drive(new ChassisSpeeds(0, pid.calculate(LimelightHelpers.getTX("limelight-main"), 0), 0));
+    io.chassis.drive(new ChassisSpeeds(0, -pid.calculate(LimelightHelpers.getTX("limelight-main"), 0), 0));
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // io.chassis.drive(new ChassisSpeeds());
+    io.chassis.drive(new ChassisSpeeds());
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // return pid.atSetpoint();
-    return false;
+    // return pid.atSetpoint() || LimelightHelpers.getTV("limelight-main");
+    return pid.atSetpoint();
   }
 }
