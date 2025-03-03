@@ -6,15 +6,17 @@ package frc.robot;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
-import dev.doglog.DogLog;
-import dev.doglog.DogLogOptions;
 import frc.robot.commands.DefaultDrive;
+import frc.robot.commands.Intake;
+import frc.robot.commands.RotateChassis;
+import frc.robot.commands.ScoreAlgae;
+import frc.robot.commands.ScoreReef;
 import frc.robot.swerve.Swerve;
 import frc.robot.utility.AutomatedController;
 import frc.robot.utility.IO;
@@ -27,8 +29,7 @@ public class RobotContainer {
   public final AutomatedController backup;
 
   private final SendableChooser<Command> auto_selector;
-  private Command current_auto = new PrintCommand("");
-
+  Command current_auto = new PrintCommand("");
   final SendableChooser<Integer> driver_selector = new SendableChooser<Integer>();
 
   public RobotContainer() {
@@ -52,13 +53,39 @@ public class RobotContainer {
     driver_selector.addOption("Uriel", 3);
     driver_selector.onChange( (driver) -> Swerve.Constants.SwitchDriver(driver));
 
-    DogLog.setOptions(new DogLogOptions()
-    .withCaptureDs(true)
-    .withCaptureConsole(true)
-    .withLogExtras(true));
+    // DogLog.setOptions(new DogLogOptions()
+    // .withCaptureDs(true)
+    // .withCaptureConsole(true)
+    // .withLogExtras(true));
 
-    DogLog.setEnabled( false); // TODO: Turn back on when we're testing proper
+    // DogLog.setEnabled( false); // TODO: Turn back on when we're testing proper
     SignalLogger.setPath("/media/sda1/ctre-logs/");
+  }
+
+
+  public void configureAuton(){
+    NamedCommands.registerCommand("Face Barge", new RotateChassis(io, 0));
+    NamedCommands.registerCommand("Rotate IJ", new RotateChassis(io, -120));
+    NamedCommands.registerCommand("Rotate LK", new RotateChassis(io, -60));
+    NamedCommands.registerCommand("Rotate HG", new RotateChassis(io, 180));
+    NamedCommands.registerCommand("Rotate CD", new RotateChassis(io, 60));
+    NamedCommands.registerCommand("Rotate EF", new RotateChassis(io, 120));
+
+    NamedCommands.registerCommand("Score L-L4", new ScoreReef(io, false, 4));
+    NamedCommands.registerCommand("Score L-L3", new ScoreReef(io, false, 3));
+    NamedCommands.registerCommand("Score L-L2", new ScoreReef(io, false, 2));
+    NamedCommands.registerCommand("Score L-L1", new ScoreReef(io, false, 1));
+
+    NamedCommands.registerCommand("Score R-L4", new ScoreReef(io, true, 4));
+    NamedCommands.registerCommand("Score R-L3", new ScoreReef(io, true, 3));
+    NamedCommands.registerCommand("Score R-L2", new ScoreReef(io, true, 2));
+    NamedCommands.registerCommand("Score R-L1", new ScoreReef(io, true, 1));
+
+    NamedCommands.registerCommand("Score Barge", new ScoreAlgae(io, true));
+
+    NamedCommands.registerCommand("Clear Low Algae", new Intake(io, false, false, 6));
+    NamedCommands.registerCommand("Clear High Algae", new Intake(io, false, false, 7));
+     
   }
 
   public Command getAutonomousCommand() {

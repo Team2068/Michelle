@@ -12,6 +12,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -63,6 +64,8 @@ public class Swerve extends SubsystemBase {
     public final Constants constants = new Constants();
 
     public boolean active = true;
+
+    private final PIDController rotationPID = new PIDController(0.0, 0.0, 0.0); // TODO tune these if Characterization fails for Theta
 
     public Swerve() {
         kinematics = new SwerveDriveKinematics(
@@ -210,7 +213,7 @@ public class Swerve extends SubsystemBase {
                     mod.set(voltage.magnitude(), 0);
             }, log -> {
                 for (int i = 0; i < 4; i++) {
-                    log.motor(constants.LAYOUT_TITLE[i] + " [Drive]")
+                    log.motor(Constants.LAYOUT_TITLE[i] + " [Drive]")
                             .voltage(modules[i].voltage())
                             .linearPosition(distance[i].mut_replace(modules[i].drivePosition(), Meters))
                             .linearVelocity(modules[i].velocity());
@@ -223,11 +226,10 @@ public class Swerve extends SubsystemBase {
             null,
             null),
             new SysIdRoutine.Mechanism(voltage -> {
-                for (Module mod : modules)
-                    mod.setSteer(voltage.magnitude()); // Applies voltage to the steer motors
+                speeds = new ChassisSpeeds(0, 0, (voltage.magnitude()/16.0) * Constants.MAX_VELOCITY);
             }, log -> {
                 for (int i = 0; i < 4; i++) {
-                    log.motor(constants.LAYOUT_TITLE[i] + " [Steer]")
+                    log.motor(Constants.LAYOUT_TITLE[i] + " [Steer]")
                             .voltage(modules[i].steerVoltage())
                             .angularPosition(angle[i].mut_replace(modules[i].angle(), Radians))
                             .angularVelocity(modules[i].steerVelocity());
@@ -247,13 +249,17 @@ public class Swerve extends SubsystemBase {
 
     public Pose2d estimatePose() {
         estimator.update(rotation(), modulePositions());
-        LimelightHelpers.SetRobotOrientation("limelight-main", estimator.getEstimatedPosition().getRotation().getRotations(), 0,0,0,0,0);
+        // double tagAngle = (LimelightHelpers.getTargetPose_CameraSpace("limelight-main")[3] + 360) %360;
+        // double ourPos =  tagAngle - LimelightHelpers.getTX("limelight-main")  + 130;
+        // SmartDashboard.putNumber("Our Angle", ourPos);
+        LimelightHelpers.SetRobotOrientation("limelight-main", 0, 0,0,0,0,0);
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-main");
+        
+        
         if (mt2 == null) return new Pose2d();
-        if (!(Math.abs(pigeon2.getAngularVelocityXWorld().getValueAsDouble()) > 720|| mt2.tagCount == 0)){
+        else if (!(Math.abs(pigeon2.getAngularVelocityXWorld().getValueAsDouble()) > 720|| mt2.tagCount == 0)){
             estimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
             estimator.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
-            // estimatedPosePublisher.set(mt2.pose);
             estimatedPosePublisher.set(estimator.getEstimatedPosition());
         }
         return mt2.pose;
@@ -271,29 +277,29 @@ public class Swerve extends SubsystemBase {
         estimatePose();
         posePublisher.set(pose);
 
-        // SmartDashboard.putNumber("X position", pose.getX());
-        // SmartDashboard.putNumber("Y position", pose.getY());
+        SmartDashboard.putNumber("X position", pose.getX());
+        SmartDashboard.putNumber("Y position", pose.getY());
 
-        // SmartDashboard.putNumber("Odometry rotation", rotation().getDegrees());
-        // SmartDashboard.putNumber("Pigeon Yaw", pigeon2.getYaw().getValueAsDouble());
-        // SmartDashboard.putNumber("Pigeon Pitch",
-        // pigeon2.getPitch().getValueAsDouble());
-        // SmartDashboard.putNumber("Pigeon Roll",
-        // pigeon2.getRoll().getValueAsDouble());
+        SmartDashboard.putNumber("Odometry rotation", rotation().getDegrees());
+        SmartDashboard.putNumber("Pigeon Yaw", pigeon2.getYaw().getValueAsDouble());
+        SmartDashboard.putNumber("Pigeon Pitch",
+        pigeon2.getPitch().getValueAsDouble());
+        SmartDashboard.putNumber("Pigeon Roll",
+        pigeon2.getRoll().getValueAsDouble());
 
-        // SmartDashboard.putString("Drive Mode", (field_oritented) ? "Field-Oriented" : "Robot-Oriented");
+        SmartDashboard.putString("Drive Mode", (field_oritented) ? "Field-Oriented" : "Robot-Oriented");
 
-        DogLog.log("Swerve/Current States", moduleStates(modules));
-        DogLog.log("Swerve/Target States", states);
+        // DogLog.log("Swerve/Current States", moduleStates(modules));
+        // DogLog.log("Swerve/Target States", states);
 
-        DogLog.log("Swerve/X Position", pose.getX());
-        DogLog.log("Swerve/Y Position", pose.getY());
-        DogLog.log("Swerve/Pose", pose);
-        DogLog.log("Swerve/Odometry Rotation", rotation().getDegrees());
+        // DogLog.log("Swerve/X Position", pose.getX());
+        // DogLog.log("Swerve/Y Position", pose.getY());
+        // DogLog.log("Swerve/Pose", pose);
+        // DogLog.log("Swerve/Odometry Rotation", rotation().getDegrees());
 
-        DogLog.log("Swerve/Pigeon Yaw", pigeon2.getYaw().getValueAsDouble());
-        DogLog.log("Swerve/Pigeon Pitch", pigeon2.getPitch().getValueAsDouble());
-        DogLog.log("Swerve/Pigeon Roll", pigeon2.getRoll().getValueAsDouble());
-        DogLog.log("Swerve/Drive Mode", (field_oritented) ? "Field-Oriented" : "Robot-Oriented");
+        // DogLog.log("Swerve/Pigeon Yaw", getYaw());
+        // DogLog.log("Swerve/Pigeon Pitch", pigeon2.getPitch().getValueAsDouble());
+        // DogLog.log("Swerve/Pigeon Roll", pigeon2.getRoll().getValueAsDouble());
+        // DogLog.log("Swerve/Drive Mode", (field_oritented) ? "Field-Oriented" : "Robot-Oriented");
     }
 }

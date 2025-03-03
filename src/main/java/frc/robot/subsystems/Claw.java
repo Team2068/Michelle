@@ -2,14 +2,10 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.fasterxml.jackson.databind.util.Converter;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -23,20 +19,19 @@ import dev.doglog.DogLog;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 
 public class Claw extends SubsystemBase {
-  SparkMax algaeIntake = new SparkMax(13, MotorType.kBrushless);
-  TalonFX coralIntake = new TalonFX(14);
-  SparkMax pivot = new SparkMax(15, MotorType.kBrushless);
-  
+  SparkMax intake = new SparkMax(13, MotorType.kBrushless);
+  SparkMax pivot = new SparkMax(14, MotorType.kBrushless);
+
   DigitalInput algaeBreak = new DigitalInput(0);
   DigitalInput coralBreak = new DigitalInput(1);
 
@@ -49,7 +44,7 @@ public class Claw extends SubsystemBase {
     SparkMaxConfig config = new SparkMaxConfig();
 
     config.idleMode(SparkMaxConfig.IdleMode.kBrake);
-    algaeIntake.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    intake.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     config.closedLoop.pidf(0.0, 0.0, 0.0, 0.0, ClosedLoopSlot.kSlot0);
     config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
@@ -60,91 +55,71 @@ public class Claw extends SubsystemBase {
     pivot.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-  public void voltsAlgae(double volts){
-    algaeIntake.setVoltage(volts);
+  public void volts(double volts) {
+    intake.setVoltage(volts);
   }
 
-  public void speedAlgae(double speed){
-    algaeIntake.setVoltage(speed);
+  public void speed(double speed) {
+    intake.setVoltage(speed);
   }
 
-  public void voltsCoral(double volts){
-    coralIntake.setVoltage(volts);
+  public void stop() {
+    intake.stopMotor();
   }
 
-  public void speedCoral(double speed){
-    coralIntake.setVoltage(speed);
-  }
-
-  public void scoreCoral(){
-    coralIntake.set(.4);
-  }
-
-  public void stopCoral(){
-    coralIntake.set(0);
-  }
-
-  public void scoreAlgae(){
-    algaeIntake.set(1);
-  }
-
-  public void stopAlgae(){
-    algaeIntake.set(0);
-  }
-
-  public void stop(){
-    algaeIntake.stopMotor();
-  }
-
-  public boolean hasAlgae(){
+  public boolean hasAlgae() {
     return algaeBreak.get();
   }
 
-  public boolean hasCoral(){
+  public boolean hasCoral() {
     return coralBreak.get();
   }
 
-  public Voltage voltage(){
-    return Volts.of(pivot.getBusVoltage()); // TODO: Return Bus voltage
+  public Voltage voltage() {
+    return Volts.of(pivot.getBusVoltage());
   }
 
-  public double angle(){
+  public double angle() {
     return pivot.getAbsoluteEncoder().getPosition();
   }
 
-  public void pivotVolts(double volts){
+  public void pivotVolts(double volts) {
     pivot.setVoltage(volts);
   }
 
-  public void setAngle(double target_angle){
+  public void setAngle(double target_angle) {
     target = target_angle;
     stopped = false;
     time.restart();
   }
 
-
-  public final SysIdRoutine routine = new SysIdRoutine(new Config(
+  public final SysIdRoutine pivotRoutine = new SysIdRoutine(new Config(
       null,
       Volts.of(4),
       Seconds.of(5),
-      null
-    ), new Mechanism(
-      volts -> pivot.setVoltage(volts),
-      log -> {
-        log.motor("Claw Pivot")
-        .voltage(voltage())
-        .angularPosition(Degree.of(angle()))
-        .angularVelocity(DegreesPerSecond.of(pivot.getAbsoluteEncoder().getVelocity()));
-       }, this));
+      null),
+      new Mechanism(
+          volts -> pivot.setVoltage(volts),
+          log -> {
+            log.motor("Claw Pivot")
+                .voltage(voltage())
+                .angularPosition(Degree.of(angle()))
+                .angularVelocity(DegreesPerSecond.of(pivot.getAbsoluteEncoder().getVelocity()));
+          }, this));
 
   @Override
   public void periodic() {
-    DogLog.log("Claw/Algae Full", hasAlgae());
-    DogLog.log("Claw/Coral Full", hasCoral());
-    DogLog.log("Claw/Pivot Angle", angle());
+    // DogLog.log("Claw/Algae Full", hasAlgae());
+    // DogLog.log("Claw/Coral Full", hasCoral());
+    // DogLog.log("Claw/Pivot Angle", angle());
+
+    SmartDashboard.putBoolean("Have Algae", hasAlgae());
+    SmartDashboard.putBoolean("Have Algae", hasAlgae());
+    SmartDashboard.putNumber("Claw Pivot", angle());
 
     double cTime = time.get();
-    if (stopped) return;
+    if (stopped)
+      return;
 
     State out = profile.calculate(cTime, new State(angle(), 0), new State(target, 0));
     pivot.getClosedLoopController().setReference(out.position, ControlType.kPosition);

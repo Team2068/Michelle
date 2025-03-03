@@ -22,10 +22,10 @@ public class Swerve {
         // BOT SWITCHING
         public boolean comp = true;
 
-        public double TRACKWIDTH = 19.5; // 30.0 for MKi
-        public double WHEELBASE = 21.5; // 30.0 for MKi
-        public double GEAR_RATIO;
-        public double WHEEL_RADIUS;
+        public double TRACKWIDTH = 30; // 30.0 for MKi
+        public double WHEELBASE = 30; // 30.0 for MKi
+        public double GEAR_RATIO = 8.14;
+        public double WHEEL_RADIUS = .1143;
 
         // DRIVER SETTINGS
         public static int driver = 0;
@@ -46,24 +46,18 @@ public class Swerve {
         public static final String[] LAYOUT_TITLE = { "Front Left", "Front Right", "Back Left", "Back Right" };
         public static final int[] CHASSIS_ID = { 2, 3, 4, 5 }; // FL, FR, BL, BR
         public static final int[] ENCODER_ID = { 7, 8, 9, 10 }; // FL, FR, BL, BR
-        public static double[] ENCODER_OFFSETS = {-0.8823, -0.8371, -0.6311, -0.7314};
+        public static double[] ENCODER_OFFSETS = {-0.87890625, -0.996337890625, -0.638427734375, -0.892822265625};
         public static final int PIGEON_ID = 6;
 
         public Constants(){
             // compChassis = (System.getenv("BLUEBOT") == null); // Determine if we're comp based on an enviornmental variable like in 2023
             if (comp) {
-                TRACKWIDTH = 30.0;
-                WHEELBASE = 30.0;
-                GEAR_RATIO = 8.14; // L1 Ratio
-                WHEEL_RADIUS = 0.1143;
                 MASS = 60.0;
             } else {
-                TRACKWIDTH = 19.5;
-                WHEELBASE = 21.5;
-                GEAR_RATIO = 6.12; // L3 Ratio
-                WHEEL_RADIUS = 0.1016;
                 MASS = 47.0;
             }
+
+            MASS = (comp) ? 60.0 : 47.0;
 
             // double trackwidthMeters = Units.inchesToMeters(TRACKWIDTH);
             // double wheelbaseMeters = Units.inchesToMeters(WHEELBASE);
