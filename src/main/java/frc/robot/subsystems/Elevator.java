@@ -61,7 +61,7 @@ public class Elevator extends SubsystemBase {
     lead.getConfigurator().apply(config);
     // lead.getConfigurator().apply(new SoftwareLimitSwitchConfigs().withForwardSoftLimitEnable(true).withReverseSoftLimitEnable(true)
     // .withForwardSoftLimitThreshold(0).withReverseSoftLimitThreshold(0)); // TODO: Find the forward and reverse Soft limit switches
-    follow.setControl(new Follower(lead.getDeviceID(), false)); // TODO: Check if we need to invert
+    follow.setControl(new Follower(lead.getDeviceID(), true)); // TODO: Check if we need to invert
   }
 
   public void speed(double speed) {
@@ -153,6 +153,8 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("Elevator Height", position());
+
     if (stopped)
       return;
 
@@ -160,7 +162,7 @@ public class Elevator extends SubsystemBase {
     lead.setControl(positionRequest.withPosition(out.position));
 
     SmartDashboard.putNumber("Elevator Motor Voltage", voltage().magnitude());
-    SmartDashboard.putNumber("Elevator Height", position());
+    // SmartDashboard.putNumber("Elevator Height", position());
 
     SmartDashboard.putNumber("Elevator Target Height", target);
     SmartDashboard.putNumber("Elevator cTarget Height", out.position);

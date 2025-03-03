@@ -54,8 +54,11 @@ public class AutomatedController {
         // controller.rightBumper().onTrue(new SimpleAlign(io, true));
         
         // controller.leftBumper().onTrue(new RotateChassis(io, 45));
-        controller.leftBumper().toggleOnTrue(new LimelightAlign(io, 0));
-        controller.rightBumper().toggleOnTrue(new LimelightAlign(io, 2));
+        // controller.leftBumper().toggleOnTrue(new LimelightAlign(io, 0));
+        // controller.rightBumper().toggleOnTrue(new LimelightAlign(io, 2));
+
+        controller.leftBumper().onTrue(Util.Do(() -> io.elevator.volts(1), io.elevator)).onFalse(Util.Do(() -> io.elevator.volts(0), io.elevator));
+        controller.rightBumper().onTrue(Util.Do(() -> io.elevator.volts(-1), io.elevator)).onFalse(Util.Do(() -> io.elevator.volts(0), io.elevator));
         controller.x().toggleOnTrue(new LimelightAlign(io, 1));
 
         // AUTOMATED
