@@ -43,8 +43,8 @@ public class RobotContainer {
     SmartDashboard.putData("Run Test Auto", Util.Do(current_auto::schedule));
 
     SmartDashboard.putData("Main-Controller Mode", main.selector);
-    SmartDashboard.putData("Backup-Controller Mode", main.selector);
-    SmartDashboard.putString("Driver", Swerve.Constants.drivers[Swerve.Constants.driver]);
+    SmartDashboard.putData("Backup-Controller Mode", backup.selector);
+    SmartDashboard.putData("Driver", driver_selector);
     io.chassis.setDefaultCommand(new DefaultDrive(io, main.controller));
 
     driver_selector.setDefaultOption("Shaan", 0);

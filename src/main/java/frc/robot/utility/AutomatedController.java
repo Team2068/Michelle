@@ -13,7 +13,7 @@ import frc.robot.commands.LimelightAlign;
 public class AutomatedController {
     public final CommandXboxController controller;
     public final SendableChooser<Runnable> selector = new SendableChooser<Runnable>();
-    public int mode = 0;
+    public int mode = 3;
 
     IO io;
 
@@ -24,6 +24,7 @@ public class AutomatedController {
         selector.setDefaultOption("Automated", () -> {mode = 0;});
         selector.addOption("Manual", () -> {mode = 1;});
         selector.addOption("Debug", () -> {mode = 2;});
+        selector.addOption("Debug Setting", () -> {mode = 3;});
 
         selector.onChange((x) -> {x.run();});
 
@@ -53,6 +54,9 @@ public class AutomatedController {
     public BooleanSupplier debug(){
         return mode(2);
     }
+    public BooleanSupplier debug_setting(){
+        return mode(3);
+    }
 
     public void switchMode(){
         mode = (mode + 1) % 3;
@@ -69,10 +73,6 @@ public class AutomatedController {
         // controller.leftBumper().onTrue(new RotateChassis(io, 45));
         // controller.leftBumper().toggleOnTrue(new LimelightAlign(io, 0));
         // controller.rightBumper().toggleOnTrue(new LimelightAlign(io, 2));
-
-        controller.leftBumper().onTrue(Util.Do(() -> io.elevator.volts(1), io.elevator)).onFalse(Util.Do(() -> io.elevator.volts(0), io.elevator));
-        controller.rightBumper().onTrue(Util.Do(() -> io.elevator.volts(-1), io.elevator)).onFalse(Util.Do(() -> io.elevator.volts(0), io.elevator));
-        controller.x().toggleOnTrue(new LimelightAlign(io, 1));
 
         // AUTOMATED
 
@@ -117,5 +117,16 @@ public class AutomatedController {
         controller.a().and(debug()).toggleOnTrue(io.elevator.routine.quasistatic(Direction.kReverse));
         controller.y().and(debug()).toggleOnTrue(io.elevator.routine.dynamic(Direction.kForward));
         controller.b().and(debug()).toggleOnTrue(io.elevator.routine.dynamic(Direction.kReverse));
+
+        controller.leftBumper().and(debug_setting()).onTrue(Util.Do(() -> io.elevator.volts(-3), io.elevator)).onFalse(Util.Do(() -> io.elevator.volts(0), io.elevator));
+        controller.rightBumper().and(debug_setting()).onTrue(Util.Do(() -> io.elevator.volts(3), io.elevator)).onFalse(Util.Do(() -> io.elevator.volts(0), io.elevator));
+        controller.x().and(debug_setting()).toggleOnTrue(new LimelightAlign(io, 1));
+
+        controller.povUp().and(debug()).toggleOnTrue(io.chassis.   steerRoutine.quasistatic(Direction.kForward));
+        controller.povDown().and(debug()).toggleOnTrue(io.chassis. steerRoutine.quasistatic(Direction.kReverse));
+        controller.povRight().and(debug()).toggleOnTrue(io.chassis.steerRoutine.dynamic(Direction.kForward));
+        controller.povLeft().and(debug()).toggleOnTrue(io.chassis. steerRoutine.dynamic(Direction.kReverse));
+
     }
+
 }

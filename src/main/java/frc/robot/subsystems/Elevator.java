@@ -6,16 +6,18 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.SignalLogger;
-import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.*;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
@@ -40,11 +42,13 @@ public class Elevator extends SubsystemBase {
 
   PositionVoltage positionRequest = new PositionVoltage(0).withSlot(0);
 
+  final String[] level_layout = {"Rest", "L1", "L2", "L3", "L4", "Barge", "Low Algae", "High Algae"};
+
   // Target Heights
   public final double Rest = 0;
-  public final double L1 = 0;
-  public final double L2 = 0;
-  public final double L3 = 0;
+  public final double L1 = 25;
+  public final double L2 = 43.5;
+  public final double L3 = 76;
   public final double L4 = 0;
   public final double Barge = 0;
   public final double Low_Algae = 0;
@@ -52,15 +56,21 @@ public class Elevator extends SubsystemBase {
   public final double MAX_HEIGHT = 0;
 
   public Elevator() {
-    Slot0Configs config = new Slot0Configs();
-    config.kP = 0.0;
-    config.kI = 0.0;
-    config.kD = 0.0;
-    config.kG = 0.0;
+    TalonFXConfiguration config = new TalonFXConfiguration();
+    config.Slot0.kP = 0.0;
+    config.Slot0.kI = 0.0;
+    config.Slot0.kD = 0.0;
+    config.Slot0.kG = 0.0;
+
+    config.MotorOutput.withInverted(InvertedValue.Clockwise_Positive);
+    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    config.SoftwareLimitSwitch
+    .withForwardSoftLimitEnable(true)
+    .withForwardSoftLimitThreshold(300.0)
+    .withReverseSoftLimitEnable(true)
+    .withReverseSoftLimitThreshold(0.0);
 
     lead.getConfigurator().apply(config);
-    // lead.getConfigurator().apply(new SoftwareLimitSwitchConfigs().withForwardSoftLimitEnable(true).withReverseSoftLimitEnable(true)
-    // .withForwardSoftLimitThreshold(0).withReverseSoftLimitThreshold(0)); // TODO: Find the forward and reverse Soft limit switches
     follow.setControl(new Follower(lead.getDeviceID(), true)); // TODO: Check if we need to invert
   }
 
@@ -86,6 +96,9 @@ public class Elevator extends SubsystemBase {
 
   public void move(int level) {
       switch (level) {
+        case 1:
+          move(L1);
+          break;
         case 2:
           move(L2);
           break;
@@ -108,6 +121,7 @@ public class Elevator extends SubsystemBase {
           move(Rest); // LEVEL 1 // TODO: See if we need to change the height we go to
           break;
       }
+      SmartDashboard.putString("Target Level", level_layout[level]);
   }
 
   public InstantCommand moveCommand(int level){
@@ -127,11 +141,13 @@ public class Elevator extends SubsystemBase {
   }
 
   public double position() {
-    return lead.getPosition().getValueAsDouble() * conversion;
+    // return lead.getPosition().getValueAsDouble() * conversion;
+    return lead.getPosition().getValueAsDouble();
   }
 
   public LinearVelocity velocity() {
-    return MetersPerSecond.of(lead.getVelocity().getValueAsDouble() * conversion);
+    // return MetersPerSecond.of(lead.getVelocity().getValueAsDouble() * conversion);
+    return MetersPerSecond.of(lead.getVelocity().getValueAsDouble());
   }
 
   final double gearReduction = 1/17;

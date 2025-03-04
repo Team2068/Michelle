@@ -31,13 +31,12 @@ public class Swerve {
         public static int driver = 0;
         public static double transFactor = .65; // factor = x/125, with x being the percentage of our max speed, same for the thing below
         public static double rotFactor = .30; // .6 for tristan
-        public static String[] drivers = {"Shaan", "Norah", "Jason", "Uriel"};
 
         // AUTON CONSTANTS
         public double XControllerP = 5.1555;
         public double XControllerD = 0.61072;
-        public double ThetaControllerP = 0.0000001;
-        public double ThetaControllerD = 0.00000001;
+        public double ThetaControllerP = 0;
+        public double ThetaControllerD = 0;
         public RobotConfig autoConfig;
         public double MASS = 47;
 
