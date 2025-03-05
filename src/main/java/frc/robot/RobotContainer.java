@@ -4,10 +4,14 @@
 
 package frc.robot;
 
+import java.util.function.Consumer;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.Pair;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -51,6 +55,7 @@ public class RobotContainer {
     driver_selector.addOption("Norah", 1);
     driver_selector.addOption("Jason", 2);
     driver_selector.addOption("Uriel", 3);
+    driver_selector.addOption("Debug", 4);
     driver_selector.onChange( (driver) -> Swerve.Constants.SwitchDriver(driver));
 
     // DogLog.setOptions(new DogLogOptions()
@@ -80,12 +85,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("Score R-L3", new ScoreReef(io, true, 3));
     NamedCommands.registerCommand("Score R-L2", new ScoreReef(io, true, 2));
     NamedCommands.registerCommand("Score R-L1", new ScoreReef(io, true, 1));
-
     NamedCommands.registerCommand("Score Barge", new ScoreAlgae(io, true));
 
     NamedCommands.registerCommand("Clear Low Algae", new Intake(io, false, false, 6));
     NamedCommands.registerCommand("Clear High Algae", new Intake(io, false, false, 7));
-     
   }
 
   public Command getAutonomousCommand() {

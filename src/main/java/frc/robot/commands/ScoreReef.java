@@ -4,11 +4,23 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.utility.IO;
 
 public class ScoreReef extends SequentialCommandGroup {
+
+  public ScoreReef(IO io, boolean score_right, int Level, GenericHID controller) {
+    addCommands(
+      // TODO: Check if we have coral & if we don't have
+      io.elevator.moveCommand(Level),
+      new AutoAlign((score_right) ? 2 : 1, io),
+      new WaitUntilCommand(io.elevator::atPosition), // TODO: Wait until we're at the height
+      new Intake(io, true, true, controller), // TODO: Set to Reef Scoring Angle
+      io.elevator.moveCommand(0)
+    );
+  }
 
   public ScoreReef(IO io, boolean score_right, int Level) {
     addCommands(

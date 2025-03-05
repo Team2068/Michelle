@@ -17,10 +17,14 @@ public class LimelightAlign extends Command {
   int positions;
   PIDController pid = new PIDController(.1, 0, 0);
   String limelight = "limelight-main";
+  Runnable exec;
 
-  public LimelightAlign(IO io, int positions) {
+  public LimelightAlign(IO io, int positions, Boolean rotation) {
     this.io = io;
     this.positions = positions;
+
+    exec = (rotation) ? () -> {io.chassis.drive(new ChassisSpeeds(0, 0, -pid.calculate(LimelightHelpers.getTX("limelight-main"))));} : () -> io.chassis.drive(new ChassisSpeeds(0, -pid.calculate(LimelightHelpers.getTX("limelight-main"), 0), 0));
+
     pid.setTolerance(1);
     addRequirements(io.chassis);
   }

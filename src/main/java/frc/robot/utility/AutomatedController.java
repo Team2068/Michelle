@@ -120,7 +120,7 @@ public class AutomatedController {
 
         controller.leftBumper().and(debug_setting()).onTrue(Util.Do(() -> io.elevator.volts(-3), io.elevator)).onFalse(Util.Do(() -> io.elevator.volts(0), io.elevator));
         controller.rightBumper().and(debug_setting()).onTrue(Util.Do(() -> io.elevator.volts(3), io.elevator)).onFalse(Util.Do(() -> io.elevator.volts(0), io.elevator));
-        controller.x().and(debug_setting()).toggleOnTrue(new LimelightAlign(io, 1));
+        controller.x().and(debug_setting()).toggleOnTrue(new LimelightAlign(io, 1, false));
 
         controller.povUp().and(debug()).toggleOnTrue(io.chassis.   steerRoutine.quasistatic(Direction.kForward));
         controller.povDown().and(debug()).toggleOnTrue(io.chassis. steerRoutine.quasistatic(Direction.kReverse));

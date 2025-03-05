@@ -63,10 +63,10 @@ public class Elevator extends SubsystemBase {
     config.Slot0.kG = 0.0;
 
     config.MotorOutput.withInverted(InvertedValue.Clockwise_Positive);
-    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.SoftwareLimitSwitch
     .withForwardSoftLimitEnable(true)
-    .withForwardSoftLimitThreshold(300.0)
+    .withForwardSoftLimitThreshold(130.0)
     .withReverseSoftLimitEnable(true)
     .withReverseSoftLimitThreshold(0.0);
 

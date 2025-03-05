@@ -6,6 +6,8 @@ package frc.robot.commands;
 
 import java.util.function.BooleanSupplier;
 
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.utility.IO;
 
@@ -26,7 +28,9 @@ public class Intake extends Command {
   public Intake(IO io, boolean coral, boolean release) { // negative is release, 1 is coral, 2 is algae, 3 is algae in ground positio
     // TODO: Review and see if we can optimise it
     if (coral){
-      intake = () -> io.claw.speed( (release) ? .4 : -.4);
+      intake = () -> {
+        io.claw.speed( (release) ? .4 : -.4);
+      };
       holding = () -> (release) ? io.claw.hasCoral() :  !io.claw.hasCoral();
     } else { // Algae
       intake = () -> {
@@ -36,6 +40,33 @@ public class Intake extends Command {
       holding = () -> (release) ? io.claw.hasAlgae() :  !io.claw.hasAlgae();
     }
     stop = io.claw::stop;
+  }
+
+  public Intake(IO io, boolean coral, boolean release, GenericHID controller) { // negative is release, 1 is coral, 2 is algae, 3 is algae in ground positio
+    // TODO: Review and see if we can optimise it
+    if (coral){
+      intake = () -> {
+        io.claw.speed( (release) ? .4 : -.4);
+        controller.setRumble(RumbleType.kBothRumble, .25);
+      };
+      holding = () -> (release) ? io.claw.hasCoral() :  !io.claw.hasCoral();
+    } else { // Algae
+      intake = () -> {
+        io.claw.speed(1);
+        controller.setRumble(RumbleType.kBothRumble, .25);
+        // TODO: Set Claw to Reef intake Angle or Ground pickup if we
+      };
+      holding = () -> (release) ? io.claw.hasAlgae() :  !io.claw.hasAlgae();
+    }
+    stop = () -> {
+      io.claw.stop();
+      controller.setRumble(RumbleType.kBothRumble, 0.0);
+    };
+  }
+
+  public Intake(IO io, boolean coral, boolean release, int level, GenericHID controller) { // negative is release, 1 is coral, 2 is algae, 3 is algae in ground positio
+    this(io, coral, release,controller);
+    io.elevator.move(level);
   }
 
   public Intake(IO io, boolean coral, boolean release, int level) { // negative is release, 1 is coral, 2 is algae, 3 is algae in ground positio
