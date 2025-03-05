@@ -33,6 +33,9 @@ public class Claw extends SubsystemBase {
 
   DigitalInput algaeBreak = new DigitalInput(0);
   DigitalInput coralBreak = new DigitalInput(1);
+  
+  public final static double INTAKE_ANGLE = 0;
+  public final static double REEF_ANGLE = 0;
 
   TrapezoidProfile profile = new TrapezoidProfile(new Constraints(100, 500));
   Timer time = new Timer();
@@ -82,14 +85,14 @@ public class Claw extends SubsystemBase {
     return pivot.getAbsoluteEncoder().getPosition();
   }
 
-  public void pivotVolts(double volts) {
-    pivot.setVoltage(volts);
-  }
-
-  public void setAngle(double target_angle) {
+  public void angle(double target_angle) {
     target = target_angle;
     stopped = false;
     time.restart();
+  }
+
+  public void pivotVolts(double volts) {
+    pivot.setVoltage(volts);
   }
 
   public final SysIdRoutine pivotRoutine = new SysIdRoutine(new Config(

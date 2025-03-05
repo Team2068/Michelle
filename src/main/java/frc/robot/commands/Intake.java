@@ -9,6 +9,7 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Claw;
 import frc.robot.utility.IO;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -16,6 +17,7 @@ public class Intake extends Command {
 
   Runnable intake;
   Runnable stop;
+  Runnable rumble;
   BooleanSupplier holding;
   double angle;
 
@@ -25,43 +27,23 @@ public class Intake extends Command {
   // public static int SCORE_ALGAE = 2;
   // public static int INTAKE_ALGAE_GROUND = -3; // THIS WILL MATTER ONLY IF WE DO GROUND PICKUP
 
-  public Intake(IO io, boolean coral, boolean release) { // negative is release, 1 is coral, 2 is algae, 3 is algae in ground positio
-    // TODO: Review and see if we can optimise it
-    if (coral){
-      intake = () -> {
-        io.claw.speed( (release) ? .4 : -.4);
-      };
-      holding = () -> (release) ? io.claw.hasCoral() :  !io.claw.hasCoral();
-    } else { // Algae
-      intake = () -> {
-        io.claw.speed(1);
-        // TODO: Set Claw to Reef intake Angle or Ground pickup if we
-      };
-      holding = () -> (release) ? io.claw.hasAlgae() :  !io.claw.hasAlgae();
-    }
-    stop = io.claw::stop;
-  }
+  public Intake(IO io, boolean coral, boolean release, GenericHID controller) {
+    rumble = (controller != null) ? () -> controller.setRumble(RumbleType.kBothRumble, .25) : () -> {}; // TODO: Check if it's fine
+    holding = () -> (coral) ? ((release) ? io.claw.hasCoral() :  !io.claw.hasCoral()) : ((release) ? io.claw.hasAlgae() :  !io.claw.hasAlgae());
+    
+    intake = () -> {
+      io.claw.speed((release) ? 1 : .4);
+      io.claw.angle((release) ? Claw.REEF_ANGLE : Claw.INTAKE_ANGLE); // TODO: See if we need to add an angle for scoring on L4 & Barge
+    };
 
-  public Intake(IO io, boolean coral, boolean release, GenericHID controller) { // negative is release, 1 is coral, 2 is algae, 3 is algae in ground positio
-    // TODO: Review and see if we can optimise it
-    if (coral){
-      intake = () -> {
-        io.claw.speed( (release) ? .4 : -.4);
-        controller.setRumble(RumbleType.kBothRumble, .25);
-      };
-      holding = () -> (release) ? io.claw.hasCoral() :  !io.claw.hasCoral();
-    } else { // Algae
-      intake = () -> {
-        io.claw.speed(1);
-        controller.setRumble(RumbleType.kBothRumble, .25);
-        // TODO: Set Claw to Reef intake Angle or Ground pickup if we
-      };
-      holding = () -> (release) ? io.claw.hasAlgae() :  !io.claw.hasAlgae();
-    }
     stop = () -> {
       io.claw.stop();
       controller.setRumble(RumbleType.kBothRumble, 0.0);
     };
+  }
+
+  public Intake(IO io, boolean coral, boolean release){
+    this(io, coral, release, null);
   }
 
   public Intake(IO io, boolean coral, boolean release, int level, GenericHID controller) { // negative is release, 1 is coral, 2 is algae, 3 is algae in ground positio
@@ -78,6 +60,7 @@ public class Intake extends Command {
   @Override
   public void initialize() {
     intake.run();
+    rumble.run();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

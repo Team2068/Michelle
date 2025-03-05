@@ -50,14 +50,14 @@ public class Elevator extends SubsystemBase {
   public final double L2 = 43.5;
   public final double L3 = 76;
   public final double L4 = 0;
-  public final double Barge = 0;
-  public final double Low_Algae = 0;
-  public final double High_Algae = 0;
-  public final double MAX_HEIGHT = 0;
+  public final double Barge = 0; // TODO: FIND BARGE
+  public final double Low_Algae = 0; // TODO: FIND
+  public final double High_Algae = 0; // TODO: FIND
+  public final double MAX_HEIGHT = 0; // TODO: FIND
 
   public Elevator() {
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.Slot0.kP = 0.0;
+    config.Slot0.kP = 0.01;
     config.Slot0.kI = 0.0;
     config.Slot0.kD = 0.0;
     config.Slot0.kG = 0.0;
@@ -65,9 +65,9 @@ public class Elevator extends SubsystemBase {
     config.MotorOutput.withInverted(InvertedValue.Clockwise_Positive);
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.SoftwareLimitSwitch
-    .withForwardSoftLimitEnable(true)
+    .withForwardSoftLimitEnable(false)
     .withForwardSoftLimitThreshold(130.0)
-    .withReverseSoftLimitEnable(true)
+    .withReverseSoftLimitEnable(false)
     .withReverseSoftLimitThreshold(0.0);
 
     lead.getConfigurator().apply(config);
