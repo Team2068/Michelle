@@ -42,10 +42,11 @@ public class Elevator extends SubsystemBase {
 
   PositionVoltage positionRequest = new PositionVoltage(0).withSlot(0);
 
-  final String[] level_layout = {"Rest", "L1", "L2", "L3", "L4", "Barge", "Low Algae", "High Algae"};
+  final String[] level_layout = { "Rest", "L1", "L2", "L3", "L4", "Barge", "Low Algae", "High Algae" };
 
   // Target Heights
   public final double Rest = 0;
+  public final double L0 = 0;
   public final double L1 = 25;
   public final double L2 = 43.5;
   public final double L3 = 76;
@@ -65,10 +66,10 @@ public class Elevator extends SubsystemBase {
     config.MotorOutput.withInverted(InvertedValue.Clockwise_Positive);
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.SoftwareLimitSwitch
-    .withForwardSoftLimitEnable(false)
-    .withForwardSoftLimitThreshold(130.0)
-    .withReverseSoftLimitEnable(false)
-    .withReverseSoftLimitThreshold(0.0);
+        .withForwardSoftLimitEnable(false)
+        .withForwardSoftLimitThreshold(130.0)
+        .withReverseSoftLimitEnable(false)
+        .withReverseSoftLimitThreshold(0.0);
 
     lead.getConfigurator().apply(config);
     follow.setControl(new Follower(lead.getDeviceID(), true)); // TODO: Check if we need to invert
@@ -95,36 +96,39 @@ public class Elevator extends SubsystemBase {
   }
 
   public void move(int level) {
-      switch (level) {
-        case 1:
-          move(L1);
-          break;
-        case 2:
-          move(L2);
-          break;
-        case 3:
-          move(L3);
-          break;
-        case 4:
-          move(L4);
-          break;
-        case 5:
-          move(Barge);
-          break;
-        case 6:
-          move(Low_Algae);
-          break;
-        case 7:
-          move(High_Algae);
-          break;
-        default:
-          move(Rest); // LEVEL 1 // TODO: See if we need to change the height we go to
-          break;
-      }
-      SmartDashboard.putString("Target Level", level_layout[level]);
+    switch (level) {
+      case 0:
+        move(L0);
+        break;
+      case 1:
+        move(L1);
+        break;
+      case 2:
+        move(L2);
+        break;
+      case 3:
+        move(L3);
+        break;
+      case 4:
+        move(L4);
+        break;
+      case 5:
+        move(Barge);
+        break;
+      case 6:
+        move(Low_Algae);
+        break;
+      case 7:
+        move(High_Algae);
+        break;
+      default:
+        move(Rest); // LEVEL 1 // TODO: See if we need to change the height we go to
+        break;
+    }
+    SmartDashboard.putString("Target Level", level_layout[level]);
   }
 
-  public InstantCommand moveCommand(int level){
+  public InstantCommand moveCommand(int level) {
     return new InstantCommand(() -> this.move(level), this);
   }
 
@@ -146,12 +150,13 @@ public class Elevator extends SubsystemBase {
   }
 
   public LinearVelocity velocity() {
-    // return MetersPerSecond.of(lead.getVelocity().getValueAsDouble() * conversion);
+    // return MetersPerSecond.of(lead.getVelocity().getValueAsDouble() *
+    // conversion);
     return MetersPerSecond.of(lead.getVelocity().getValueAsDouble());
   }
 
-  final double gearReduction = 1/17;
-  final double conversion = Math.PI * gearReduction *(Units.inchesToMeters(2) / 60);
+  final double gearReduction = 1 / 17;
+  final double conversion = Math.PI * gearReduction * (Units.inchesToMeters(2) / 60);
 
   public final SysIdRoutine routine = new SysIdRoutine(new Config(
       null,

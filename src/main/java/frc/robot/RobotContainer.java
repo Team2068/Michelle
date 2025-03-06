@@ -87,8 +87,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("Score R-L1", new ScoreReef(io, true, 1));
     NamedCommands.registerCommand("Score Barge", new ScoreAlgae(io, true));
 
-    NamedCommands.registerCommand("Clear Low Algae", new Intake(io, false, false, 6));
-    NamedCommands.registerCommand("Clear High Algae", new Intake(io, false, false, 7));
+    // TODO: SEE IF WE CAN GET AWAY WITH THESE LEVELS
+    NamedCommands.registerCommand("Clear Low Algae", new Intake(io, false, false, 2));
+    NamedCommands.registerCommand("Clear High Algae", new Intake(io, false, false, 3));
   }
 
   public Command getAutonomousCommand() {

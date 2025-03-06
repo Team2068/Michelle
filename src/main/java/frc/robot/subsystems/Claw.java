@@ -34,13 +34,16 @@ public class Claw extends SubsystemBase {
   DigitalInput algaeBreak = new DigitalInput(0);
   DigitalInput coralBreak = new DigitalInput(1);
   
-  public final static double INTAKE_ANGLE = 0;
-  public final static double REEF_ANGLE = 0;
+  public final static double INTAKE_ANGLE = 0; // TODO: FIND INTAKE ANGLE
+  public final static double BARGE_ANGLE = 0; // TODO: FIND BARGE ANGLE
+  public final static double REEF_ANGLE = 0; // TODO: FIND REEF ANGLE
 
   TrapezoidProfile profile = new TrapezoidProfile(new Constraints(100, 500));
   Timer time = new Timer();
-  double target = 0;
+  double target = 0.0;
   boolean stopped = true;
+
+  public boolean algaeIntaking = false;
 
   public Claw() {
     SparkMaxConfig config = new SparkMaxConfig();
@@ -89,6 +92,16 @@ public class Claw extends SubsystemBase {
     target = target_angle;
     stopped = false;
     time.restart();
+  }
+
+  public void angle(int level){
+    if (level == 0){ // Rest
+      angle(INTAKE_ANGLE);
+    } else if (level < 3 || level > 5) {
+      angle(REEF_ANGLE);
+    } else {
+      angle(BARGE_ANGLE);
+    }
   }
 
   public void pivotVolts(double volts) {
