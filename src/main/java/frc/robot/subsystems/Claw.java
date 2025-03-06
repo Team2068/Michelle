@@ -11,7 +11,9 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 
@@ -29,11 +31,11 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 
 public class Claw extends SubsystemBase {
   SparkMax intake = new SparkMax(13, MotorType.kBrushless);
-  SparkMax pivot = new SparkMax(14, MotorType.kBrushless);
+  SparkFlex pivot = new SparkFlex(14, MotorType.kBrushless);
 
   DigitalInput algaeBreak = new DigitalInput(0);
   DigitalInput coralBreak = new DigitalInput(1);
-  
+
   public final static double INTAKE_ANGLE = 0; // TODO: FIND INTAKE ANGLE
   public final static double BARGE_ANGLE = 0; // TODO: FIND BARGE ANGLE
   public final static double REEF_ANGLE = 0; // TODO: FIND REEF ANGLE
@@ -51,13 +53,17 @@ public class Claw extends SubsystemBase {
     config.idleMode(SparkMaxConfig.IdleMode.kBrake);
     intake.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    config.closedLoop.pidf(0.0, 0.0, 0.0, 0.0, ClosedLoopSlot.kSlot0);
-    config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
-    // config.softLimit.forwardSoftLimitEnabled(true);
-    // config.softLimit.forwardSoftLimit(0); // TODO: Find the Forward soft limit
-    // config.softLimit.reverseSoftLimitEnabled(true);
-    // config.softLimit.reverseSoftLimit(0); // TODO: Find the Reverse soft limit
-    pivot.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    SparkFlexConfig pivotConfig = new SparkFlexConfig();
+    pivotConfig.idleMode(SparkMaxConfig.IdleMode.kBrake);
+    pivotConfig.closedLoop.pidf(0.0, 0.0, 0.0, 0.0, ClosedLoopSlot.kSlot0);
+    pivotConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+
+    // pivotConfig.softLimit.forwardSoftLimitEnabled(true);
+    // pivotConfig.softLimit.forwardSoftLimit(0); // TODO: Find the Forward soft limit
+    // pivotConfig.softLimit.reverseSoftLimitEnabled(true);
+    // pivotConfig.softLimit.reverseSoftLimit(0); // TODO: Find the Reverse soft limit
+
+    pivot.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public void volts(double volts) {
@@ -94,8 +100,8 @@ public class Claw extends SubsystemBase {
     time.restart();
   }
 
-  public void angle(int level){
-    if (level == 0){ // Rest
+  public void angle(int level) {
+    if (level == 0) { // Rest
       angle(INTAKE_ANGLE);
     } else if (level < 3 || level > 5) {
       angle(REEF_ANGLE);

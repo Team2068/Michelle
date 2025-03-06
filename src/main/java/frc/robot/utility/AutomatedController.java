@@ -125,7 +125,7 @@ public class AutomatedController {
         controller.rightTrigger().and(debug()).toggleOnTrue(new Aimbot(io));
         controller.leftBumper().and(debug()).toggleOnTrue(new AutoAlign(0, io));
         controller.rightBumper().and(debug()).toggleOnTrue(new AutoAlign(2, io));
-
+ 
         controller.povUp().and(debug()).toggleOnTrue(io.chassis.driveRoutine.quasistatic(Direction.kForward));
         controller.povDown().and(debug()).toggleOnTrue(io.chassis.driveRoutine.quasistatic(Direction.kReverse));
         controller.povRight().and(debug()).toggleOnTrue(io.chassis.driveRoutine.dynamic(Direction.kForward));
