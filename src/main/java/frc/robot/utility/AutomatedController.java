@@ -93,20 +93,20 @@ public class AutomatedController {
         controller.x().and(automated()).onTrue(new ScoreReef(io, 2));
         controller.a().and(automated()).onTrue(new ScoreReef(io, 1));
 
-        controller.start().and(automated()).onTrue(Util.Do(() -> io.elevator.move(0)));
+        // controller.start().and(automated()).onTrue(Util.Do(() -> io.elevator.move(0)));
         controller.back().and(automated()).onTrue(Util.Do(() -> io.chassis.resetOdometry()));
     }
 
     void configureTuning(){
-        controller.povUp().and(tuning()).toggleOnTrue(io.chassis.driveRoutine.quasistatic(Direction.kForward));
-        controller.povDown().and(tuning()).toggleOnTrue(io.chassis.driveRoutine.quasistatic(Direction.kReverse));
-        controller.povRight().and(tuning()).toggleOnTrue(io.chassis.driveRoutine.dynamic(Direction.kForward));
-        controller.povLeft().and(tuning()).toggleOnTrue(io.chassis.driveRoutine.dynamic(Direction.kReverse));
+        controller.x().and(tuning()).toggleOnTrue(io.chassis.driveRoutine.quasistatic(Direction.kForward));
+        controller.a().and(tuning()).toggleOnTrue(io.chassis.driveRoutine.quasistatic(Direction.kReverse));
+        controller.y().and(tuning()).toggleOnTrue(io.chassis.driveRoutine.dynamic(Direction.kForward));
+        controller.b().and(tuning()).toggleOnTrue(io.chassis.driveRoutine.dynamic(Direction.kReverse));
 
-        controller.x().and(tuning()).toggleOnTrue(io.elevator.routine.quasistatic(Direction.kForward));
-        controller.a().and(tuning()).toggleOnTrue(io.elevator.routine.quasistatic(Direction.kReverse));
-        controller.y().and(tuning()).toggleOnTrue(io.elevator.routine.dynamic(Direction.kForward));
-        controller.b().and(tuning()).toggleOnTrue(io.elevator.routine.dynamic(Direction.kReverse));
+        // controller.x().and(tuning()).toggleOnTrue(io.elevator.routine.quasistatic(Direction.kForward));
+        // controller.a().and(tuning()).toggleOnTrue(io.elevator.routine.quasistatic(Direction.kReverse));
+        // controller.y().and(tuning()).toggleOnTrue(io.elevator.routine.dynamic(Direction.kForward));
+        // controller.b().and(tuning()).toggleOnTrue(io.elevator.routine.dynamic(Direction.kReverse));
 
         controller.povUp().and(tuning()).toggleOnTrue(io.chassis.   steerRoutine.quasistatic(Direction.kForward));
         controller.povDown().and(tuning()).toggleOnTrue(io.chassis. steerRoutine.quasistatic(Direction.kReverse));
@@ -118,6 +118,7 @@ public class AutomatedController {
         controller.leftBumper().onTrue(Util.Do(() -> io.elevator.volts(-3), io.elevator)).onFalse(Util.Do(() -> io.elevator.volts(0), io.elevator));
         controller.rightBumper().onTrue(Util.Do(() -> io.elevator.volts(3), io.elevator)).onFalse(Util.Do(() -> io.elevator.volts(0), io.elevator));
         controller.start().and(debug()).onTrue(Util.Do(io.elevator::zero, io.elevator));
+
 
         controller.y().and(debug()).onTrue(Util.Do( () -> io.elevator.move(4),io.elevator));
         controller.b().and(debug()).onTrue(Util.Do( () -> io.elevator.move(3),io.elevator));

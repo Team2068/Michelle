@@ -201,7 +201,7 @@ public class Swerve extends SubsystemBase {
 
     public final SysIdRoutine driveRoutine = new SysIdRoutine(new Config(
             null,
-            Volts.of(2),
+            Volts.of(4),
             null,
             null),
             new SysIdRoutine.Mechanism(voltage -> {
