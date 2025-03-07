@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import java.util.function.Consumer;
-
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;

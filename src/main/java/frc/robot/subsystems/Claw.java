@@ -6,19 +6,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Claw extends SubsystemBase {
 
-  Servo closer = new Servo(0);
+  Servo stopper = new Servo(0);
   Servo slapper = new Servo(1);
 
   public boolean open = false;
   public boolean slapping = false;
 
   public void open(){
-    closer.setAngle(0); //TODO: Find open & closed Angles
+    stopper.setAngle(0); //TODO: Find open & closed Angles
     open = true;
   }
 
   public void close(){
-    closer.setAngle(0);
+    stopper.setAngle(0);
     open = false; 
   }
 
@@ -31,15 +31,23 @@ public class Claw extends SubsystemBase {
     slapper.setAngle(0);
     slapping = false;
   }
+
+  public void toggleStopper(){
+    stopper.setAngle((open) ? 0.0 : 0.0);
+  }
+
+  public void toggleSlapper(){
+    slapper.setAngle((slapping) ? 0.0 : 0.0);
+  }
   
   
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Coral Stopper Angle", closer.getAngle());
+    SmartDashboard.putNumber("Coral Stopper Angle", stopper.getAngle());
     SmartDashboard.putBoolean("Coral Stopper Open", open);
 
-    SmartDashboard.putNumber("Slapper Angle", closer.getAngle());
+    SmartDashboard.putNumber("Slapper Angle", stopper.getAngle());
     SmartDashboard.putBoolean("Slapping", open);
   }
 }

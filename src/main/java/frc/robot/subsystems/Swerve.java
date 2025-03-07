@@ -11,7 +11,6 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -63,8 +62,6 @@ public class Swerve extends SubsystemBase {
     public final Constants constants = new Constants();
 
     public boolean active = true;
-
-    private final PIDController rotationPID = new PIDController(0.0, 0.0, 0.0); // TODO tune these if Characterization fails for Theta
 
     public Swerve() {
         kinematics = new SwerveDriveKinematics(

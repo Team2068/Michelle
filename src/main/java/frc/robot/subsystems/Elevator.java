@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -34,6 +35,8 @@ public class Elevator extends SubsystemBase {
   TalonFX follow = new TalonFX(12);
 
   SparkMaxConfig config = new SparkMaxConfig();
+  
+  boolean limitsActive = true;
 
   TrapezoidProfile profile = new TrapezoidProfile(new Constraints(100, 500));
   Timer time = new Timer();
@@ -66,13 +69,13 @@ public class Elevator extends SubsystemBase {
     config.MotorOutput.withInverted(InvertedValue.Clockwise_Positive);
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.SoftwareLimitSwitch
-        .withForwardSoftLimitEnable(false)
+        .withForwardSoftLimitEnable(true)
         .withForwardSoftLimitThreshold(130.0)
-        .withReverseSoftLimitEnable(false)
+        .withReverseSoftLimitEnable(true)
         .withReverseSoftLimitThreshold(0.0);
 
     lead.getConfigurator().apply(config);
-    follow.setControl(new Follower(lead.getDeviceID(), true)); // TODO: Check if we need to invert
+    follow.setControl(new Follower(lead.getDeviceID(), true));
   }
 
   public void speed(double speed) {
@@ -93,6 +96,23 @@ public class Elevator extends SubsystemBase {
     // target = Math.max(Math.min(height, 0), MAX_HEIGHT);
     target = height;
     time.restart();
+  }
+
+  public void disableLimits(){
+    lead.getConfigurator().apply(new SoftwareLimitSwitchConfigs().withForwardSoftLimitEnable(false).withReverseSoftLimitEnable(false));
+    limitsActive = false;
+  }
+
+  public void enableLimits(){
+    lead.getConfigurator().apply(new SoftwareLimitSwitchConfigs().withForwardSoftLimitEnable(true).withReverseSoftLimitEnable(true));
+    limitsActive = true;
+  }
+
+  public void toggleLimits(){
+    if (limitsActive)
+      disableLimits();
+    else
+      enableLimits();
   }
 
   public void move(int level) {

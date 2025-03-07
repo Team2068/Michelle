@@ -13,19 +13,13 @@
         {
           "type": "named",
           "data": {
-            "name": "Score L-L3"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Clear Algae"
+            "name": "Score L-L4"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Scuffed",
+  "folder": null,
   "choreoAuto": false
 }

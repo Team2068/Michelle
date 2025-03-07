@@ -11,7 +11,7 @@ public class IO extends SubsystemBase {
         // public final Hang hang = new Hang();
         public final Limelight limelight = new Limelight();
 
-        public final Claw claw = null;
+        public final Claw claw = new Claw();
         // public final Elevator elevator = null;
         public final Hang hang = null;
 
