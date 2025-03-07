@@ -10,16 +10,13 @@ import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.math.Pair;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import frc.robot.commands.ClearAlgae;
 import frc.robot.commands.DefaultDrive;
-import frc.robot.commands.Intake;
 import frc.robot.commands.RotateChassis;
-import frc.robot.commands.ScoreAlgae;
 import frc.robot.commands.ScoreReef;
 import frc.robot.swerve.Swerve;
 import frc.robot.utility.AutomatedController;
@@ -58,12 +55,6 @@ public class RobotContainer {
     driver_selector.addOption("Debug", 4);
     driver_selector.onChange( (driver) -> Swerve.Constants.SwitchDriver(driver));
 
-    // DogLog.setOptions(new DogLogOptions()
-    // .withCaptureDs(true)
-    // .withCaptureConsole(true)
-    // .withLogExtras(true));
-
-    // DogLog.setEnabled( false); // TODO: Turn back on when we're testing proper
     SignalLogger.setPath("/media/sda1/ctre-logs/");
   }
 
@@ -79,17 +70,13 @@ public class RobotContainer {
     NamedCommands.registerCommand("Score L-L4", new ScoreReef(io, false, 4));
     NamedCommands.registerCommand("Score L-L3", new ScoreReef(io, false, 3));
     NamedCommands.registerCommand("Score L-L2", new ScoreReef(io, false, 2));
-    NamedCommands.registerCommand("Score L-L1", new ScoreReef(io, false, 1));
 
     NamedCommands.registerCommand("Score R-L4", new ScoreReef(io, true, 4));
     NamedCommands.registerCommand("Score R-L3", new ScoreReef(io, true, 3));
     NamedCommands.registerCommand("Score R-L2", new ScoreReef(io, true, 2));
-    NamedCommands.registerCommand("Score R-L1", new ScoreReef(io, true, 1));
-    NamedCommands.registerCommand("Score Barge", new ScoreAlgae(io, true));
+    NamedCommands.registerCommand("Score L1", new ScoreReef(io, 1));
 
-    // TODO: SEE IF WE CAN GET AWAY WITH THESE LEVELS
-    NamedCommands.registerCommand("Clear Low Algae", new Intake(io, false, false, 2));
-    NamedCommands.registerCommand("Clear High Algae", new Intake(io, false, false, 3));
+    NamedCommands.registerCommand("Clear Algae", new ClearAlgae(io, false));
   }
 
   public Command getAutonomousCommand() {

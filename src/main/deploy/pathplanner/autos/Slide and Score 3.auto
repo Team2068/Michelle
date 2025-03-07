@@ -7,7 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "XXX"
+            "pathName": "Middle to HG"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score L-L3"
           }
         }
       ]

@@ -7,31 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Bottom to CD"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score L-L4"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Cycle CD"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score R-L4"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Cycle CD"
+            "pathName": "Top to LK"
           }
         },
         {
@@ -43,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Cycle CD"
+            "pathName": "Cycle LK"
           }
         },
         {
@@ -53,21 +29,57 @@
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Clear Low Alage"
+            "pathName": "Cycle LK"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "CD to Barge"
+            "name": "Clear Algae"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Score L-L2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Cycle LK"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score R-L2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Cycle LK"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score L1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Cycle LK"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score L1"
           }
         }
       ]

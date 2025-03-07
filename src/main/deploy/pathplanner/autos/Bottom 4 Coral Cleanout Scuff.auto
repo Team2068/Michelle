@@ -7,31 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Top to LK"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score L-L4"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Cycle LK"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score R-L4"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Cycle LK"
+            "pathName": "Bottom to CD"
           }
         },
         {
@@ -43,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Cycle LK"
+            "pathName": "Cycle CD"
           }
         },
         {
@@ -53,33 +29,69 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Clear Low Alage"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "LK to Barge"
+            "pathName": "Cycle CD"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Score Barge"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Barge to Station to LK"
+            "name": "Clear Algae"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Score L-L2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Cycle CD"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score R-L2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Cycle CD"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score L1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Cycle CD"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score L1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Cycle CD"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score L1"
           }
         }
       ]

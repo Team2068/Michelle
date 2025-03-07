@@ -4,15 +4,13 @@ import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.Aimbot;
 import frc.robot.commands.AutoAlign;
-import frc.robot.commands.Intake;
+import frc.robot.commands.ClearAlgae;
 import frc.robot.commands.LimelightAlign;
-import frc.robot.commands.ScoreAlgae;
 import frc.robot.commands.ScoreReef;
 
 public class AutomatedController {
@@ -42,6 +40,7 @@ public class AutomatedController {
         // controller.back().onTrue(Util.Do(io.elevator::rest));
         // controller.start().onTrue(Util.Do(io.elevator::zero));
         configure();
+        configureAutomated();
         configureDebug();
     }
 
@@ -73,49 +72,20 @@ public class AutomatedController {
         
         controller.start().and(controller.getHID()::getBackButtonPressed).onTrue(Util.Do(this::switchMode));
         controller.back().onTrue(Util.Do(io.chassis::resetOdometry, io.chassis));
-
-        // controller.leftBumper().onTrue(new SimpleAlign(io, false));
-        // controller.rightBumper().onTrue(new SimpleAlign(io, true));
-        
-        // controller.leftBumper().onTrue(new RotateChassis(io, 45));
-        // controller.leftBumper().toggleOnTrue(new LimelightAlign(io, 0));
-        // controller.rightBumper().toggleOnTrue(new LimelightAlign(io, 2));
-
-        // AUTOMATED
-
-        // Based on the nearest element and our field orientation
-        // LB align Left and Score Coral & Score Barge
-        // RB align Right and Score Coral & Score Processor
-
-        controller.leftBumper().and(automated()).toggleOnTrue(new AutoAlign(0, io));
-        controller.rightBumper().and(automated()).toggleOnTrue(new AutoAlign(2, io));
-
-        // MANUAL
-        // RB align Right and Score Coral & Score Processor 
-        // controller.y().and( automated() ).onTrue(Util.D      
+  
         controller.povDown().and( manual() ).onTrue(Util.Do(io.chassis::toggle));
         controller.povLeft().and( manual() ).onTrue(Util.Do(io.chassis::syncEncoders));
         controller.povRight().and( manual() ).and(() -> {return !io.chassis.active;}).onTrue(new InstantCommand(io.chassis::zeroAbsolute)); // Add the Rumble effect
-
-        // controller.povRight().and( manual() ).and(() -> {return !io.chassis.active;}).onTrue(new Rumble(0, .5, controller.getHID(), io.chassis::zeroAbsolute)); // Add the Rumble effect
     }
 
     void configureAutomated(){
         controller.leftBumper().and(automated()).onTrue(Util.Do(() -> new LimelightAlign(io, 1, false)));
         controller.rightBumper().and(automated()).onTrue(Util.Do(() -> new LimelightAlign(io, 2, false)));
-
-        controller.a().and(automated()).and(() -> !io.claw.hasCoral()).onTrue(Util.Do(() -> new Intake(io, true, false, rumble)));
-
-        controller.a().and(automated()).and(() -> io.claw.hasCoral()).onTrue(Util.Do(() -> new ScoreReef(io, 1, rumble)));
-        controller.b().and(automated()).and(() -> io.claw.hasCoral()).onTrue(Util.Do(() -> new ScoreReef(io, 3, rumble)));
-        controller.x().and(automated()).and(() -> io.claw.hasCoral()).onTrue(Util.Do(() -> new ScoreReef(io, 2, rumble)));
-        controller.y().and(automated()).and(() -> io.claw.hasCoral()).onTrue(Util.Do(() -> new ScoreReef(io, 4, rumble)));
-
-        controller.x().and(automated()).and(() -> io.claw.hasAlgae()).onTrue(io.elevator.moveCommand(7));
-        controller.a().and(automated()).and(() -> io.claw.hasAlgae()).onTrue(io.elevator.moveCommand(6));
-
-        controller.povLeft().and(automated()).onTrue(Util.Do(() -> new Intake(io, false, true, rumble)));
-        controller.povUp().and(automated()).onTrue(new ConditionalCommand(new ScoreAlgae(io, true, rumble), new Intake(io, false, false, rumble), io.claw::hasAlgae));
+        
+        controller.y().and(automated()).onTrue(new ScoreReef(io, 3));
+        controller.b().and(automated()).onTrue(new ClearAlgae(io));
+        controller.x().and(automated()).onTrue(new ScoreReef(io, 2));
+        controller.a().and(automated()).onTrue(new ScoreReef(io, 1));
 
         controller.start().and(automated()).onTrue(Util.Do(() -> io.elevator.move(0)));
         controller.back().and(automated()).onTrue(Util.Do(() -> io.chassis.resetOdometry()));
