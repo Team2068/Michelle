@@ -67,7 +67,7 @@ public class Module {
         config.CurrentLimits.SupplyCurrentLimit = 20;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         
-        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         steer.configure(steerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
