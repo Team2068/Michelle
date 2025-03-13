@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.344772727272727,
+        "x": 3.6695454545454544,
         "y": 5.206633522727272
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.7642249354128365,
-        "y": 5.548440560420403
+        "x": 3.442902780309121,
+        "y": 5.472347910370522
       },
       "isLocked": false,
-      "linkedName": "Starting IJ"
+      "linkedName": "LK"
     },
     {
       "anchor": {
@@ -20,41 +20,36 @@
         "y": 7.220894886363636
       },
       "prevControl": {
-        "x": 1.5412515749121463,
-        "y": 7.342700736229868
+        "x": 2.030789042192635,
+        "y": 6.818654369259048
       },
       "nextControl": {
-        "x": 1.9845375267660235,
-        "y": 7.101350753043471
+        "x": 1.6271387237970898,
+        "y": 7.429466458596492
       },
       "isLocked": false,
       "linkedName": "Top Coral Station"
     },
     {
       "anchor": {
-        "x": 5.344772727272727,
-        "y": 5.206633522727272
+        "x": 2.9615625,
+        "y": 3.9801278409090908
       },
       "prevControl": {
-        "x": 4.8663102932710895,
-        "y": 5.487137469543703
+        "x": 2.5867889091633094,
+        "y": 4.994866966222094
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Starting IJ"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1.0,
-      "rotationDegrees": 119.99999999999999
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.9612403100775195,
-      "maxWaypointRelativePos": 1.05,
+      "minWaypointRelativePos": 0.95,
+      "maxWaypointRelativePos": 1.1,
       "constraints": {
         "maxVelocity": 1.0,
         "maxAcceleration": 5.5,
@@ -77,13 +72,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 119.99999999999999
   },
   "useDefaultConstraints": true
 }

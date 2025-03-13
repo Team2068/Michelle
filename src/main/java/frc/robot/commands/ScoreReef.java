@@ -12,24 +12,21 @@ import frc.robot.utility.Util;
 
 public class ScoreReef extends SequentialCommandGroup {
 
-  public ScoreReef(IO io, int Level, GenericHID controller) {
+  public ScoreReef(IO io, int level, GenericHID controller) {
     addCommands(
-      // TODO: Check if we have coral & if we don't have
-      io.elevator.moveCommand(Level),
-      new WaitUntilCommand(io.elevator::atPosition), // TODO: Wait until we're at the height
-      new Intake(io, true, true, controller), // TODO: Set to Reef Scoring Angle
+      new Intake(io, true, level, controller), // TODO: Set to Reef Scoring Angle
       io.elevator.moveCommand(0)
     );
   }
 
-  public ScoreReef(IO io, boolean score_right, int Level) {
+  public ScoreReef(IO io, boolean score_right, int level) {
     addCommands(
       // TODO: Check if we have coral & if we don't have
-      io.elevator.moveCommand(Level),
-      new AutoAlign((score_right) ? 2 : 1, io),
+      io.elevator.moveCommand(level),
+      new AutoAlign((score_right) ? 2 : 0, io),
+      Util.Do(() -> io.claw.angle(level), io.claw),
       new WaitUntilCommand(io.elevator::atPosition), // TODO: Wait until we're at the height
-      Util.Do(() -> io.claw.angle(Level), io.claw),
-      new Intake(io, true, true), // TODO: Set to Reef Scoring Angle
+      new Intake(io, true, level), // TODO: Set to Reef Scoring Angle
       io.elevator.moveCommand(0)
     );
   }

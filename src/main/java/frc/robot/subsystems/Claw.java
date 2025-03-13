@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -33,19 +32,17 @@ public class Claw extends SubsystemBase {
   SparkMax intake = new SparkMax(13, MotorType.kBrushless);
   SparkFlex pivot = new SparkFlex(14, MotorType.kBrushless);
 
-  DigitalInput algaeBreak = new DigitalInput(0);
-  DigitalInput coralBreak = new DigitalInput(1);
+  public static final double INTAKE_ANGLE = 0;
+  public static final double REEF_ANGLE = 0;
 
-  public final static double INTAKE_ANGLE = 0; // TODO: FIND INTAKE ANGLE
-  public final static double BARGE_ANGLE = 0; // TODO: FIND BARGE ANGLE
-  public final static double REEF_ANGLE = 0; // TODO: FIND REEF ANGLE
+  DigitalInput coralBreak = new DigitalInput(0);
 
   TrapezoidProfile profile = new TrapezoidProfile(new Constraints(100, 500));
   Timer time = new Timer();
   double target = 0.0;
   boolean stopped = true;
 
-  public boolean algaeIntaking = false;
+  public boolean intaking = false;
 
   public Claw() {
     SparkMaxConfig config = new SparkMaxConfig();
@@ -58,10 +55,10 @@ public class Claw extends SubsystemBase {
     pivotConfig.closedLoop.pidf(0.0, 0.0, 0.0, 0.0, ClosedLoopSlot.kSlot0);
     pivotConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
 
-    // pivotConfig.softLimit.forwardSoftLimitEnabled(true);
-    // pivotConfig.softLimit.forwardSoftLimit(0); // TODO: Find the Forward soft limit
-    // pivotConfig.softLimit.reverseSoftLimitEnabled(true);
-    // pivotConfig.softLimit.reverseSoftLimit(0); // TODO: Find the Reverse soft limit
+    pivotConfig.softLimit.forwardSoftLimitEnabled(false);
+    pivotConfig.softLimit.forwardSoftLimit(0); // TODO: Find the Forward soft limit
+    pivotConfig.softLimit.reverseSoftLimitEnabled(false);
+    pivotConfig.softLimit.reverseSoftLimit(0); // TODO: Find the Reverse soft limit
 
     pivot.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
@@ -76,10 +73,6 @@ public class Claw extends SubsystemBase {
 
   public void stop() {
     intake.stopMotor();
-  }
-
-  public boolean hasAlgae() {
-    return algaeBreak.get();
   }
 
   public boolean hasCoral() {
@@ -98,16 +91,6 @@ public class Claw extends SubsystemBase {
     target = target_angle;
     stopped = false;
     time.restart();
-  }
-
-  public void angle(int level) {
-    if (level == 0) { // Rest
-      angle(INTAKE_ANGLE);
-    } else if (level < 3 || level > 5) {
-      angle(REEF_ANGLE);
-    } else {
-      angle(BARGE_ANGLE);
-    }
   }
 
   public void pivotVolts(double volts) {
@@ -134,8 +117,7 @@ public class Claw extends SubsystemBase {
     // DogLog.log("Claw/Coral Full", hasCoral());
     // DogLog.log("Claw/Pivot Angle", angle());
 
-    SmartDashboard.putBoolean("Have Algae", hasAlgae());
-    SmartDashboard.putBoolean("Have Algae", hasAlgae());
+    SmartDashboard.putBoolean("Coral", hasCoral());
     SmartDashboard.putNumber("Claw Pivot", angle());
 
     double cTime = time.get();

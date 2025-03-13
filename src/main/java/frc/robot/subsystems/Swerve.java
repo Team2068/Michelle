@@ -11,7 +11,6 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -63,8 +62,6 @@ public class Swerve extends SubsystemBase {
     public final Constants constants = new Constants();
 
     public boolean active = true;
-
-    private final PIDController rotationPID = new PIDController(0.0, 0.0, 0.0); // TODO tune these if Characterization fails for Theta
 
     public Swerve() {
         kinematics = new SwerveDriveKinematics(
@@ -165,11 +162,12 @@ public class Swerve extends SubsystemBase {
     }
 
     public void resetOdometry() {
-        resetOdometry(new Pose2d(new Translation2d(), new Rotation2d(180)));
+        resetOdometry(new Pose2d(new Translation2d(), new Rotation2d(0)));
     }
 
     public void resetOdometry(Pose2d pose) {
-        resetAngle();
+        // resetAngle();
+        pigeon2.setYaw(pose.getRotation().getDegrees());
         resetPosition();
 
         odometry.resetPosition(rotation(), modulePositions(), pose);
@@ -221,11 +219,11 @@ public class Swerve extends SubsystemBase {
 
     public final SysIdRoutine steerRoutine = new SysIdRoutine(new Config(
             null,
-            Volts.of(1),
+            null,
             null,
             null),
             new SysIdRoutine.Mechanism(voltage -> {
-                speeds = new ChassisSpeeds(0, 0, (voltage.magnitude()/16.0) * Constants.MAX_VELOCITY);
+                speeds = new ChassisSpeeds(0, 0, (voltage.magnitude()/16.0) * Constants.MAX_ANGULAR_VELOCITY);
             }, log -> {
                 for (int i = 0; i < 4; i++) {
                     log.motor(Constants.LAYOUT_TITLE[i] + " [Steer]")

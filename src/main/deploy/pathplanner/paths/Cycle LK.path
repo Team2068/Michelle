@@ -3,45 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.8,
-        "y": 5.3
+        "x": 3.6695454545454544,
+        "y": 5.206633522727272
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9060695947806816,
-        "y": 5.981127203067267
+        "x": 3.357804178610237,
+        "y": 5.486653629540659
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "LK"
     },
     {
       "anchor": {
-        "x": 1.6828767123287671,
-        "y": 7.353189212328767
+        "x": 1.7649715909090908,
+        "y": 7.220894886363636
       },
       "prevControl": {
-        "x": 1.5172681656002416,
-        "y": 7.54046924129733
+        "x": 1.5966241435231892,
+        "y": 7.40571679242093
       },
       "nextControl": {
-        "x": 1.9544850896817896,
-        "y": 7.046038248301759
+        "x": 1.9333190382949925,
+        "y": 7.036072980306343
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Top Coral Station"
     },
     {
       "anchor": {
-        "x": 3.8,
-        "y": 5.3
+        "x": 3.6695454545454544,
+        "y": 5.206633522727272
       },
       "prevControl": {
-        "x": 3.365004409549383,
-        "y": 5.774787496649876
+        "x": 3.500993559994922,
+        "y": 5.391268998309367
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "LK"
     }
   ],
   "rotationTargets": [],
@@ -63,22 +63,22 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 5.5,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 4.6,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 360.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.99999999999999
+    "rotation": 119.99999999999999
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -59.99999999999999
+    "rotation": 119.99999999999999
   },
   "useDefaultConstraints": true
 }

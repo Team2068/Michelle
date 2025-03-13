@@ -21,8 +21,6 @@ public class Limelight extends SubsystemBase {
   double latency;
   public int tag; 
 
-  // EXAMPLE: TagPose[1][RIGHT][X]
-
   int[] tagLocation;
 
   final NetworkTable table = NetworkTableInstance.getDefault().getTable("Limelight");

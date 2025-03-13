@@ -35,13 +35,14 @@ public class Swerve {
         // AUTON CONSTANTS
         public double XControllerP = 5.1555;
         public double XControllerD = 0.61072;
-        public double ThetaControllerP = 0;
+        public double ThetaControllerP = .001;
         public double ThetaControllerD = 0;
         public RobotConfig autoConfig;
         public double MASS = 47;
 
         // BASE CHASSIS CONFIGURATION
         public static final double MAX_VELOCITY = 5.4;
+        public static final double MAX_ANGULAR_VELOCITY = Math.PI/6;
         public static final String[] LAYOUT_TITLE = { "Front Left", "Front Right", "Back Left", "Back Right" };
         public static final int[] CHASSIS_ID = { 2, 3, 4, 5 }; // FL, FR, BL, BR
         public static final int[] ENCODER_ID = { 7, 8, 9, 10 }; // FL, FR, BL, BR
@@ -101,7 +102,7 @@ public class Swerve {
                 
                 default: // Shaan
                 transFactor = .65;
-                rotFactor = .48;
+                rotFactor = .5;
                     break;
             }
         }
@@ -112,6 +113,7 @@ public class Swerve {
         public boolean connected();
         public double angle();
         public AngularVelocity velocity();
+
     }
 
     public static class Cancoder implements Encoder {

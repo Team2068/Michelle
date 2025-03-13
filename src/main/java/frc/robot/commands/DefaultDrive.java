@@ -24,7 +24,7 @@ public class DefaultDrive extends Command {
     public DefaultDrive(IO io, CommandXboxController controller) {
         this(io, () -> modifyAxis(controller.getLeftY()) * Swerve.Constants.MAX_VELOCITY,
         () -> modifyAxis(controller.getLeftX()) * Swerve.Constants.MAX_VELOCITY,
-        () -> modifyAxis(controller.getRightX()) * Swerve.Constants.MAX_VELOCITY);
+        () -> modifyAxis(controller.getRightX()) * Swerve.Constants.MAX_ANGULAR_VELOCITY);
         this.controller = controller;
     }
   
@@ -47,7 +47,7 @@ public class DefaultDrive extends Command {
         double up_scale = (Swerve.Constants.MAX_VELOCITY * .2) * modifyAxis(controller.getRightTriggerAxis());
 
         double scale = Constants.transFactor * down_scale + up_scale;
-        double rot_scale = Constants.rotFactor * down_scale + up_scale;
+        double rot_scale = Constants.rotFactor * down_scale;
 
         double xSpeed = x_supplier.getAsDouble() * scale;
         double ySpeed = y_supplier.getAsDouble() * scale;

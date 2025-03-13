@@ -8,53 +8,48 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.7642249354128365,
-        "y": 5.548440560420403
+        "x": 4.599760694017934,
+        "y": 5.624873196871553
       },
       "isLocked": false,
       "linkedName": "Starting IJ"
     },
     {
       "anchor": {
-        "x": 1.7649715909090908,
-        "y": 7.220894886363636
+        "x": 1.755,
+        "y": 7.171036931818182
       },
       "prevControl": {
-        "x": 1.5412515749121463,
-        "y": 7.342700736229868
+        "x": 1.954912240657937,
+        "y": 6.979269733268736
       },
       "nextControl": {
-        "x": 1.9845375267660235,
-        "y": 7.101350753043471
+        "x": 1.564159066139434,
+        "y": 7.354102416625691
       },
       "isLocked": false,
-      "linkedName": "Top Coral Station"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.344772727272727,
+        "x": 3.6695454545454544,
         "y": 5.206633522727272
       },
       "prevControl": {
-        "x": 4.8663102932710895,
-        "y": 5.487137469543703
+        "x": 3.490908924519007,
+        "y": 5.381530607151542
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Starting IJ"
+      "linkedName": "LK"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1.0,
-      "rotationDegrees": 119.99999999999999
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.9612403100775195,
-      "maxWaypointRelativePos": 1.05,
+      "minWaypointRelativePos": 0.9344909234412,
+      "maxWaypointRelativePos": 1.3480662983425347,
       "constraints": {
         "maxVelocity": 1.0,
         "maxAcceleration": 5.5,
@@ -77,7 +72,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 119.99999999999999
   },
   "reversed": false,
   "folder": null,

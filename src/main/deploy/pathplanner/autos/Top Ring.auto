@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Bottom to CD"
+            "pathName": "Top to IJ"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Cycle CD"
+            "pathName": "Cycle JI"
           }
         },
         {
@@ -31,49 +31,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Cycle CD"
+            "pathName": "IJ to LK"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Score L-L3"
+            "name": "Score L-L4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Cycle CD"
+            "pathName": "Cycle LK"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Score R-L3"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Clear Low Alage"
+            "name": "Score R-L4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "CD to Barge"
+            "pathName": "LK to AB"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Score L-L2"
+            "name": "Score L-L4"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Algae Intake",
+  "folder": null,
   "choreoAuto": false
 }

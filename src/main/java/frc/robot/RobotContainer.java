@@ -4,14 +4,10 @@
 
 package frc.robot;
 
-import java.util.function.Consumer;
-
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.math.Pair;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.commands.DefaultDrive;
 import frc.robot.commands.Intake;
 import frc.robot.commands.RotateChassis;
-import frc.robot.commands.ScoreAlgae;
 import frc.robot.commands.ScoreReef;
 import frc.robot.swerve.Swerve;
 import frc.robot.utility.AutomatedController;
@@ -85,11 +80,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("Score R-L3", new ScoreReef(io, true, 3));
     NamedCommands.registerCommand("Score R-L2", new ScoreReef(io, true, 2));
     NamedCommands.registerCommand("Score R-L1", new ScoreReef(io, true, 1));
-    NamedCommands.registerCommand("Score Barge", new ScoreAlgae(io, true));
 
     // TODO: SEE IF WE CAN GET AWAY WITH THESE LEVELS
-    NamedCommands.registerCommand("Clear Low Algae", new Intake(io, false, false, 2));
-    NamedCommands.registerCommand("Clear High Algae", new Intake(io, false, false, 3));
+    NamedCommands.registerCommand("Clear Low Algae", new Intake(io, false, 2)); // TODO: MAKE ACTUAL COMMAND
+    NamedCommands.registerCommand("Clear High Algae", new Intake(io, false, 3)); // TODO: MAKE ACTUAL COMMAND
   }
 
   public Command getAutonomousCommand() {

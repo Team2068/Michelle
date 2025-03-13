@@ -27,9 +27,9 @@ public class Intake extends Command {
   // public static int SCORE_ALGAE = 2;
   // public static int INTAKE_ALGAE_GROUND = -3; // THIS WILL MATTER ONLY IF WE DO GROUND PICKUP
 
-  public Intake(IO io, boolean coral, boolean release, GenericHID controller) {
+  public Intake(IO io, boolean release, int level, GenericHID controller) {
     rumble = (controller != null) ? () -> controller.setRumble(RumbleType.kBothRumble, .25) : () -> {}; // TODO: Check if it's fine
-    holding = () -> (coral) ? ((release) ? io.claw.hasCoral() :  !io.claw.hasCoral()) : ((release) ? io.claw.hasAlgae() :  !io.claw.hasAlgae());
+    holding = () -> (release) ? io.claw.hasCoral() :  !io.claw.hasCoral();
     
     intake = () -> {
       io.claw.speed((release) ? 1 : .4);
@@ -40,21 +40,14 @@ public class Intake extends Command {
       io.claw.stop();
       controller.setRumble(RumbleType.kBothRumble, 0.0);
     };
-  }
 
-  public Intake(IO io, boolean coral, boolean release){
-    this(io, coral, release, null);
-  }
-
-  public Intake(IO io, boolean coral, boolean release, int level, GenericHID controller) { // negative is release, 1 is coral, 2 is algae, 3 is algae in ground positio
-    this(io, coral, release,controller);
     io.elevator.move(level);
   }
 
-  public Intake(IO io, boolean coral, boolean release, int level) { // negative is release, 1 is coral, 2 is algae, 3 is algae in ground positio
-    this(io, coral, release);
-    io.elevator.move(level);
+  public Intake(IO io, boolean release, int level){
+    this(io, release, level, null);
   }
+
 
   // Called when the command is initially scheduled.
   @Override
