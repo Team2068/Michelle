@@ -158,7 +158,6 @@ public class Swerve extends SubsystemBase {
 
     public Pose2d pose() {
         return odometry.getPoseMeters();
-        // return estimatePose();
     }
 
     public void resetOdometry() {
@@ -166,14 +165,13 @@ public class Swerve extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
-        // resetAngle();
         pigeon2.setYaw(pose.getRotation().getDegrees());
-        resetPosition();
+        resetModulePositions();
 
         odometry.resetPosition(rotation(), modulePositions(), pose);
     }
 
-    public void resetPosition() {
+    public void resetModulePositions() {
         for (Module mod : modules)
             mod.resetDrivePosition();
     }
@@ -202,7 +200,8 @@ public class Swerve extends SubsystemBase {
 
     public final SysIdRoutine driveRoutine = new SysIdRoutine(new Config(
             null,
-            Volts.of(2),
+            // Volts.of(2),
+            null,
             null,
             null),
             new SysIdRoutine.Mechanism(voltage -> {
@@ -219,18 +218,25 @@ public class Swerve extends SubsystemBase {
 
     public final SysIdRoutine steerRoutine = new SysIdRoutine(new Config(
             null,
-            null,
+            Volts.of(2),
             null,
             null),
             new SysIdRoutine.Mechanism(voltage -> {
                 speeds = new ChassisSpeeds(0, 0, (voltage.magnitude()/16.0) * Constants.MAX_ANGULAR_VELOCITY);
             }, log -> {
-                for (int i = 0; i < 4; i++) {
-                    log.motor(Constants.LAYOUT_TITLE[i] + " [Steer]")
-                            .voltage(modules[i].steerVoltage())
-                            .angularPosition(angle[i].mut_replace(modules[i].angle(), Radians))
-                            .angularVelocity(modules[i].steerVelocity());
-                }
+                // TODO: Test to see if this gives us accurate PID values
+                log.motor("Chassis")
+                    .voltage(modules[0].steerVoltage())
+                    .angularPosition(pigeon2.getYaw().getValue())
+                    .angularVelocity(pigeon2.getAngularVelocityYWorld().getValue());
+                    // .angularAcceleration(pigeon2.getAccelerationY().getValue()); // TODO: Test to see if converting this to angular acceleration would be valid
+
+                // for (int i = 0; i < 4; i++) {
+                //     log.motor(Constants.LAYOUT_TITLE[i] + " [Steer]")
+                //             .voltage(modules[i].steerVoltage())
+                //             .angularPosition(angle[i].mut_replace(modules[i].angle(), Radians))
+                //             .angularVelocity(modules[i].steerVelocity());
+                // }
             }, this));
 
     public double getRoll() {

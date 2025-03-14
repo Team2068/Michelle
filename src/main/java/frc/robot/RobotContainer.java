@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.commands.DefaultDrive;
-import frc.robot.commands.Intake;
 import frc.robot.commands.RotateChassis;
 import frc.robot.commands.ScoreReef;
 import frc.robot.swerve.Swerve;
@@ -82,8 +81,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("Score R-L1", new ScoreReef(io, true, 1));
 
     // TODO: SEE IF WE CAN GET AWAY WITH THESE LEVELS
-    NamedCommands.registerCommand("Clear Low Algae", new Intake(io, false, 2)); // TODO: MAKE ACTUAL COMMAND
-    NamedCommands.registerCommand("Clear High Algae", new Intake(io, false, 3)); // TODO: MAKE ACTUAL COMMAND
+    // NamedCommands.registerCommand("Clear Low Algae", new Intake(io, false)); // TODO: MAKE ACTUAL COMMAND
+    // NamedCommands.registerCommand("Clear High Algae", new Intake(io, false)); // TODO: MAKE ACTUAL COMMAND
   }
 
   public Command getAutonomousCommand() {

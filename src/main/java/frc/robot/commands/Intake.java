@@ -20,6 +20,7 @@ public class Intake extends Command {
   Runnable rumble;
   BooleanSupplier holding;
   double angle;
+  boolean release;
 
   // public static int INTAKE_CORAL = -1;
   // public static int INTAKE_ALGAE = -2;
@@ -27,7 +28,7 @@ public class Intake extends Command {
   // public static int SCORE_ALGAE = 2;
   // public static int INTAKE_ALGAE_GROUND = -3; // THIS WILL MATTER ONLY IF WE DO GROUND PICKUP
 
-  public Intake(IO io, boolean release, int level, GenericHID controller) {
+  public Intake(IO io, boolean release, GenericHID controller) {
     rumble = (controller != null) ? () -> controller.setRumble(RumbleType.kBothRumble, .25) : () -> {}; // TODO: Check if it's fine
     holding = () -> (release) ? io.claw.hasCoral() :  !io.claw.hasCoral();
     
@@ -41,11 +42,11 @@ public class Intake extends Command {
       controller.setRumble(RumbleType.kBothRumble, 0.0);
     };
 
-    io.elevator.move(level);
+    this.release = release;
   }
 
-  public Intake(IO io, boolean release, int level){
-    this(io, release, level, null);
+  public Intake(IO io, boolean release){
+    this(io, release, null);
   }
 
 
