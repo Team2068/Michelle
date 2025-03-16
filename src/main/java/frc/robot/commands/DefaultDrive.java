@@ -22,9 +22,9 @@ public class DefaultDrive extends Command {
     }
 
     public DefaultDrive(IO io, CommandXboxController controller) {
-        this(io, () -> modifyAxis(controller.getLeftY()) * Swerve.Constants.MAX_VELOCITY,
-        () -> modifyAxis(controller.getLeftX()) * Swerve.Constants.MAX_VELOCITY,
-        () -> modifyAxis(controller.getRightX()) * Swerve.Constants.MAX_ANGULAR_VELOCITY);
+        this(io, () -> -modifyAxis(controller.getLeftY()) * Swerve.Constants.MAX_VELOCITY,
+        () -> -modifyAxis(controller.getLeftX()) * Swerve.Constants.MAX_VELOCITY,
+        () -> -modifyAxis(controller.getRightX()) * Swerve.Constants.MAX_ANGULAR_VELOCITY);
         this.controller = controller;
     }
   

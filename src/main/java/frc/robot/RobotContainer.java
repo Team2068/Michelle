@@ -66,7 +66,7 @@ public class RobotContainer {
   public void configureAuton(){
     NamedCommands.registerCommand("Face Barge", new RotateChassis(io, 0));
     NamedCommands.registerCommand("Rotate IJ", new RotateChassis(io, -120));
-    NamedCommands.registerCommand("Rotate LK", new RotateChassis(io, -60));
+    NamedCommands.registerCommand("rotatelk", new RotateChassis(io, 300));
     NamedCommands.registerCommand("Rotate HG", new RotateChassis(io, 180));
     NamedCommands.registerCommand("Rotate CD", new RotateChassis(io, 60));
     NamedCommands.registerCommand("Rotate EF", new RotateChassis(io, 120));

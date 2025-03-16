@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.Aimbot;
 import frc.robot.commands.AutoAlign;
 import frc.robot.commands.LimelightAlign;
+import frc.robot.commands.RotateChassis;
 import frc.robot.commands.ScoreReef;
 
 public class AutomatedController {
@@ -87,6 +88,8 @@ public class AutomatedController {
         controller.leftBumper().and(automated()).toggleOnTrue(new AutoAlign(0, io));
         controller.rightBumper().and(automated()).toggleOnTrue(new AutoAlign(2, io));
 
+        controller.x().and(manual()).toggleOnTrue(new RotateChassis(io, 300));
+
         // MANUAL
         // RB align Right and Score Coral & Score Processor 
         // controller.y().and( automated() ).onTrue(Util.D      
@@ -119,20 +122,21 @@ public class AutomatedController {
         // controller.leftBumper().and(debug()).toggleOnTrue(new AutoAlign(0, io));
         // controller.rightBumper().and(debug()).toggleOnTrue(new AutoAlign(2, io));
  
-        // controller.povUp().and(debug()).toggleOnTrue(io.chassis.driveRoutine.quasistatic(Direction.kForward));
-        // controller.povDown().and(debug()).toggleOnTrue(io.chassis.driveRoutine.quasistatic(Direction.kReverse));
-        // controller.povRight().and(debug()).toggleOnTrue(io.chassis.driveRoutine.dynamic(Direction.kForward));
-        // controller.povLeft().and(debug()).toggleOnTrue(io.chassis.driveRoutine.dynamic(Direction.kReverse));
+        controller.x().and(debug()).toggleOnTrue(io.chassis.driveRoutine.quasistatic(Direction.kForward));
+        controller.a().and(debug()).toggleOnTrue(io.chassis.driveRoutine.quasistatic(Direction.kReverse));
+        controller.y().and(debug()).toggleOnTrue(io.chassis.driveRoutine.dynamic(Direction.kForward));
+        controller.b().and(debug()).toggleOnTrue(io.chassis.driveRoutine.dynamic(Direction.kReverse));
 
         // controller.x().and(debug()).toggleOnTrue(io.elevator.routine.quasistatic(Direction.kForward));
         // controller.a().and(debug()).toggleOnTrue(io.elevator.routine.quasistatic(Direction.kReverse));
         // controller.y().and(debug()).toggleOnTrue(io.elevator.routine.dynamic(Direction.kForward));
-        // controller.b().and(debug()).toggleOnTrue(io.elevator.routine.dynamic(Direction.kReverse));
+        // controller.b().and(debug()).toggleOnTrue(io.elevator.routine.dynamic(Direction.kRevezrse));
 
-        controller.leftBumper().and(debug_setting()).onTrue(Util.Do(() -> io.elevator.volts(-3), io.elevator)).onFalse(Util.Do(() -> io.elevator.volts(0), io.elevator));
-        controller.rightBumper().and(debug_setting()).onTrue(Util.Do(() -> io.elevator.volts(3), io.elevator)).onFalse(Util.Do(() -> io.elevator.volts(0), io.elevator));
+        controller.leftBumper().and(debug_setting()).onTrue(Util.Do(() -> io.elevator.volts( 
+            (double) Util.get("Test Elevator Volts", 1.0)), io.elevator)).onFalse(Util.Do(() -> io.elevator.volts(0), io.elevator));
+        controller.rightBumper().and(debug_setting()).onTrue(Util.Do(() -> io.elevator.volts(-(double) Util.get("Test Elevator Volts", 1.0)), io.elevator)).onFalse(Util.Do(() -> io.elevator.volts(0), io.elevator));
         controller.x().and(debug_setting()).onTrue(Util.Do(io.elevator::zero, io.elevator));
-        // controller.x().and(debug_setting()).toggleOnTrue(new LimelightAlign(io, 1, false));
+        // controller.x().and(debug_setting()).toggleOnTrue(new LimelighPtAlign(io, 1, false));
 
         controller.povUp().and(debug()).toggleOnTrue(io.chassis.   steerRoutine.quasistatic(Direction.kForward));
         controller.povDown().and(debug()).toggleOnTrue(io.chassis. steerRoutine.quasistatic(Direction.kReverse));

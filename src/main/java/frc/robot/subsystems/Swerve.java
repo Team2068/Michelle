@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -24,6 +25,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.units.measure.MutDistance;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -202,19 +204,18 @@ public class Swerve extends SubsystemBase {
 
     public final SysIdRoutine driveRoutine = new SysIdRoutine(new Config(
             null,
-            Volts.of(2),
+            Volts.of(3),
+            // Seconds.of(5),
             null,
             null),
             new SysIdRoutine.Mechanism(voltage -> {
                 for (Module mod : modules)
                     mod.set(voltage.magnitude(), 0);
             }, log -> {
-                for (int i = 0; i < 4; i++) {
-                    log.motor(Constants.LAYOUT_TITLE[i] + " [Drive]")
-                            .voltage(modules[i].voltage())
-                            .linearPosition(distance[i].mut_replace(modules[i].drivePosition(), Meters))
-                            .linearVelocity(modules[i].velocity());
-                }
+                    log.motor(Constants.LAYOUT_TITLE[0] + " [Drive]")
+                            .voltage(modules[0].voltage())
+                            .linearPosition(distance[0].mut_replace(modules[0].drivePosition(), Meters))
+                            .linearVelocity(modules[0].velocity());
             }, this));
 
     public final SysIdRoutine steerRoutine = new SysIdRoutine(new Config(

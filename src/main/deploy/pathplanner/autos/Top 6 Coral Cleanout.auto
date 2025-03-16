@@ -17,6 +17,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Rotate LK"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Cycle LK"
@@ -29,6 +35,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Rotate LK"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Cycle LK"
@@ -38,6 +50,12 @@
           "type": "named",
           "data": {
             "name": "Score L-L3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "rotate LK"
           }
         },
         {
@@ -59,6 +77,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "rotate LK"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Cycle LK"
@@ -71,6 +95,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "rotate LK"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Cycle LK"
@@ -80,6 +110,12 @@
           "type": "named",
           "data": {
             "name": "score R-L2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "rotate LK"
           }
         }
       ]

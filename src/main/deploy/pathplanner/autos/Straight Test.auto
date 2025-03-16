@@ -9,6 +9,18 @@
           "data": {
             "pathName": "Straight Test"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "rotatelk"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
         }
       ]
     }
