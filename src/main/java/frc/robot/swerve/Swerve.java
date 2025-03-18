@@ -38,7 +38,6 @@ public class Swerve {
         public double ThetaControllerP = 0;
         public double ThetaControllerD = 0;
         public RobotConfig autoConfig;
-        public double MASS = 47;
 
         // BASE CHASSIS CONFIGURATION
         public static final double MAX_VELOCITY = 5.4;
@@ -50,34 +49,6 @@ public class Swerve {
         public static final int PIGEON_ID = 6;
 
         public Constants(){
-            // compChassis = (System.getenv("BLUEBOT") == null); // Determine if we're comp based on an enviornmental variable like in 2023
-            if (comp) {
-                MASS = 60.0;
-            } else {
-                MASS = 47.0;
-            }
-
-            MASS = (comp) ? 60.0 : 47.0;
-
-            // double trackwidthMeters = Units.inchesToMeters(TRACKWIDTH);
-            // double wheelbaseMeters = Units.inchesToMeters(WHEELBASE);
-            // Translation2d[] swerve_offsets =
-            //     new Translation2d[] {
-            //         new Translation2d(trackwidthMeters / 2, wheelbaseMeters / 2),
-            //         new Translation2d(trackwidthMeters / 2, -wheelbaseMeters / 2),
-            //         new Translation2d(-trackwidthMeters / 2, wheelbaseMeters / 2),
-            //         new Translation2d(-trackwidthMeters / 2, -wheelbaseMeters / 2)
-            //     };
-
-            // double moi = 1/12 * MASS * (trackwidthMeters * trackwidthMeters + wheelbaseMeters * wheelbaseMeters); // estimate of moi
-            // ModuleConfig moduleConfigs = new ModuleConfig(WHEEL_RADIUS, 5.4, 1.2, null, GEAR_RATIO, 59, 4);
-            // autoConfig = new RobotConfig(
-            //     MASS,
-            //     moi,
-            //     moduleConfigs,
-            //     swerve_offsets
-            // );
-
             try {
                 autoConfig = RobotConfig.fromGUISettings();
             } catch (IOException | org.json.simple.parser.ParseException e) {

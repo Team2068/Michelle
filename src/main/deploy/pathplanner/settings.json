@@ -4,7 +4,9 @@
   "holonomicMode": true,
   "pathFolders": [
     "Algae",
+    "Top Ring No rotation",
     "Return",
+    "Rotation Test",
     "Starting",
     "Test"
   ],
@@ -13,7 +15,7 @@
     "Scuff",
     "Testing"
   ],
-  "defaultMaxVel": 4.0,
+  "defaultMaxVel": 3.5,
   "defaultMaxAccel": 5.0,
   "defaultMaxAngVel": 360.0,
   "defaultMaxAngAccel": 360.0,

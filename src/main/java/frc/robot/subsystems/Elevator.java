@@ -83,9 +83,14 @@ public class Elevator extends SubsystemBase {
     lead.setVoltage(volts);
   }
 
+  public void followVolts(double volts){
+    follow.setVoltage(volts);
+  }
+
   public void stop() {
     stopped = true;
     lead.stopMotor();
+    follow.stopMotor();
   }
 
   public void move(double height) {

@@ -14,7 +14,9 @@ public class ScoreReef extends SequentialCommandGroup {
 
   public ScoreReef(IO io, int level, GenericHID controller) {
     addCommands(
-      new Intake(io, true, level, controller), // TODO: Set to Reef Scoring Angle
+      io.elevator.moveCommand(level),
+      new WaitUntilCommand(io.elevator::atPosition),
+      new Intake(io, true, controller), // TODO: Set to Reef Scoring Angle
       io.elevator.moveCommand(0)
     );
   }
@@ -23,10 +25,10 @@ public class ScoreReef extends SequentialCommandGroup {
     addCommands(
       // TODO: Check if we have coral & if we don't have
       io.elevator.moveCommand(level),
+      new WaitUntilCommand(io.elevator::atPosition),
       new AutoAlign((score_right) ? 2 : 0, io),
       Util.Do(() -> io.claw.angle(level), io.claw),
-      new WaitUntilCommand(io.elevator::atPosition), // TODO: Wait until we're at the height
-      new Intake(io, true, level), // TODO: Set to Reef Scoring Angle
+      new Intake(io, true), // TODO: Set to Reef Scoring Angle
       io.elevator.moveCommand(0)
     );
   }

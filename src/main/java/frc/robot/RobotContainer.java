@@ -13,9 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.commands.DefaultDrive;
-import frc.robot.commands.Intake;
 import frc.robot.commands.RotateChassis;
-import frc.robot.commands.ScoreReef;
 import frc.robot.swerve.Swerve;
 import frc.robot.utility.AutomatedController;
 import frc.robot.utility.IO;
@@ -34,6 +32,8 @@ public class RobotContainer {
   public RobotContainer() {
     main = new AutomatedController(0, io);
     backup = new AutomatedController(1, io);
+
+    configureAuton();
 
     auto_selector = AutoBuilder.buildAutoChooser();
     auto_selector.onChange((command) -> {current_auto = command;});
@@ -64,26 +64,26 @@ public class RobotContainer {
 
 
   public void configureAuton(){
+    NamedCommands.registerCommand("Rotate to Reef", new RotateChassis(io));
     NamedCommands.registerCommand("Face Barge", new RotateChassis(io, 0));
     NamedCommands.registerCommand("Rotate IJ", new RotateChassis(io, -120));
-    NamedCommands.registerCommand("rotatelk", new RotateChassis(io, 300));
+    NamedCommands.registerCommand("Rotate LK", new RotateChassis(io, 300));
     NamedCommands.registerCommand("Rotate HG", new RotateChassis(io, 180));
     NamedCommands.registerCommand("Rotate CD", new RotateChassis(io, 60));
     NamedCommands.registerCommand("Rotate EF", new RotateChassis(io, 120));
 
-    NamedCommands.registerCommand("Score L-L4", new ScoreReef(io, false, 4));
-    NamedCommands.registerCommand("Score L-L3", new ScoreReef(io, false, 3));
-    NamedCommands.registerCommand("Score L-L2", new ScoreReef(io, false, 2));
-    NamedCommands.registerCommand("Score L-L1", new ScoreReef(io, false, 1));
+    // NamedCommands.registerCommand("Score L-L4", new ScoreReef(io, false, 4));
+    // NamedCommands.registerCommand("Score L-L3", new ScoreReef(io, false, 3));
+    // NamedCommands.registerCommand("Score L-L2", new ScoreReef(io, false, 2));
+    // NamedCommands.registerCommand("Score L-L1", new ScoreReef(io, false, 1));
 
-    NamedCommands.registerCommand("Score R-L4", new ScoreReef(io, true, 4));
-    NamedCommands.registerCommand("Score R-L3", new ScoreReef(io, true, 3));
-    NamedCommands.registerCommand("Score R-L2", new ScoreReef(io, true, 2));
-    NamedCommands.registerCommand("Score R-L1", new ScoreReef(io, true, 1));
+    // NamedCommands.registerCommand("Score R-L4", new ScoreReef(io, true, 4));
+    // NamedCommands.registerCommand("Score R-L3", new ScoreReef(io, true, 3));
+    // NamedCommands.registerCommand("Score R-L2", new ScoreReef(io, true, 2));
+    // NamedCommands.registerCommand("Score R-L1", new ScoreReef(io, true, 1));
 
-    // TODO: SEE IF WE CAN GET AWAY WITH THESE LEVELS
-    NamedCommands.registerCommand("Clear Low Algae", new Intake(io, false, 2)); // TODO: MAKE ACTUAL COMMAND
-    NamedCommands.registerCommand("Clear High Algae", new Intake(io, false, 3)); // TODO: MAKE ACTUAL COMMAND
+    // NamedCommands.registerCommand("Clear Low Algae", new Intake(io, false)); // TODO: MAKE ACTUAL COMMAND
+    // NamedCommands.registerCommand("Clear High Algae", new Intake(io, false)); // TODO: MAKE ACTUAL COMMAND
   }
 
   public Command getAutonomousCommand() {

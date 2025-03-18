@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.Aimbot;
 import frc.robot.commands.AutoAlign;
 import frc.robot.commands.LimelightAlign;
 import frc.robot.commands.RotateChassis;
@@ -27,8 +26,8 @@ public class AutomatedController {
 
         selector.setDefaultOption("Automated", () -> {mode = 0;});
         selector.addOption("Manual", () -> {mode = 1;});
-        selector.addOption("Debug", () -> {mode = 2;});
-        selector.addOption("Debug Setting", () -> {mode = 3;});
+        selector.addOption("Characterise", () -> {mode = 2;});
+        selector.addOption("Debug", () -> {mode = 3;});
 
         selector.onChange((x) -> {x.run();});
 
@@ -39,7 +38,7 @@ public class AutomatedController {
         controller.leftStick().debounce(2).onTrue(new InstantCommand(io.chassis::resetAngle));
         // controller.back().onTrue(Util.Do(io.elevator::rest));
         // controller.start().onTrue(Util.Do(io.elevator::zero));
-        configure();
+        configureManual();
         configureDebug();
     }
 
@@ -55,11 +54,11 @@ public class AutomatedController {
         return mode(1);
     }
 
-    public BooleanSupplier debug(){
+    public BooleanSupplier characterise(){
         return mode(2);
     }
 
-    public BooleanSupplier debug_setting(){
+    public BooleanSupplier debug(){
         return mode(3);
     }
 
@@ -88,8 +87,6 @@ public class AutomatedController {
         controller.leftBumper().and(automated()).toggleOnTrue(new AutoAlign(0, io));
         controller.rightBumper().and(automated()).toggleOnTrue(new AutoAlign(2, io));
 
-        controller.x().and(manual()).toggleOnTrue(new RotateChassis(io, 300));
-
         // MANUAL
         // RB align Right and Score Coral & Score Processor 
         // controller.y().and( automated() ).onTrue(Util.D      
@@ -117,37 +114,56 @@ public class AutomatedController {
         controller.back().and(automated()).onTrue(Util.Do(() -> io.chassis.resetOdometry()));
     }
 
+    public void configureManual(){
+        
+        controller.start().and(controller.getHID()::getBackButtonPressed).onTrue(Util.Do(this::switchMode));
+        controller.back().onTrue(Util.Do(io.chassis::resetOdometry, io.chassis));
+
+        // controller.leftBumper().and(automated()).toggleOnTrue(new AutoAlign(0, io));
+        // controller.rightBumper().and(automated()).toggleOnTrue(new AutoAlign(2, io));
+
+        controller.povDown().and( manual() ).onTrue(Util.Do(io.chassis::toggle));
+        controller.povLeft().and( manual() ).onTrue(Util.Do(io.chassis::syncEncoders));
+        controller.povRight().and( manual() ).and(() -> {return !io.chassis.active;}).onTrue(new InstantCommand(io.chassis::zeroAbsolute)); // Add the Rumble effect
+
+        // controller.povRight().and( manual() ).and(() -> {return !io.chassis.active;}).onTrue(new Rumble(0, .5, controller.getHID(), io.chassis::zeroAbsolute)); // Add the Rumble effect
+    }
+
+    void configureCharacterisaton(){
+ 
+        // controller.x().and(characterise()).toggleOnTrue(io.chassis.driveRoutine.quasistatic(Direction.kForward));
+        // controller.a().and(characterise()).toggleOnTrue(io.chassis.driveRoutine.quasistatic(Direction.kReverse));
+        // controller.y().and(characterise()).toggleOnTrue(io.chassis.driveRoutine.dynamic(Direction.kForward));
+        // controller.b().and(characterise()).toggleOnTrue(io.chassis.driveRoutine.dynamic(Direction.kReverse));
+
+        // controller.leftBumper().and(characterise()).toggleOnTrue(io.elevator.routine.quasistatic(Direction.kForward));
+        // controller.rightBumper().and(characterise()).toggleOnTrue(io.elevator.routine.quasistatic(Direction.kReverse));
+        // controller.leftTrigger().and(characterise()).toggleOnTrue(io.elevator.routine.dynamic(Direction.kForward));
+        // controller.rightTrigger().and(characterise()).toggleOnTrue(io.elevator.routine.dynamic(Direction.kReverse));
+
+        controller.povUp().and(characterise()).toggleOnTrue(io.chassis.   steerRoutine.quasistatic(Direction.kForward));
+        controller.povDown().and(characterise()).toggleOnTrue(io.chassis. steerRoutine.quasistatic(Direction.kReverse));
+        controller.povRight().and(characterise()).toggleOnTrue(io.chassis.steerRoutine.dynamic(Direction.kForward));
+        controller.povLeft().and(characterise()).toggleOnTrue(io.chassis. steerRoutine.dynamic(Direction.kReverse));
+    }
+
     void configureDebug(){
         // controller.rightTrigger().and(debug()).toggleOnTrue(new Aimbot(io));
         // controller.leftBumper().and(debug()).toggleOnTrue(new AutoAlign(0, io));
         // controller.rightBumper().and(debug()).toggleOnTrue(new AutoAlign(2, io));
- 
-        controller.x().and(debug()).toggleOnTrue(io.chassis.driveRoutine.quasistatic(Direction.kForward));
-        controller.a().and(debug()).toggleOnTrue(io.chassis.driveRoutine.quasistatic(Direction.kReverse));
-        controller.y().and(debug()).toggleOnTrue(io.chassis.driveRoutine.dynamic(Direction.kForward));
-        controller.b().and(debug()).toggleOnTrue(io.chassis.driveRoutine.dynamic(Direction.kReverse));
 
-        // controller.x().and(debug()).toggleOnTrue(io.elevator.routine.quasistatic(Direction.kForward));
-        // controller.a().and(debug()).toggleOnTrue(io.elevator.routine.quasistatic(Direction.kReverse));
-        // controller.y().and(debug()).toggleOnTrue(io.elevator.routine.dynamic(Direction.kForward));
-        // controller.b().and(debug()).toggleOnTrue(io.elevator.routine.dynamic(Direction.kRevezrse));
+        controller.leftBumper().and(debug()).onTrue(Util.Do(() -> io.elevator.volts(-1), io.elevator)).onFalse(Util.Do(() -> io.elevator.volts(0), io.elevator));
+        controller.rightBumper().and(debug()).onTrue(Util.Do(() -> io.elevator.volts(1), io.elevator)).onFalse(Util.Do(() -> io.elevator.volts(0), io.elevator));
+        controller.a().and(debug()).onTrue(Util.Do(() -> io.elevator.followVolts(-1), io.elevator)).onFalse(Util.Do(() -> io.elevator.volts(0), io.elevator));
+        controller.b().and(debug()).onTrue(Util.Do(() -> io.elevator.followVolts(1), io.elevator)).onFalse(Util.Do(() -> io.elevator.volts(0), io.elevator));
+        controller.x().and(debug()).onTrue(Util.Do(io.elevator::zero, io.elevator));
+        // controller.x().and(debug_setting()).toggleOnTrue(new LimelightAlign(io, 1, false));
 
-        controller.leftBumper().and(debug_setting()).onTrue(Util.Do(() -> io.elevator.volts( 
-            (double) Util.get("Test Elevator Volts", 1.0)), io.elevator)).onFalse(Util.Do(() -> io.elevator.volts(0), io.elevator));
-        controller.rightBumper().and(debug_setting()).onTrue(Util.Do(() -> io.elevator.volts(-(double) Util.get("Test Elevator Volts", 1.0)), io.elevator)).onFalse(Util.Do(() -> io.elevator.volts(0), io.elevator));
-        controller.x().and(debug_setting()).onTrue(Util.Do(io.elevator::zero, io.elevator));
-        // controller.x().and(debug_setting()).toggleOnTrue(new LimelighPtAlign(io, 1, false));
-
-        controller.povUp().and(debug()).toggleOnTrue(io.chassis.   steerRoutine.quasistatic(Direction.kForward));
-        controller.povDown().and(debug()).toggleOnTrue(io.chassis. steerRoutine.quasistatic(Direction.kReverse));
-        controller.povRight().and(debug()).toggleOnTrue(io.chassis.steerRoutine.dynamic(Direction.kForward));
-        controller.povLeft().and(debug()).toggleOnTrue(io.chassis. steerRoutine.dynamic(Direction.kReverse));
-
-        controller.y().and(debug_setting()).onTrue(Util.Do( () -> io.elevator.move(4),io.elevator));
-        controller.b().and(debug_setting()).onTrue(Util.Do( () -> io.elevator.move(3),io.elevator));
-        controller.x().and(debug_setting()).onTrue(Util.Do( () -> io.elevator.move(2),io.elevator));
-        controller.a().and(debug_setting()).onTrue(Util.Do( () -> io.elevator.move(1),io.elevator));
-        controller.povUp().and(debug_setting()).onTrue(Util.Do(() -> io.elevator.move(5),io.elevator));
+        // controller.y().and(debug()).onTrue(Util.Do( () -> io.elevator.move(4),io.elevator));
+        // controller.b().and(debug()).onTrue(Util.Do( () -> io.elevator.move(3),io.elevator));
+        // controller.x().and(debug()).onTrue(Util.Do( () -> io.elevator.move(2),io.elevator));
+        // controller.a().and(debug()).onTrue(Util.Do( () -> io.elevator.move(1),io.elevator));
+        // controller.povUp().and(debug()).onTrue(Util.Do(() -> io.elevator.move(5),io.elevator));
         
         // controller.povLeft().and(debug_setting()).onTrue(Util.Do(() -> io.elevator.volts(4), io.elevator));
         // controller.povDown().and(debug_setting()).onTrue(Util.Do(() -> io.elevator.volts(-4), io.elevator));
