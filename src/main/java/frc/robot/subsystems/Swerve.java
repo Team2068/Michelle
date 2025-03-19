@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -25,7 +24,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.units.measure.MutDistance;
-import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;

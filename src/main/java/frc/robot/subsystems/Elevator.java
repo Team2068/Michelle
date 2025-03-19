@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -38,6 +39,7 @@ public class Elevator extends SubsystemBase {
   TrapezoidProfile profile = new TrapezoidProfile(new Constraints(100, 500));
   Timer time = new Timer();
   double target = 0;
+  public 
   boolean stopped = true;
 
   PositionVoltage positionRequest = new PositionVoltage(0).withSlot(0);
@@ -50,29 +52,36 @@ public class Elevator extends SubsystemBase {
   public final double L1 = 25;
   public final double L2 = 43.5;
   public final double L3 = 76;
-  public final double L4 = 0;
+  public final double L4 = 110;
   public final double Barge = 0; // TODO: FIND BARGE
   public final double Low_Algae = 0; // TODO: FIND
   public final double High_Algae = 0; // TODO: FIND
   public final double MAX_HEIGHT = 0; // TODO: FIND
 
+  public boolean softLimits = true;
+
   public Elevator() {
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.Slot0.kP = 0.01;
+    config.Slot0.kP = 0.3;
     config.Slot0.kI = 0.0;
-    config.Slot0.kD = 0.0;
+    config.Slot0.kD = 0.1;
     config.Slot0.kG = 0.0;
 
-    config.MotorOutput.withInverted(InvertedValue.Clockwise_Positive);
+    config.MotorOutput.withInverted(InvertedValue.CounterClockwise_Positive);
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.SoftwareLimitSwitch
-        .withForwardSoftLimitEnable(false)
-        .withForwardSoftLimitThreshold(130.0)
-        .withReverseSoftLimitEnable(false)
-        .withReverseSoftLimitThreshold(0.0);
+        .withForwardSoftLimitEnable(softLimits)
+        .withForwardSoftLimitThreshold(0.0)
+        .withReverseSoftLimitEnable(softLimits)
+        .withReverseSoftLimitThreshold(160.0);
 
     lead.getConfigurator().apply(config);
     follow.setControl(new Follower(lead.getDeviceID(), true)); // TODO: Check if we need to invert
+  }
+
+  public void toggleSoftLimits() {
+    softLimits = !softLimits;
+    lead.getConfigurator().apply(new SoftwareLimitSwitchConfigs().withForwardSoftLimitEnable(softLimits).withReverseSoftLimitEnable(softLimits));
   }
 
   public void speed(double speed) {
@@ -180,6 +189,7 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Elevator Height", position());
+    SmartDashboard.putBoolean("Elevator Soft Limits Active", softLimits);
 
     if (stopped)
       return;
