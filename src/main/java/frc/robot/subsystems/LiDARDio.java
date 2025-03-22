@@ -6,15 +6,13 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class LiDAR_PWM extends SubsystemBase {
+public class LiDARDio {
 
   Counter counter;
 
-  public LiDAR_PWM(int address) {
-    counter = new Counter(new DigitalInput(address));
+  public LiDARDio(int port) {
+    counter = new Counter(new DigitalInput(port));
     counter.setMaxPeriod(1.0);
     counter.setSemiPeriodMode(true);   
     reset();
@@ -30,11 +28,6 @@ public class LiDAR_PWM extends SubsystemBase {
 
   public void reset() {
     counter.reset();
-  }
-
-  @Override
-  public void periodic() {
-    SmartDashboard.putNumber("Lidar Distance", distance());
   }
 }
 	

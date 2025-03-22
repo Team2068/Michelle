@@ -211,7 +211,8 @@ public class Swerve extends SubsystemBase {
                     log.motor(Constants.LAYOUT_TITLE[0] + " [Drive]")
                             .voltage(modules[0].voltage())
                             .linearPosition(distance[0].mut_replace(modules[0].drivePosition(), Meters))
-                            .linearVelocity(modules[0].velocity());
+                            .linearVelocity(modules[0].velocity())
+                            .linearAcceleration(pigeon2.getAccelerationX().getValue()); // NOTE: This is due to our gyro being mounted 90 degrees off centre
             }, this));
 
     public final SysIdRoutine steerRoutine = new SysIdRoutine(new Config(
@@ -222,7 +223,6 @@ public class Swerve extends SubsystemBase {
             new SysIdRoutine.Mechanism(voltage -> {
                 speeds = new ChassisSpeeds(0, 0, (voltage.magnitude()/16.0) * Constants.MAX_ANGULAR_VELOCITY);
             }, log -> {
-                // TODO: Test to see if this gives us accurate PID values
                 log.motor("Chassis")
                     .voltage(modules[0].steerVoltage())
                     .angularPosition(pigeon2.getYaw().getValue())

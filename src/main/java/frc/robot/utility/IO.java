@@ -9,7 +9,7 @@ public class IO extends SubsystemBase {
         public final Elevator elevator = new Elevator();
         public final Limelight limelight = new Limelight();
 
-        public final Claw claw = null;
+        public final Shooter claw = new Shooter();
         public final Hang hang = null;
 
         public IO() {

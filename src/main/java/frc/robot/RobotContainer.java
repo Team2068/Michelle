@@ -53,12 +53,6 @@ public class RobotContainer {
     driver_selector.addOption("Debug", 4);
     driver_selector.onChange( (driver) -> Swerve.Constants.SwitchDriver(driver));
 
-    // DogLog.setOptions(new DogLogOptions()
-    // .withCaptureDs(true)
-    // .withCaptureConsole(true)
-    // .withLogExtras(true));
-
-    // DogLog.setEnabled( false); // TODO: Turn back on when we're testing proper
     SignalLogger.setPath("/media/sda1/ctre-logs/");
   }
 
