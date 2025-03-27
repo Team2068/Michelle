@@ -22,7 +22,6 @@ public class AutomatedController {
     public AutomatedController(int port, IO io){
         this.io = io;
 
-
         selector.setDefaultOption("Automated", () -> {mode = 0;});
         selector.addOption("Manual", () -> {mode = 1;});
         selector.addOption("Characterise", () -> {mode = 2;});
@@ -75,14 +74,13 @@ public class AutomatedController {
 
     void configureAutomated(){
 
-        IntSupplier pos = () -> { return ((controller.getHID().getLeftBumperButtonPressed()) ? -1 : 0) + ((controller.getHID().getLeftBumperButtonPressed()) ? 1 : 0); };
-        // controller.leftBumper().and(controller.getHID()::getRightBumperButtonPressed).and(automated()).onTrue(Util.Do(() -> new LimelightAlign(io, 0, false)));
+        IntSupplier pos = () -> { return ((controller.getHID().getLeftBumperButtonPressed()) ? -1 : 0) + ((controller.getHID().getLeftBumperButtonPressed()) ? 1 : 0) + 1; };
 
-        controller.y().and(automated()).and(() -> io.claw.hasCoral()).onTrue(Util.Do(() -> new ScoreReef(io, pos.getAsInt() ,4)));
-        controller.x().and(automated()).and(() -> io.claw.hasCoral()).onTrue(Util.Do(() -> new ScoreReef(io, pos.getAsInt() ,3)));
-        controller.b().and(automated()).and(() -> io.claw.hasCoral()).onTrue(Util.Do(() -> new ScoreReef(io, pos.getAsInt() ,2)));
-        controller.a().and(automated()).and(() -> io.claw.hasCoral()).onTrue(Util.Do(() -> new ScoreReef(io, pos.getAsInt() ,1)));
-        controller.a().and(automated()).and(() -> !io.claw.hasCoral()).onTrue(new Intake(io, false));
+        controller.y().and(automated()).and(() -> io.shooter.hasCoral()).onTrue(Util.Do(() -> new ScoreReef(io, pos.getAsInt() ,4)));
+        controller.x().and(automated()).and(() -> io.shooter.hasCoral()).onTrue(Util.Do(() -> new ScoreReef(io, pos.getAsInt() ,3)));
+        controller.b().and(automated()).and(() -> io.shooter.hasCoral()).onTrue(Util.Do(() -> new ScoreReef(io, pos.getAsInt() ,2)));
+        controller.a().and(automated()).and(() -> io.shooter.hasCoral()).onTrue(Util.Do(() -> new ScoreReef(io, pos.getAsInt() ,1)));
+        controller.a().and(automated()).and(() -> !io.shooter.hasCoral()).onTrue(new Intake(io, false));
 
         controller.start().and(automated()).onTrue(Util.Do(() -> io.elevator.move(0)));
         controller.back().onTrue(Util.Do(io.chassis::resetAngle, io.chassis));
@@ -98,8 +96,8 @@ public class AutomatedController {
         controller.b().and(manual()).onTrue(Util.Do(() -> io.elevator.move(2)));
         controller.a().and(manual()).onTrue(Util.Do(() -> io.elevator.move(1)));
 
-        controller.leftBumper().onTrue(Util.Do(() -> io.claw.speed(direction * .4), io.claw)).onFalse(Util.Do(() -> io.claw.volts(0), io.claw));
-        controller.rightBumper().onTrue(Util.Do(() -> io.claw.speed(direction * 1), io.claw)).onFalse(Util.Do(() -> io.claw.volts(0), io.claw));
+        controller.leftBumper().onTrue(Util.Do(() -> io.shooter.speed(direction * .4), io.shooter)).onFalse(Util.Do(() -> io.shooter.volts(0), io.shooter));
+        controller.rightBumper().onTrue(Util.Do(() -> io.shooter.speed(direction * 1), io.shooter)).onFalse(Util.Do(() -> io.shooter.volts(0), io.shooter));
         controller.y().and(manual()).onTrue(Util.Do(() -> { direction = -direction;}));
         
         // controller.povDown().and( manual() ).onTrue(Util.Do(io.chassis::toggle));
@@ -119,10 +117,10 @@ public class AutomatedController {
         // controller.povRight().and(characterise()).toggleOnTrue(io.steerRoutine.dynamic(Direction.kForward));
         // controller.povLeft().and(characterise()).toggleOnTrue(io.chassis. steerRoutine.dynamic(Direction.kReverse));
 
-        controller.x().and(characterise()).toggleOnTrue(io.claw.pivotRoutine.quasistatic(Direction.kForward));
-        controller.a().and(characterise()).toggleOnTrue(io.claw.pivotRoutine.quasistatic(Direction.kReverse));
-        controller.y().and(characterise()).toggleOnTrue(io.claw.pivotRoutine.dynamic(Direction.kForward));
-        controller.b().and(characterise()).toggleOnTrue(io.claw.pivotRoutine.dynamic(Direction.kReverse));
+        controller.x().and(characterise()).toggleOnTrue(io.shooter.pivotRoutine.quasistatic(Direction.kForward));
+        controller.a().and(characterise()).toggleOnTrue(io.shooter.pivotRoutine.quasistatic(Direction.kReverse));
+        controller.y().and(characterise()).toggleOnTrue(io.shooter.pivotRoutine.dynamic(Direction.kForward));
+        controller.b().and(characterise()).toggleOnTrue(io.shooter.pivotRoutine.dynamic(Direction.kReverse));
 
         controller.leftBumper().and(characterise()).toggleOnTrue(io.elevator.routine.quasistatic(Direction.kForward));
         controller.rightBumper().and(characterise()).toggleOnTrue(io.elevator.routine.quasistatic(Direction.kReverse));
@@ -146,8 +144,8 @@ public class AutomatedController {
         }, io.elevator)).onFalse(Util.Do(() -> io.elevator.volts(0), io.elevator));
 
         controller.y().and(debug()).onTrue(Util.Do(() -> {
-            io.claw.volts(volts);
-        }, io.claw)).onFalse(Util.Do(() -> io.claw.volts(0), io.claw));
+            io.shooter.volts(volts);
+        }, io.shooter)).onFalse(Util.Do(() -> io.shooter.volts(0), io.shooter));
 
 
         controller.x().and(debug()).onTrue(Util.Do(io.elevator::zero, io.elevator));

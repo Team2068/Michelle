@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.commands.DefaultDrive;
 import frc.robot.commands.RotateChassis;
+import frc.robot.commands.ScoreReef;
 import frc.robot.swerve.Swerve;
 import frc.robot.utility.AutomatedController;
 import frc.robot.utility.IO;
@@ -66,15 +67,15 @@ public class RobotContainer {
     NamedCommands.registerCommand("Rotate CD", new RotateChassis(io, 60));
     NamedCommands.registerCommand("Rotate EF", new RotateChassis(io, 120));
 
-    // NamedCommands.registerCommand("Score L-L4", new ScoreReef(io, false, 4));
-    // NamedCommands.registerCommand("Score L-L3", new ScoreReef(io, false, 3));
-    // NamedCommands.registerCommand("Score L-L2", new ScoreReef(io, false, 2));
-    // NamedCommands.registerCommand("Score L-L1", new ScoreReef(io, false, 1));
+    NamedCommands.registerCommand("Score L-L4", new ScoreReef(io, 0, 4));
+    NamedCommands.registerCommand("Score L-L3", new ScoreReef(io, 0, 3));
+    NamedCommands.registerCommand("Score L-L2", new ScoreReef(io, 0, 2));
+    NamedCommands.registerCommand("Score L-L1", new ScoreReef(io, 0, 1));
 
-    // NamedCommands.registerCommand("Score R-L4", new ScoreReef(io, true, 4));
-    // NamedCommands.registerCommand("Score R-L3", new ScoreReef(io, true, 3));
-    // NamedCommands.registerCommand("Score R-L2", new ScoreReef(io, true, 2));
-    // NamedCommands.registerCommand("Score R-L1", new ScoreReef(io, true, 1));
+    NamedCommands.registerCommand("Score R-L4", new ScoreReef(io, 2, 4));
+    NamedCommands.registerCommand("Score R-L3", new ScoreReef(io, 2, 3));
+    NamedCommands.registerCommand("Score R-L2", new ScoreReef(io, 2, 2));
+    NamedCommands.registerCommand("Score R-L1", new ScoreReef(io, 2, 1));
 
     // NamedCommands.registerCommand("Clear Low Algae", new Intake(io, false)); // TODO: MAKE ACTUAL COMMAND
     // NamedCommands.registerCommand("Clear High Algae", new Intake(io, false)); // TODO: MAKE ACTUAL COMMAND

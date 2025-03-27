@@ -27,14 +27,14 @@ public class Intake extends Command {
   // public static int INTAKE_ALGAE_GROUND = -3; // THIS WILL MATTER ONLY IF WE DO GROUND PICKUP
 
   public Intake(IO io, boolean release, GenericHID controller) {
-    holding = () -> (release) ? io.claw.hasCoral() :  !io.claw.hasCoral();
+    holding = () -> (release) ? io.shooter.hasCoral() :  !io.shooter.hasCoral();
     
     intake = () -> {
-      io.claw.speed((release) ? 1 : .4);
+      io.shooter.speed((release) ? 1 : .4);
     };
 
     stop = () -> {
-      io.claw.stop();
+      io.shooter.stop();
       controller.setRumble(RumbleType.kBothRumble, 0.0);
     };
 

@@ -1,34 +1,47 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Hang extends SubsystemBase {
-  public TalonFX hang = new TalonFX(16, "rio"); // We Don't actually know the motor yet
+  // public TalonFX hang = new TalonFX(16, "rio"); // We Don't actually know the motor yet
+  SparkMax motor = new SparkMax(16, MotorType.kBrushed); // CIM
 
+  public boolean up = false;
+  double upPosition = 0; // TODO: FIND UP POSITION
+  double downPosition = 0;
 
   public Hang() {
-    // TODO: Configure a soft limit switch
-    hang.setNeutralMode(NeutralModeValue.Brake);
+    motor.configure(new SparkMaxConfig().idleMode(IdleMode.kBrake), ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-  public void hangSpeed(double speed) {
-    hang.set(speed);
+  public void speed(double speed) {
+    motor.set(speed);
   }
 
-  public void hangVoltage(double volts) {
-    hang.setVoltage(volts);
+  public void volts(double volts) {
+    motor.setVoltage(volts);
   }
 
-  public void stopHang() {
-    hang.stopMotor();
+  public void stop() {
+    motor.stopMotor();
+  }
+
+  public void toggleHang(){
+    up = !up;
+    motor.getClosedLoopController().setReference(((up) ? upPosition : downPosition), ControlType.kPosition);
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Hang Position", hang.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("Hang Position", motor.getEncoder().getPosition());
   }
 }

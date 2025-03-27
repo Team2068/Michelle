@@ -35,8 +35,8 @@ public class Shooter extends SubsystemBase {
   Servo hood = new Servo(0);
 
 
-  double[] pivotAngle = {0,0,0,0,0};
-  double[] hoodAngle = {0,0,0,0,0};
+  double[] pivotAngle = {0,0,0,0,0, 0}; // last one FOR BARGE
+  double[] hoodAngle = {0,0,0,0,0, 0};
 
   TrapezoidProfile profile = new TrapezoidProfile(new Constraints(100, 500));
   Timer time = new Timer();
@@ -63,23 +63,43 @@ public class Shooter extends SubsystemBase {
     pivot.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-  public void setHood(double v){
+  public void hood(double v){
     hood.setPosition(v);
   }
 
+  public void hoodSpeed(double v){
+    hood.setSpeed(v);
+  }
+
   public void volts(double volts) {
-    pivot.setVoltage(volts);
+    intake.setVoltage(volts);
   }
 
   public void speed(double speed) {
     intake.setVoltage(speed);
   }
 
+  public void pivotVolts(double volts) {
+    pivot.setVoltage(volts);
+  }
+
+  public void pivotSpeed(double speed) {
+    pivot.setVoltage(speed);
+  }
+
   public void stop() {
     intake.stopMotor();
   }
 
+  public void stopPivot(){
+    pivot.stopMotor();
+  }
+
   public boolean hasCoral() {
+    return beambreak.get();
+  }
+
+  public boolean hasAlgae() {
     return beambreak.get();
   }
 
@@ -103,10 +123,6 @@ public class Shooter extends SubsystemBase {
   public void angle(int level){
     angle(pivotAngle[level]);
     hood.setAngle(hoodAngle[level]);
-  }
-
-  public void pivotVolts(double volts) {
-    pivot.setVoltage(volts);
   }
 
   public final SysIdRoutine pivotRoutine = new SysIdRoutine(new Config(

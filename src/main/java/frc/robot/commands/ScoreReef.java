@@ -16,7 +16,7 @@ public class ScoreReef extends SequentialCommandGroup {
       new LimelightAlign(io, reefPosition, false),
       io.elevator.moveCommand(level),
       new WaitUntilCommand(io.elevator::atPosition),
-      Util.Do(() -> io.claw.angle(level), io.claw),
+      Util.Do(() -> io.shooter.angle(level), io.shooter),
       new Intake(io, true), // TODO: Set to Reef Scoring Angle
       io.elevator.moveCommand(0)
     );
