@@ -92,29 +92,29 @@ public class ModeController {
 
     public void configureAutomated(){
         IntSupplier pos = () -> { return ((controller.getHID().getRawButtonPressed(Button.kLeftBumper.value)) ? -1 : 0) + ((controller.getHID().getRawButtonPressed(Button.kRightBumper.value)) ? 1 : 0) + 1; };
-        binding(Button.kY, AUTOMATED, () -> io.shooter.hasCoral()).onTrue(new ScoreReef(io, pos.getAsInt(), 4));
-        binding(Button.kX, AUTOMATED, () -> io.shooter.hasCoral()).onTrue(new ScoreReef(io, pos.getAsInt(), 3));
-        binding(Button.kB, AUTOMATED, () -> io.shooter.hasCoral()).onTrue(new ScoreReef(io, pos.getAsInt(), 2));
-        binding(Button.kA, AUTOMATED, () -> io.shooter.hasCoral()).onTrue(new ScoreReef(io, pos.getAsInt(), 1));
-        binding(Button.kA, AUTOMATED, () -> !io.shooter.hasCoral()).onTrue(new Intake(io, false));
+        binding(Button.kY, AUTOMATED, () -> io.shooter.coral()).onTrue(new ScoreReef(io, pos.getAsInt(), 4));
+        binding(Button.kX, AUTOMATED, () -> io.shooter.coral()).onTrue(new ScoreReef(io, pos.getAsInt(), 3));
+        binding(Button.kB, AUTOMATED, () -> io.shooter.coral()).onTrue(new ScoreReef(io, pos.getAsInt(), 2));
+        binding(Button.kA, AUTOMATED, () -> io.shooter.coral()).onTrue(new ScoreReef(io, pos.getAsInt(), 1));
+        binding(Button.kA, AUTOMATED, () -> !io.shooter.coral()).onTrue(new Intake(io, false));
         binding(Button.kStart, AUTOMATED).onTrue(Util.Do(() -> io.elevator.move(0)));
 
-        binding(povDirection.Up, AUTOMATED, () -> !io.shooter.hasAlgae()).onTrue(new ClearAlgae(io));
-        binding(povDirection.Up, AUTOMATED, () -> io.shooter.hasAlgae()).onTrue(Util.Do(() ->io.shooter.speed(1), io.shooter)).onFalse(Util.Do(() -> {
-            io.shooter.stop();
-            io.shooter.angle(0);
-            io.elevator.move(0);
-        }, io.shooter));
+        // binding(povDirection.Up, AUTOMATED, () -> !io.shooter.algae()).onTrue(new ClearAlgae(io));
+        // binding(povDirection.Up, AUTOMATED, () -> io.shooter.algae()).onTrue(Util.Do(() ->io.shooter.speed(1), io.shooter)).onFalse(Util.Do(() -> {
+        //     io.shooter.stopIntake();
+        //     io.shooter.angle(0);
+        //     io.elevator.move(0);
+        // }, io.shooter));
 
-        // TODO: Check if this works as expected
-        binding(povDirection.Left, AUTOMATED, () -> !io.shooter.hasAlgae()).toggleOnTrue(Util.Do(() -> {
-            io.shooter.speed(-1);
-            io.shooter.angle(0);
-        }, io.shooter)).toggleOnFalse(Util.Do(() -> {
-            io.shooter.stop();
-            io.shooter.angle(0);
-        }, io.shooter));
-        binding(povDirection.Left, AUTOMATED, () -> io.shooter.hasAlgae()).onTrue(io.elevator.moveCommand(5));
+        // // TODO: Check if this works as expected
+        // binding(povDirection.Left, AUTOMATED, () -> !io.shooter.algae()).toggleOnTrue(Util.Do(() -> {
+        //     io.shooter.speed(-1);
+        //     io.shooter.angle(0);
+        // }, io.shooter)).toggleOnFalse(Util.Do(() -> {
+        //     io.shooter.stopIntake();
+        //     io.shooter.angle(0);
+        // }, io.shooter));
+        // binding(povDirection.Left, AUTOMATED, () -> io.shooter.algae()).onTrue(io.elevator.moveCommand(5));
 
         binding(povDirection.Down,AUTOMATED).onTrue(Util.Do(io.hang::toggleHang, io.hang));
     }
@@ -128,7 +128,7 @@ public class ModeController {
         binding(Axis.kLeftTrigger, MANUAL).whileTrue(Util.Do(() -> io.shooter.speed(controller.getRawAxis(Axis.kLeftTrigger.value))));
         binding(Axis.kRightTrigger, MANUAL).whileTrue(Util.Do(() -> io.shooter.pivotSpeed(controller.getRawAxis(Axis.kRightTrigger.value))));
 
-        binding(Button.kY, MANUAL).onTrue(Util.Do(() -> io.shooter.speed(-1), io.shooter)).onFalse(Util.Do(io.shooter::stop, io.shooter));
+        binding(Button.kY, MANUAL).onTrue(Util.Do(() -> io.shooter.speed(-1), io.shooter)).onFalse(Util.Do(io.shooter::stopIntake, io.shooter));
         binding(Button.kX, MANUAL).onTrue(Util.Do(() -> io.shooter.hoodSpeed(.1), io.shooter)).onFalse(Util.Do(() -> io.shooter.hoodSpeed(0), io.shooter));
         binding(Button.kA, MANUAL).onTrue(Util.Do(() -> io.shooter.hoodSpeed(-.1), io.shooter)).onFalse(Util.Do(() -> io.shooter.hoodSpeed(0), io.shooter));
 

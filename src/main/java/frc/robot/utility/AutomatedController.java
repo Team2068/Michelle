@@ -76,11 +76,11 @@ public class AutomatedController {
 
         IntSupplier pos = () -> { return ((controller.getHID().getLeftBumperButtonPressed()) ? -1 : 0) + ((controller.getHID().getLeftBumperButtonPressed()) ? 1 : 0) + 1; };
 
-        controller.y().and(automated()).and(() -> io.shooter.hasCoral()).onTrue(Util.Do(() -> new ScoreReef(io, pos.getAsInt() ,4)));
-        controller.x().and(automated()).and(() -> io.shooter.hasCoral()).onTrue(Util.Do(() -> new ScoreReef(io, pos.getAsInt() ,3)));
-        controller.b().and(automated()).and(() -> io.shooter.hasCoral()).onTrue(Util.Do(() -> new ScoreReef(io, pos.getAsInt() ,2)));
-        controller.a().and(automated()).and(() -> io.shooter.hasCoral()).onTrue(Util.Do(() -> new ScoreReef(io, pos.getAsInt() ,1)));
-        controller.a().and(automated()).and(() -> !io.shooter.hasCoral()).onTrue(new Intake(io, false));
+        controller.y().and(automated()).and(() -> io.shooter.coral()).onTrue(Util.Do(() -> new ScoreReef(io, pos.getAsInt() ,4)));
+        controller.x().and(automated()).and(() -> io.shooter.coral()).onTrue(Util.Do(() -> new ScoreReef(io, pos.getAsInt() ,3)));
+        controller.b().and(automated()).and(() -> io.shooter.coral()).onTrue(Util.Do(() -> new ScoreReef(io, pos.getAsInt() ,2)));
+        controller.a().and(automated()).and(() -> io.shooter.coral()).onTrue(Util.Do(() -> new ScoreReef(io, pos.getAsInt() ,1)));
+        controller.a().and(automated()).and(() -> !io.shooter.coral()).onTrue(new Intake(io, false));
 
         controller.start().and(automated()).onTrue(Util.Do(() -> io.elevator.move(0)));
         controller.back().onTrue(Util.Do(io.chassis::resetAngle, io.chassis));

@@ -5,6 +5,9 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -18,7 +21,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,10 +30,18 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 
 public class Shooter extends SubsystemBase {
+  
   SparkMax intake = new SparkMax(13, MotorType.kBrushless);
   SparkMax pivot = new SparkMax(14, MotorType.kBrushless);
-  DutyCycleEncoder encoder = new DutyCycleEncoder(new DigitalInput(3)); // or 4
-  DigitalInput beambreak = new DigitalInput(1);
+
+  // DutyCycleEncoder encoder = new DutyCycleEncoder(new DigitalInput(3)); // or 4
+  DoubleSupplier[] position;
+  
+  DigitalInput beam = new DigitalInput(1);
+  int currentCoralSensor = 0;
+  BooleanSupplier[] coral;
+  String[] coralSensingDisplay = {"Beam Break", "RPM"};
+
   Servo hood = new Servo(0);
 
 
@@ -61,6 +71,9 @@ public class Shooter extends SubsystemBase {
     pivotConfig.softLimit.reverseSoftLimit(0); // TODO: Find the Reverse soft limit
 
     pivot.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    position = new DoubleSupplier[]{pivot.getEncoder()::getPosition, pivot.getAbsoluteEncoder()::getPosition};
+    coral = new BooleanSupplier[]{beam::get}; //TODO: Have the second option be RPM sensing
   }
 
   public void hood(double v){
@@ -71,23 +84,23 @@ public class Shooter extends SubsystemBase {
     hood.setSpeed(v);
   }
 
-  public void volts(double volts) {
-    intake.setVoltage(volts);
+  public void volts(double v) {
+    intake.setVoltage(v);
   }
 
-  public void speed(double speed) {
-    intake.setVoltage(speed);
+  public void speed(double s) {
+    intake.set(s);
   }
 
-  public void pivotVolts(double volts) {
-    pivot.setVoltage(volts);
+  public void pivotVolts(double v) {
+    pivot.setVoltage(v);
   }
 
-  public void pivotSpeed(double speed) {
-    pivot.setVoltage(speed);
+  public void pivotSpeed(double s) {
+    pivot.set(s);
   }
 
-  public void stop() {
+  public void stopIntake() {
     intake.stopMotor();
   }
 
@@ -95,23 +108,25 @@ public class Shooter extends SubsystemBase {
     pivot.stopMotor();
   }
 
-  public boolean hasCoral() {
-    return beambreak.get();
+  public void stop(){
+    intake.stopMotor();
+    pivot.stopMotor();
   }
 
-  public boolean hasAlgae() {
-    return beambreak.get();
+  public boolean coral() {
+    return coral[currentCoralSensor].getAsBoolean();
   }
+
+  // public boolean algae() {
+  //   return beam.get();
+  // }
 
   public Voltage voltage() {
     return Volts.of(pivot.getBusVoltage());
   }
 
   public double angle() {
-    // return encoder.get(); 
-    return pivot.getEncoder().getPosition();
-    // return (encoder.get()  * 360.0 ); 
-
+    return position[absoluteConnected()].getAsDouble();
   }
 
   public void angle(double target_angle) {
@@ -123,6 +138,10 @@ public class Shooter extends SubsystemBase {
   public void angle(int level){
     angle(pivotAngle[level]);
     hood.setAngle(hoodAngle[level]);
+  }
+
+  public int absoluteConnected(){
+    return (pivot.getAbsoluteEncoder().getPosition() == -2000) ? 1 : 0; // TODO: 2000 is just a dummy value, replace with actual value present when the cable is not connected
   }
 
   public final SysIdRoutine pivotRoutine = new SysIdRoutine(new Config(
@@ -141,10 +160,17 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("Coral", hasCoral());
-    SmartDashboard.putNumber("Claw Pivot", angle());
-    SmartDashboard.putNumber("Claw Absolute Pivot", encoder.get() * 360);
+    SmartDashboard.putBoolean("Coral", coral());
+    SmartDashboard.putString("Current Coral Sensing", coralSensingDisplay[currentCoralSensor]);
+    
+    SmartDashboard.putNumber("Pivot Angle", angle());
     SmartDashboard.putNumber("Hood Angle", hood.get() * 180);
+
+    SmartDashboard.putNumber("Pivot Relative Angle", pivot.getEncoder().getPosition());
+    SmartDashboard.putNumber("Pivot Absolute Angle", pivot.getAbsoluteEncoder().getPosition());
+
+    SmartDashboard.putBoolean("Claw Absolute Encoder Connected", absoluteConnected() == 0);
+    // TODO: Find out how to indicate if the Hood Servo is connected or not
 
     double cTime = time.get();
     if (stopped)
