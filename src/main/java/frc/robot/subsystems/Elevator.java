@@ -14,7 +14,6 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -34,9 +33,9 @@ public class Elevator extends SubsystemBase {
   TalonFX lead = new TalonFX(11);
   TalonFX follow = new TalonFX(12);
 
-  // LiDARDio LIDAR = new LiDARDio(4);
+  LiDARDio lidar = new LiDARDio(4);
 
-  SparkMaxConfig config = new SparkMaxConfig();
+  boolean selectAbsolute = true; // NOTE: CAN SET TO FALSE IN CASE OF EMERGENCIES LIKE CORAL BLOCKING LIDAR
 
   TrapezoidProfile profile = new TrapezoidProfile(new Constraints(100, 500));
   public boolean stopped = true;
@@ -97,7 +96,6 @@ public class Elevator extends SubsystemBase {
 
   public void move(double height) {
     stopped = false;
-    // target = Math.max(Math.min(height, 0), MAX_HEIGHT);
     target = height;
     time.restart();
   }
@@ -125,7 +123,11 @@ public class Elevator extends SubsystemBase {
 
   public double position() {
     // return lead.getPosition().getValueAsDouble() * conversion;
-    return lead.getPosition().getValueAsDouble(); // TODO: Switch to LiDAR
+    return lead.getPosition().getValueAsDouble(); 
+  }
+
+  public boolean absoluteConnected(){
+    return lidar.connected();
   }
 
   public LinearVelocity velocity() {
@@ -154,13 +156,18 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Elevator Height", position());
-    // SmartDashboard.putNumber("Elevator Height LiDAR", LIDAR.distance());
+    SmartDashboard.putNumber("Elevator Height LiDAR", lidar.distance());
+    SmartDashboard.putBoolean("Elevator LiDAR Connected", absoluteConnected());
     SmartDashboard.putBoolean("Elevator Soft Limits Active", softLimits);
 
     double cTime = time.get();
 
     if (stopped)
       return;
+
+    if(absoluteConnected() && selectAbsolute) {
+      lead.setPosition(lidar.distance());
+    }
 
     State out = profile.calculate(cTime, new State(L2, lead.getVelocity().getValueAsDouble()), new State(target, 0));
     lead.setControl(positionRequest.withPosition(out.position).withEnableFOC(true));

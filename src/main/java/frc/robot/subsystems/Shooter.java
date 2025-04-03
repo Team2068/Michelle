@@ -126,7 +126,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public double angle() {
-    return position[absoluteConnected()].getAsDouble();
+    return position[absoluteConnected() ? 1 : 0].getAsDouble();
   }
 
   public void angle(double target_angle) {
@@ -140,8 +140,8 @@ public class Shooter extends SubsystemBase {
     hood.setAngle(hoodAngle[level]);
   }
 
-  public int absoluteConnected(){
-    return (pivot.getAbsoluteEncoder().getPosition() == -2000) ? 1 : 0; // TODO: 2000 is just a dummy value, replace with actual value present when the cable is not connected
+  public boolean absoluteConnected(){
+    return (pivot.getAbsoluteEncoder().getPosition() == -2000); // TODO: 2000 is just a dummy value, replace with actual value present when the cable is not connected
   }
 
   public final SysIdRoutine pivotRoutine = new SysIdRoutine(new Config(
@@ -169,7 +169,7 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Pivot Relative Angle", pivot.getEncoder().getPosition());
     SmartDashboard.putNumber("Pivot Absolute Angle", pivot.getAbsoluteEncoder().getPosition());
 
-    SmartDashboard.putBoolean("Claw Absolute Encoder Connected", absoluteConnected() == 0);
+    SmartDashboard.putBoolean("Claw Absolute Encoder Connected", absoluteConnected());
     // TODO: Find out how to indicate if the Hood Servo is connected or not
 
     double cTime = time.get();
