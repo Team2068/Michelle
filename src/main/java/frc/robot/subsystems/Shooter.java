@@ -5,22 +5,23 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,14 +29,24 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 
-public class Claw extends SubsystemBase {
+public class Shooter extends SubsystemBase {
+  
   SparkMax intake = new SparkMax(13, MotorType.kBrushless);
-  SparkFlex pivot = new SparkFlex(14, MotorType.kBrushless);
+  SparkMax pivot = new SparkMax(14, MotorType.kBrushless);
 
-  public static final double INTAKE_ANGLE = 0;
-  public static final double REEF_ANGLE = 0;
+  // DutyCycleEncoder encoder = new DutyCycleEncoder(new DigitalInput(3)); // or 4
+  DoubleSupplier[] position;
+  
+  DigitalInput beam = new DigitalInput(1);
+  int currentCoralSensor = 0;
+  BooleanSupplier[] coral;
+  String[] coralSensingDisplay = {"Beam Break", "RPM"};
 
-  DigitalInput coralBreak = new DigitalInput(0);
+  Servo hood = new Servo(0);
+
+
+  double[] pivotAngle = {0,0,0,0,0, 0}; // last one FOR BARGE
+  double[] hoodAngle = {0,0,0,0,0, 0};
 
   TrapezoidProfile profile = new TrapezoidProfile(new Constraints(100, 500));
   Timer time = new Timer();
@@ -44,16 +55,15 @@ public class Claw extends SubsystemBase {
 
   public boolean intaking = false;
 
-  public Claw() {
+  public Shooter() {
     SparkMaxConfig config = new SparkMaxConfig();
 
     config.idleMode(SparkMaxConfig.IdleMode.kBrake);
     intake.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    SparkFlexConfig pivotConfig = new SparkFlexConfig();
+    SparkMaxConfig pivotConfig = new SparkMaxConfig();
     pivotConfig.idleMode(SparkMaxConfig.IdleMode.kBrake);
     pivotConfig.closedLoop.pidf(0.0, 0.0, 0.0, 0.0, ClosedLoopSlot.kSlot0);
-    pivotConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
 
     pivotConfig.softLimit.forwardSoftLimitEnabled(false);
     pivotConfig.softLimit.forwardSoftLimit(0); // TODO: Find the Forward soft limit
@@ -61,30 +71,62 @@ public class Claw extends SubsystemBase {
     pivotConfig.softLimit.reverseSoftLimit(0); // TODO: Find the Reverse soft limit
 
     pivot.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    position = new DoubleSupplier[]{pivot.getEncoder()::getPosition, pivot.getAbsoluteEncoder()::getPosition};
+    coral = new BooleanSupplier[]{beam::get}; //TODO: Have the second option be RPM sensing
   }
 
-  public void volts(double volts) {
-    intake.setVoltage(volts);
+  public void hood(double v){
+    hood.setPosition(v);
   }
 
-  public void speed(double speed) {
-    intake.setVoltage(speed);
+  public void hoodSpeed(double v){
+    hood.setSpeed(v);
   }
 
-  public void stop() {
+  public void volts(double v) {
+    intake.setVoltage(v);
+  }
+
+  public void speed(double s) {
+    intake.set(s);
+  }
+
+  public void pivotVolts(double v) {
+    pivot.setVoltage(v);
+  }
+
+  public void pivotSpeed(double s) {
+    pivot.set(s);
+  }
+
+  public void stopIntake() {
     intake.stopMotor();
   }
 
-  public boolean hasCoral() {
-    return coralBreak.get();
+  public void stopPivot(){
+    pivot.stopMotor();
   }
+
+  public void stop(){
+    intake.stopMotor();
+    pivot.stopMotor();
+  }
+
+  public boolean coral() {
+    return coral[currentCoralSensor].getAsBoolean();
+  }
+
+  // public boolean algae() {
+  //   return beam.get();
+  // }
 
   public Voltage voltage() {
     return Volts.of(pivot.getBusVoltage());
   }
 
   public double angle() {
-    return pivot.getAbsoluteEncoder().getPosition();
+    return position[absoluteConnected()].getAsDouble();
   }
 
   public void angle(double target_angle) {
@@ -93,8 +135,13 @@ public class Claw extends SubsystemBase {
     time.restart();
   }
 
-  public void pivotVolts(double volts) {
-    pivot.setVoltage(volts);
+  public void angle(int level){
+    angle(pivotAngle[level]);
+    hood.setAngle(hoodAngle[level]);
+  }
+
+  public int absoluteConnected(){
+    return (pivot.getAbsoluteEncoder().getPosition() == -2000) ? 1 : 0; // TODO: 2000 is just a dummy value, replace with actual value present when the cable is not connected
   }
 
   public final SysIdRoutine pivotRoutine = new SysIdRoutine(new Config(
@@ -113,12 +160,17 @@ public class Claw extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // DogLog.log("Claw/Algae Full", hasAlgae());
-    // DogLog.log("Claw/Coral Full", hasCoral());
-    // DogLog.log("Claw/Pivot Angle", angle());
+    SmartDashboard.putBoolean("Coral", coral());
+    SmartDashboard.putString("Current Coral Sensing", coralSensingDisplay[currentCoralSensor]);
+    
+    SmartDashboard.putNumber("Pivot Angle", angle());
+    SmartDashboard.putNumber("Hood Angle", hood.get() * 180);
 
-    SmartDashboard.putBoolean("Coral", hasCoral());
-    SmartDashboard.putNumber("Claw Pivot", angle());
+    SmartDashboard.putNumber("Pivot Relative Angle", pivot.getEncoder().getPosition());
+    SmartDashboard.putNumber("Pivot Absolute Angle", pivot.getAbsoluteEncoder().getPosition());
+
+    SmartDashboard.putBoolean("Claw Absolute Encoder Connected", absoluteConnected() == 0);
+    // TODO: Find out how to indicate if the Hood Servo is connected or not
 
     double cTime = time.get();
     if (stopped)
@@ -126,6 +178,6 @@ public class Claw extends SubsystemBase {
 
     State out = profile.calculate(cTime, new State(angle(), 0), new State(target, 0));
     pivot.getClosedLoopController().setReference(out.position, ControlType.kPosition);
-    stopped = profile.isFinished(cTime); // TODO: check if we haven't introduced any weirdness with this
+    stopped = profile.isFinished(cTime);
   }
 }

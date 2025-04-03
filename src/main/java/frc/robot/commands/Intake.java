@@ -9,7 +9,6 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Claw;
 import frc.robot.utility.IO;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -17,7 +16,6 @@ public class Intake extends Command {
 
   Runnable intake;
   Runnable stop;
-  Runnable rumble;
   BooleanSupplier holding;
   double angle;
   boolean release;
@@ -29,16 +27,14 @@ public class Intake extends Command {
   // public static int INTAKE_ALGAE_GROUND = -3; // THIS WILL MATTER ONLY IF WE DO GROUND PICKUP
 
   public Intake(IO io, boolean release, GenericHID controller) {
-    rumble = (controller != null) ? () -> controller.setRumble(RumbleType.kBothRumble, .25) : () -> {}; // TODO: Check if it's fine
-    holding = () -> (release) ? io.claw.hasCoral() :  !io.claw.hasCoral();
+    holding = () -> (release) ? io.shooter.coral() :  !io.shooter.coral();
     
     intake = () -> {
-      io.claw.speed((release) ? 1 : .4);
-      io.claw.angle((release) ? Claw.REEF_ANGLE : Claw.INTAKE_ANGLE); // TODO: See if we need to add an angle for scoring on L4 & Barge
+      io.shooter.speed((release) ? 1 : .4);
     };
 
     stop = () -> {
-      io.claw.stop();
+      io.shooter.stopIntake();
       controller.setRumble(RumbleType.kBothRumble, 0.0);
     };
 
@@ -54,7 +50,6 @@ public class Intake extends Command {
   @Override
   public void initialize() {
     intake.run();
-    rumble.run();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

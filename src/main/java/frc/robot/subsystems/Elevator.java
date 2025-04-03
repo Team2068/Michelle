@@ -34,31 +34,27 @@ public class Elevator extends SubsystemBase {
   TalonFX lead = new TalonFX(11);
   TalonFX follow = new TalonFX(12);
 
+  // LiDARDio LIDAR = new LiDARDio(4);
+
   SparkMaxConfig config = new SparkMaxConfig();
 
   TrapezoidProfile profile = new TrapezoidProfile(new Constraints(100, 500));
+  public boolean stopped = true;
   Timer time = new Timer();
   double target = 0;
-  public 
-  boolean stopped = true;
 
   PositionVoltage positionRequest = new PositionVoltage(0).withSlot(0);
 
-  final String[] level_layout = { "Rest", "L1", "L2", "L3", "L4", "Barge", "Low Algae", "High Algae" };
+  final String[] levelLayout = { "Rest", "L1", "L2", "L3", "L4", "Barge", "Low Algae", "High Algae" };
 
-  // Target Heights
+  public final double[] Level = { 0, 25, 43.5, 76, 110 };
   public final double Rest = 0;
-  public final double L0 = 0;
   public final double L1 = 25;
   public final double L2 = 43.5;
   public final double L3 = 76;
   public final double L4 = 110;
-  public final double Barge = 0; // TODO: FIND BARGE
-  public final double Low_Algae = 0; // TODO: FIND
-  public final double High_Algae = 0; // TODO: FIND
-  public final double MAX_HEIGHT = 0; // TODO: FIND
 
-  public boolean softLimits = true;
+  public boolean softLimits = false;
 
   public Elevator() {
     TalonFXConfiguration config = new TalonFXConfiguration();
@@ -67,21 +63,22 @@ public class Elevator extends SubsystemBase {
     config.Slot0.kD = 0.1;
     config.Slot0.kG = 0.0;
 
-    config.MotorOutput.withInverted(InvertedValue.CounterClockwise_Positive);
+    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.SoftwareLimitSwitch
         .withForwardSoftLimitEnable(softLimits)
-        .withForwardSoftLimitThreshold(0.0)
+        .withForwardSoftLimitThreshold(160.0)
         .withReverseSoftLimitEnable(softLimits)
-        .withReverseSoftLimitThreshold(160.0);
+        .withReverseSoftLimitThreshold(0.0);
 
     lead.getConfigurator().apply(config);
-    follow.setControl(new Follower(lead.getDeviceID(), true)); // TODO: Check if we need to invert
+    follow.setControl(new Follower(lead.getDeviceID(), true));
   }
 
   public void toggleSoftLimits() {
     softLimits = !softLimits;
-    lead.getConfigurator().apply(new SoftwareLimitSwitchConfigs().withForwardSoftLimitEnable(softLimits).withReverseSoftLimitEnable(softLimits));
+    lead.getConfigurator().apply(
+        new SoftwareLimitSwitchConfigs().withForwardSoftLimitEnable(softLimits).withReverseSoftLimitEnable(softLimits));
   }
 
   public void speed(double speed) {
@@ -90,10 +87,6 @@ public class Elevator extends SubsystemBase {
 
   public void volts(double volts) {
     lead.setVoltage(volts);
-  }
-
-  public void followVolts(double volts){
-    follow.setVoltage(volts);
   }
 
   public void stop() {
@@ -110,36 +103,8 @@ public class Elevator extends SubsystemBase {
   }
 
   public void move(int level) {
-    switch (level) {
-      case 0:
-        move(L0);
-        break;
-      case 1:
-        move(L1);
-        break;
-      case 2:
-        move(L2);
-        break;
-      case 3:
-        move(L3);
-        break;
-      case 4:
-        move(L4);
-        break;
-      case 5:
-        move(Barge);
-        break;
-      case 6:
-        move(Low_Algae);
-        break;
-      case 7:
-        move(High_Algae);
-        break;
-      default:
-        move(Rest); // LEVEL 1 // TODO: See if we need to change the height we go to
-        break;
-    }
-    SmartDashboard.putString("Target Level", level_layout[level]);
+    move(Level[Math.min(0, Math.max(4, level))]);
+    SmartDashboard.putString("Target Elevator Level", levelLayout[level]);
   }
 
   public InstantCommand moveCommand(int level) {
@@ -160,7 +125,7 @@ public class Elevator extends SubsystemBase {
 
   public double position() {
     // return lead.getPosition().getValueAsDouble() * conversion;
-    return lead.getPosition().getValueAsDouble();
+    return lead.getPosition().getValueAsDouble(); // TODO: Switch to LiDAR
   }
 
   public LinearVelocity velocity() {
@@ -189,27 +154,25 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Elevator Height", position());
+    // SmartDashboard.putNumber("Elevator Height LiDAR", LIDAR.distance());
     SmartDashboard.putBoolean("Elevator Soft Limits Active", softLimits);
+
+    double cTime = time.get();
 
     if (stopped)
       return;
 
-    State out = profile.calculate(time.get(), new State(L2, Barge), new State(target, 0));
-    lead.setControl(positionRequest.withPosition(out.position));
+    State out = profile.calculate(cTime, new State(L2, lead.getVelocity().getValueAsDouble()), new State(target, 0));
+    lead.setControl(positionRequest.withPosition(out.position).withEnableFOC(true));
+
+    stopped = profile.isFinished(cTime);
 
     SmartDashboard.putNumber("Elevator Motor Voltage", voltage().magnitude());
-    // SmartDashboard.putNumber("Elevator Height", position());
 
     SmartDashboard.putNumber("Elevator Target Height", target);
     SmartDashboard.putNumber("Elevator cTarget Height", out.position);
 
     SmartDashboard.putNumber("Elevator Velocity", velocity().magnitude());
     SmartDashboard.putNumber("Elevator cTarget Velocity", out.velocity);
-
-    // DogLog.log("Elevator/Height", motor.getEncoder().getPosition());
-    // DogLog.log("Elevator/Target Height", target);
-    // DogLog.log("Elevator/cTarget Height", out.position);
-    // DogLog.log("Elevator/Speed", motor.getEncoder().getVelocity());
-    // DogLog.log("Elevator/cTarget Velocity", out.velocity);
   }
 }
