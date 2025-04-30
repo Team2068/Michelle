@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
+import frc.robot.utility.Util;
 
 public class Elevator extends SubsystemBase {
   TalonFX lead = new TalonFX(11);
@@ -48,19 +49,21 @@ public class Elevator extends SubsystemBase {
 
   public final double[] Level = { 0, 25, 43.5, 76, 110 };
   public final double Rest = 0;
-  public final double L1 = 25;
-  public final double L2 = 43.5;
-  public final double L3 = 76;
-  public final double L4 = 110;
+  public static final double L1 = (double) Util.get("L1 Height", 25.0);
+  public static final double L2 = (double) Util.get("L2 Height", 43.5);
+  public static final double L3 = (double) Util.get("L3 Height", 76.0);
+  public static final double L4 = (double) Util.get("L4 Height", 110.0);
+  public TalonFXConfiguration config = new TalonFXConfiguration();
+
+  boolean redundancy = false;
 
   public boolean softLimits = false;
 
   public Elevator() {
-    TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = 0.3;
     config.Slot0.kI = 0.0;
     config.Slot0.kD = 0.1;
-    config.Slot0.kG = 0.0;
+    config.Slot0.kG = 0;
 
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -72,6 +75,14 @@ public class Elevator extends SubsystemBase {
 
     lead.getConfigurator().apply(config);
     follow.setControl(new Follower(lead.getDeviceID(), true));
+  }
+
+  public void PID(double p, double i, double d, double g) {
+    config.Slot0.kP = p;
+    config.Slot0.kI = i;
+    config.Slot0.kD = d;
+    config.Slot0.kG = g;
+    lead.getConfigurator().apply(config);
   }
 
   public void toggleSoftLimits() {
@@ -136,6 +147,10 @@ public class Elevator extends SubsystemBase {
     return MetersPerSecond.of(lead.getVelocity().getValueAsDouble());
   }
 
+  public void toggleRedundancy(){
+    redundancy = !redundancy;
+  }
+
   final double gearReduction = 1 / 17;
   final double conversion = Math.PI * gearReduction * (Units.inchesToMeters(2) / 60);
 
@@ -181,5 +196,7 @@ public class Elevator extends SubsystemBase {
 
     SmartDashboard.putNumber("Elevator Velocity", velocity().magnitude());
     SmartDashboard.putNumber("Elevator cTarget Velocity", out.velocity);
+
+    SmartDashboard.putBoolean("Elevator Soft Limits", softLimits);
   }
 }

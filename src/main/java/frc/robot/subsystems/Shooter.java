@@ -24,15 +24,19 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
+import frc.robot.utility.Util;
 
 public class Shooter extends SubsystemBase {
   
   SparkMax intake = new SparkMax(13, MotorType.kBrushless);
   SparkMax pivot = new SparkMax(14, MotorType.kBrushless);
+  public SparkMaxConfig config = new SparkMaxConfig();
+  public SparkMaxConfig pivotConfig = new SparkMaxConfig();
 
   // DutyCycleEncoder encoder = new DutyCycleEncoder(new DigitalInput(3)); // or 4
   DoubleSupplier[] position;
@@ -44,9 +48,12 @@ public class Shooter extends SubsystemBase {
 
   Servo hood = new Servo(0);
 
+  boolean softLimits = false;
 
-  double[] pivotAngle = {0,0,0,0,0, 0}; // last one FOR BARGE
-  double[] hoodAngle = {0,0,0,0,0, 0};
+  boolean pivotRedundancy = false;
+
+  public static final double[] pivotAngle = (double[]) Util.get("Pivot Angle", new double[] {0,0,0,0,0,0}); // last one FOR BARGE
+  public static final double[] hoodAngle = (double[]) Util.get("Hood Angle", new double[] {0,0,0,0,0,0}); // last one FOR BARGE
 
   TrapezoidProfile profile = new TrapezoidProfile(new Constraints(100, 500));
   Timer time = new Timer();
@@ -56,14 +63,11 @@ public class Shooter extends SubsystemBase {
   public boolean intaking = false;
 
   public Shooter() {
-    SparkMaxConfig config = new SparkMaxConfig();
-
     config.idleMode(SparkMaxConfig.IdleMode.kBrake);
     intake.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    SparkMaxConfig pivotConfig = new SparkMaxConfig();
     pivotConfig.idleMode(SparkMaxConfig.IdleMode.kBrake);
-    pivotConfig.closedLoop.pidf(0.0, 0.0, 0.0, 0.0, ClosedLoopSlot.kSlot0);
+    pivotConfig.closedLoop.pid(0.0, 0.0, 0.0, ClosedLoopSlot.kSlot0);
 
     pivotConfig.softLimit.forwardSoftLimitEnabled(false);
     pivotConfig.softLimit.forwardSoftLimit(0); // TODO: Find the Forward soft limit
@@ -74,6 +78,18 @@ public class Shooter extends SubsystemBase {
 
     position = new DoubleSupplier[]{pivot.getEncoder()::getPosition, pivot.getAbsoluteEncoder()::getPosition};
     coral = new BooleanSupplier[]{beam::get}; //TODO: Have the second option be RPM sensing
+  }
+
+    public void toggleSoftLimits() {
+    softLimits = !softLimits;
+    pivotConfig.softLimit.forwardSoftLimitEnabled(softLimits);
+    pivotConfig.softLimit.reverseSoftLimitEnabled(softLimits);
+    pivot.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+  }
+
+  public void pivotPID(double p, double i, double d){
+    pivotConfig.closedLoop.pid(p, i, d, ClosedLoopSlot.kSlot0);
+    pivot.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public void hood(double v){
@@ -140,6 +156,17 @@ public class Shooter extends SubsystemBase {
     hood.setAngle(hoodAngle[level]);
   }
 
+  public InstantCommand angleCommand(int level){
+    return new InstantCommand(() -> {
+      angle(pivotAngle[level]);
+      hood.setAngle(hoodAngle[level]);
+    }, this);
+  }
+
+  public void togglePivotRedundancy(){
+    pivotRedundancy = !pivotRedundancy;
+  }
+
   public boolean absoluteConnected(){
     return (pivot.getAbsoluteEncoder().getPosition() == -2000); // TODO: 2000 is just a dummy value, replace with actual value present when the cable is not connected
   }
@@ -170,6 +197,8 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Pivot Absolute Angle", pivot.getAbsoluteEncoder().getPosition());
 
     SmartDashboard.putBoolean("Claw Absolute Encoder Connected", absoluteConnected());
+
+    SmartDashboard.putBoolean("Shooter Pivot Soft Limits", softLimits);
     // TODO: Find out how to indicate if the Hood Servo is connected or not
 
     double cTime = time.get();

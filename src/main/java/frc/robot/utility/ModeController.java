@@ -6,10 +6,11 @@ import java.util.function.IntSupplier;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.ClearAlgae;
 import frc.robot.commands.Intake;
 import frc.robot.commands.ScoreReef;
 
@@ -164,27 +165,42 @@ public class ModeController {
     }
 
     public void configureDebug(){
-        // TODO: Setup Smart Dashboard buttons to pass in the Level for the elevator
-        // TODO: Setup a shuffleboard thing to set the claw Angle based on Level (use the adjustable for the angles)
-        // TODO: Setup a Shuffleboard thing to move the bot to particular States (Ground intake, no Algae, etc)
-        // TODO: Setup Manual Movement of key mechanisms
-        // TODO: Setup a toggle for Softlimits on Elevator Height, Shooter Angle, and Maybe Hang
+        for (int i = 0; i < 5; i++){
+            SmartDashboard.putData("Elevator Height L" + i, io.elevator.moveCommand(i));
+        }
         
-        // TODO: Setup a toggle for Shooter Pivot Redundancy
+        for (int i = 0; i < 5; i++){
+            SmartDashboard.putData("Shooter Angle L" + i, io.shooter.angleCommand(i));
+        }
+
+        SmartDashboard.putData("Toggle Hang", new InstantCommand(() -> io.hang.toggleHang(), io.hang));
+
+        SmartDashboard.putData("Toggle Elevator Soft Limits", new InstantCommand(() -> io.elevator.toggleSoftLimits(), io.elevator));
+        SmartDashboard.putData("Toggle Shooter Pivot Soft Limits", new InstantCommand(() -> io.shooter.toggleSoftLimits(), io.shooter));
+        
+        SmartDashboard.putData("Toggle Shooter Redundancy", new InstantCommand(() -> io.shooter.togglePivotRedundancy(), io.shooter));
+        SmartDashboard.putData("Toggle Elevator Redundancy", new InstantCommand(() -> io.elevator.toggleRedundancy(), io.elevator));
+        SmartDashboard.putData("Toggle Encoder Redundancy", new InstantCommand(() -> io.chassis.toggleEncoderRedundancy(), io.chassis));
+        SmartDashboard.putData("Toggle Module Redundancy", new InstantCommand(() -> io.chassis.toggleModuleRedundancy(), io.chassis));
+        
         // TODO: Setup a toggle for Coral Detection Redundancy
         // TODO: Setup a toggle for Algae Detection Redundancy
-        // TODO: Setup a toggle for Elevator Redundancy
-        // TODO: Setup a toggle for Module Encoder Redundancy
-        // TODO: Setup a toggle for Module Redundancy / Redundant Kinemtics
 
-        // TODO: Setup Adjustable Height Locations for each level
-        // TODO: Setup Adjustable Shooter Angles for each Level
-        // TODO: Setup adjustable Hood angles for each Level
-        // TODO: Setup adjustable Hang Positions
+        double elevatorkP = (double) Util.get("Elevator kP", 0.3);
+        double elevatorkI = (double) Util.get("Elevator kI", 0.0);
+        double elevatorkD = (double) Util.get("Elevator kD", 0.1);
+        double elevatorkG = (double) Util.get("Elevator kG", 0.0);
+
+        double shooterkP = (double) Util.get("Elevator kP", 0.3);
+        double shooterkI = (double) Util.get("Elevator kI", 0.0);
+        double shooterkD = (double) Util.get("Elevator kD", 0.1);
         
-        // TODO: Setup Adjustable PID for Elevator
-        // TODO: Setup Adjustable PID for Shooter Pivot
-        // TODO: Maybe add a PID for target RPM
-        // TODO: Setup Adjustable PID for Hang
+        double hangkP = (double) Util.get("Elevator kP", 0.3);
+        double hangkI = (double) Util.get("Elevator kI", 0.0);
+        double hangkD = (double) Util.get("Elevator kD", 0.1);
+
+        SmartDashboard.putData("Set Elevator PID", new InstantCommand(() -> io.elevator.PID(elevatorkP, elevatorkI, elevatorkD, elevatorkG), io.elevator));
+        SmartDashboard.putData("Set Shooter Pivot PID", new InstantCommand(() -> io.shooter.pivotPID(shooterkD, shooterkI, shooterkP), io.shooter));
+        SmartDashboard.putData("Set Hang PID", new InstantCommand(() -> io.hang.PID(hangkP, hangkI, hangkD), io.hang));
     }
 }

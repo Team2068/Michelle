@@ -62,6 +62,8 @@ public class Swerve extends SubsystemBase {
     public final Constants constants = new Constants();
 
     public boolean active = true;
+    boolean encoderRedundancy = false;
+    boolean moduleRedundancy = false;
 
     public Swerve() {
         kinematics = new SwerveDriveKinematics(
@@ -132,6 +134,14 @@ public class Swerve extends SubsystemBase {
 
     public void stop() {
         speeds = new ChassisSpeeds();
+    }
+
+    public void toggleEncoderRedundancy() {
+        encoderRedundancy = !encoderRedundancy;
+    }
+
+    public void toggleModuleRedundancy() {
+        moduleRedundancy = !moduleRedundancy;
     }
 
     public double distance(Pose2d reference_point) {
