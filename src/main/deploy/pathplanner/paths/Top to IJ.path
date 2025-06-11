@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.082471026490066,
+        "y": 5.206633522727272
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.956557919698722,
+        "y": 5.192843493784709
+      },
+      "isLocked": false,
+      "linkedName": "Top Barge Starting Line"
+    },
+    {
+      "anchor": {
+        "x": 5.411734271523178,
+        "y": 5.206633522727272
+      },
+      "prevControl": {
+        "x": 6.533769976910932,
+        "y": 5.220637271660809
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Starting IJ"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.5,
+    "maxAcceleration": 5.0,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 360.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0.0,
+    "rotation": -119.99999999999999
+  },
+  "reversed": false,
+  "folder": "Starting",
+  "idealStartingState": {
+    "velocity": 0.0,
+    "rotation": -119.99999999999999
+  },
+  "useDefaultConstraints": true
+}

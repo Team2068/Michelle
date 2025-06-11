@@ -1,0 +1,91 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Top to LK"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score L-L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Cycle LK"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score R-L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Cycle LK"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score L-L3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Cycle LK"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score R-L3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Clear Low Alage"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LK to Barge"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score Barge"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Barge to Station to LK"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score L-L2"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Algae Intake",
+  "choreoAuto": false
+}
